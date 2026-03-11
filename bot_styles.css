@@ -1,0 +1,499 @@
+/* --- Arcano Live AI Bot Styles - Ultra Modern AI Edition --- */
+.ai-bot-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, rgba(20, 20, 25, 0.7), rgba(5, 5, 8, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 40px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    width: 100%;
+    max-width: 900px;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+}
+
+/* Subtle glowing grid/mesh background in the container */
+.ai-bot-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(139, 92, 246, 0.15), transparent 40%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.bot-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-display);
+    background: linear-gradient(to right, #ffffff, #a5b4fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    z-index: 1;
+    position: relative;
+    letter-spacing: -1px;
+}
+
+.bot-subtitle {
+    color: #94a3b8;
+    font-size: 1.25rem;
+    margin-bottom: 4rem;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+    font-weight: 300;
+}
+
+.bot-visual-wrapper {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4rem;
+    z-index: 1;
+}
+
+/* AI Aura Rings */
+.bot-ring {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.ring-1 {
+    width: 320px;
+    height: 320px;
+    border: 1px solid rgba(59, 130, 246, 0.1);
+    border-top: 1px solid rgba(59, 130, 246, 0.5);
+    animation: rotate-slow 15s linear infinite;
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.05);
+}
+
+.ring-2 {
+    width: 260px;
+    height: 260px;
+    border: 1px dashed rgba(139, 92, 246, 0.2);
+    animation: rotate-reverse 20s linear infinite;
+}
+
+.ring-3 {
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(16, 185, 129, 0.1);
+    border-bottom: 1px solid rgba(16, 185, 129, 0.4);
+    animation: rotate-slow 10s linear infinite;
+}
+
+.bot-orb {
+    width: 140px;
+    height: 140px;
+    background: linear-gradient(135deg, #1e1e2f, #0d0d14);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        inset 0 0 30px rgba(255, 255, 255, 0.05),
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    z-index: 2;
+}
+
+.bot-orb::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+    z-index: -1;
+    opacity: 0.5;
+}
+
+.bot-orb #bot-icon {
+    font-size: 3.5rem;
+    background: linear-gradient(135deg, #fff, #94a3b8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: all 0.5s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    z-index: 2;
+}
+
+/* AI Waves for Activity */
+.ai-waves {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 60%);
+    filter: blur(15px);
+    mix-blend-mode: overlay;
+}
+
+/* Status Classes */
+.status-idle .bot-orb {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.1);
+}
+
+/* Connecting / Processing */
+.status-connecting .bot-orb {
+    background: linear-gradient(135deg, #451a03, #2e1002);
+    box-shadow:
+        inset 0 0 30px rgba(245, 158, 11, 0.3),
+        0 0 60px rgba(245, 158, 11, 0.4),
+        0 0 0 1px rgba(245, 158, 11, 0.5);
+    animation: breathe 1.5s infinite alternate;
+}
+
+.status-connecting .bot-orb::after {
+    background: linear-gradient(135deg, #f59e0b, transparent);
+}
+
+.status-connecting #bot-icon {
+    background: linear-gradient(135deg, #fcd34d, #b45309);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.status-connecting .ai-waves {
+    opacity: 0.5;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.8) 0%, transparent 60%);
+    animation: pulse-wave 1.5s infinite;
+}
+
+/* Active / Listening */
+.status-active .bot-orb {
+    background: linear-gradient(135deg, #042f2e, #021a19);
+    box-shadow:
+        inset 0 0 40px rgba(20, 184, 166, 0.4),
+        0 0 80px rgba(20, 184, 166, 0.5),
+        0 0 0 2px rgba(20, 184, 166, 0.6);
+    animation: breathe-active 2s infinite alternate;
+}
+
+.status-active .bot-orb::after {
+    background: linear-gradient(135deg, #2dd4bf, transparent);
+}
+
+.status-active #bot-icon {
+    background: linear-gradient(135deg, #5eead4, #0f766e);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.status-active .ai-waves {
+    opacity: 0.8;
+    background: radial-gradient(circle, rgba(20, 184, 166, 0.8) 0%, transparent 60%);
+    animation: pulse-wave 1s infinite alternate;
+}
+
+.status-active .ring-1 {
+    border-color: rgba(20, 184, 166, 0.2);
+    border-top-color: rgba(20, 184, 166, 0.8);
+    box-shadow: 0 0 40px rgba(20, 184, 166, 0.2);
+}
+
+.status-active .ring-2 {
+    border-color: rgba(20, 184, 166, 0.4);
+}
+
+.status-active .ring-3 {
+    border-color: rgba(20, 184, 166, 0.3);
+    border-bottom-color: rgba(20, 184, 166, 0.9);
+}
+
+.bot-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    z-index: 2;
+    position: relative;
+}
+
+.btn-large {
+    padding: 16px 48px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #ffffff, #e2e8f0);
+    color: #0f172a;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ai-bot-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 450px;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.bot-transcript-area {
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    display: none;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.bot-report-area {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(85, 230, 165, 0.1), rgba(0, 0, 0, 0.3));
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 15px;
+    border: 1px dashed #55e6a5;
+    display: none;
+    text-align: left;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.report-header {
+    color: #55e6a5;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.report-content {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #fff;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bot-transcript-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+.bot-transcript-area::-webkit-scrollbar-thumb {
+    background: #55e6a5;
+    border-radius: 10px;
+}
+
+.bot-transcript-area p {
+    margin-bottom: 8px;
+    line-height: 1.4;
+    border-left: 2px solid #55e6a5;
+    padding-left: 10px;
+}
+
+.btn-large i {
+    font-size: 1.1rem;
+}
+
+.btn-large:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(255, 255, 255, 0.25);
+}
+
+.btn-large:active {
+    transform: translateY(1px);
+}
+
+.btn-large.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: white;
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.2);
+}
+
+.btn-large.btn-danger:hover {
+    box-shadow: 0 15px 35px rgba(239, 68, 68, 0.35);
+}
+
+.bot-status-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+    position: relative;
+}
+
+.status-indicator::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid inherit;
+    opacity: 0;
+}
+
+.status-connecting-text .status-indicator {
+    background-color: #fbbf24;
+    box-shadow: 0 0 15px #fbbf24;
+}
+
+.status-connecting-text .status-indicator::after {
+    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+    border-color: #fbbf24;
+    opacity: 1;
+}
+
+.status-active-text .status-indicator {
+    background-color: #2dd4bf;
+    box-shadow: 0 0 15px #2dd4bf;
+}
+
+.status-active-text .status-indicator::after {
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    border-color: #2dd4bf;
+    opacity: 1;
+}
+
+.status-idle-text .status-indicator {
+    background-color: #64748b;
+}
+
+@keyframes rotate-slow {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes rotate-reverse {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(-360deg);
+    }
+}
+
+@keyframes breathe {
+    0% {
+        transform: scale(0.98);
+    }
+
+    100% {
+        transform: scale(1.02);
+    }
+}
+
+@keyframes breathe-active {
+    0% {
+        transform: scale(0.97);
+    }
+
+    100% {
+        transform: scale(1.04);
+    }
+}
+
+@keyframes pulse-wave {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes ping {
+
+    75%,
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+/* Adjust hero to better fit new bot */
+.hero {
+    padding-top: 140px;
+    flex-direction: column;
+}
+
+.hero-content {
+    margin-top: 2rem;
+}

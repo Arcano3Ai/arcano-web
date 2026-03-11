@@ -1,0 +1,10 @@
+node_modules/
+.env
+.git/
+.vscode/
+npm-debug.log
+*.log
+database.sql
+deploy_hostinger.zip
+README.md
+LEEME_PARA_SUBIR.md

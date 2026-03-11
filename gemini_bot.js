@@ -1,0 +1,401 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // Detect if running on file:// protocol
+    if (window.location.protocol === 'file:') {
+        alert("⚠️ ATENCIÓN: Estás abriendo el archivo localmente (file://). Abre http://localhost:8080 para que el micrófono funcione.");
+    }
+
+    const startBtn = document.getElementById('start-bot-btn');
+    const statusText = document.getElementById('bot-status-text');
+    const statusContainer = document.querySelector('.bot-status-container');
+    const botContainer = document.querySelector('.ai-bot-container');
+    const botOrb = document.getElementById('bot-orb');
+    const transcriptArea = document.getElementById('bot-transcript');
+    const reportArea = document.getElementById('bot-report');
+    const reportText = document.getElementById('report-text');
+    const heroTitle = document.querySelector('.hero-content h1');
+    const visualWrapper = document.querySelector('.bot-visual-wrapper');
+
+    let session = null;
+    let isActive = false;
+    let mediaStream = null;
+    let audioContext = null;
+    let nextAudioTime = 0;
+    let scriptProcessor = null;
+    let microphoneNode = null;
+    let micContext = null;
+
+    let apiKey = null;
+
+    const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
+
+    // Determinar la URL correcta del WebSocket (Local vs Producción)
+    const isLocal = window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.protocol === 'file:';
+
+    let WS_URL = window.location.protocol === 'https:' ?
+        `wss://${window.location.host}/` :
+        `ws://${window.location.host}/`;
+
+    // Si estamos en entorno local pero en puerto distinto al 8080 (ej. XAMPP o Live Server), forzar el puerto 8080 de Node.
+    if (isLocal && window.location.port !== '8080') {
+        WS_URL = `ws://localhost:8080/`;
+    }
+
+    // ─── UI State ───────────────────────────────────────────────
+    const setStatus = (status) => {
+        statusContainer.className = 'bot-status-container';
+        botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
+        switch (status) {
+            case 'idle':
+                botContainer.classList.add('status-idle');
+                statusContainer.classList.add('status-idle-text');
+                statusText.textContent = 'DESCONECTADO';
+                startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar Conversación';
+                startBtn.classList.remove('btn-danger');
+                break;
+            case 'connecting':
+                botContainer.classList.add('status-connecting');
+                statusContainer.classList.add('status-connecting-text');
+                statusText.textContent = 'CONECTANDO E INICIANDO NEURAL ENGINE...';
+                startBtn.innerHTML = '<i class="fas fa-stop"></i> Cancelar';
+                startBtn.classList.add('btn-danger');
+                break;
+            case 'active':
+                botContainer.classList.add('status-active');
+                statusContainer.classList.add('status-active-text');
+                statusText.textContent = 'SISTEMA ACTIVO';
+                transcriptArea.style.display = 'block';
+                reportArea.style.display = 'none';
+                visualWrapper.style.display = 'block';
+                transcriptArea.innerHTML = ''; // Clear old chat
+                startBtn.innerHTML = '<i class="fas fa-stop"></i> Finalizar y generar informe';
+                startBtn.classList.add('btn-danger');
+                break;
+        }
+    };
+
+    setStatus('idle');
+
+    // ─── Button Click ────────────────────────────────────────────
+    startBtn.addEventListener('click', async () => {
+        if (isActive || session) {
+            disconnect();
+            return;
+        }
+
+        setStatus('connecting');
+
+        try {
+            // 1. Init audio contexts
+            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+            if (audioContext.state === 'suspended') await audioContext.resume();
+
+            // 2. PEDIR PERMISOS Y ACTIVAR MICRÓFONO PRIMERO
+            await startMic();
+
+            // 3. Conectar a Gemini después de que el audio ya está fluyendo
+            connect();
+        } catch (e) {
+            console.error("No se pudo iniciar el microfono:", e);
+            setStatus('idle');
+        }
+    });
+
+    // ─── Connect via raw WebSocket ────────────────────────────────
+    function connect() {
+        const ws = new WebSocket(WS_URL);
+        session = ws;
+
+        ws.onopen = () => {
+            console.log('[Bot] WebSocket opened');
+            const setupMsg = {
+                setup: {
+                    model: MODEL,
+                    generationConfig: {
+                        responseModalities: ['AUDIO'],
+                        temperature: 0.7,
+                        top_p: 0.95,
+                        speechConfig: {
+                            voiceConfig: {
+                                prebuiltVoiceConfig: { voiceName: 'Aoede' }
+                            }
+                        }
+                    },
+                    systemInstruction: {
+                        parts: [{ text: "You are a friendly and casual Google Expert from Arcano Solutions. Your goal is to help clients find the best Google products for their needs (from Google Workspace and Ads to Cloud). You are consultive: instead of just selling, you 'interview' the client by asking about their business goals or current challenges. Your tone is warm, approachable, and smart. MANDATORY: Start your first response in English with a friendly 'Hi!', then adapt to the user's language. Keep responses brief, conversational, and always end with a small follow-up question to keep the interview going." }]
+                    }
+                }
+            };
+            ws.send(JSON.stringify(setupMsg));
+            console.log('[Bot] Setup sent:', JSON.stringify(setupMsg).slice(0, 150));
+        };
+
+        ws.onmessage = async (event) => {
+            let raw = event.data;
+
+            // Handle Blob
+            if (raw instanceof Blob) {
+                raw = await raw.text();
+            }
+
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (e) {
+                console.warn('[Bot] Non-JSON message:', raw?.slice?.(0, 200));
+                return;
+            }
+
+            console.log('[Bot] Received:', JSON.stringify(data).slice(0, 300));
+
+            // setupComplete — try all known variants
+            const isReady = data.setupComplete !== undefined ||
+                data.setup_complete !== undefined ||
+                (data.setupComplete === null) ||
+                (typeof data === 'object' && Object.keys(data).length === 0);
+
+            if (isReady && !isActive) {
+                console.log('[Bot] Setup complete!');
+                isActive = true;
+                setStatus('active');
+
+                // Enviar saludo inicial automático para que el agente se presente
+                ws.send(JSON.stringify({
+                    clientContent: {
+                        turns: [{ role: 'user', parts: [{ text: 'Hello.' }] }],
+                        turnComplete: true
+                    }
+                }));
+                return;
+            }
+
+            // Audio response — try all known field name variants
+            const sc = data.serverContent ?? data.server_content;
+            if (sc) {
+                botOrb.style.transform = 'scale(1.1)';
+                setTimeout(() => { botOrb.style.transform = ''; }, 200);
+
+                const mt = sc.modelTurn ?? sc.model_turn;
+                if (mt?.parts) {
+                    for (const p of mt.parts) {
+                        // Capturar transcripcion de texto si viene acompanada de audio
+                        if (p.text) {
+                            const pElem = document.createElement('p');
+                            pElem.textContent = '🤖 ' + p.text;
+                            transcriptArea.appendChild(pElem);
+                            transcriptArea.scrollTop = transcriptArea.scrollHeight;
+                        }
+
+                        const inline = p.inlineData ?? p.inline_data;
+                        if (inline?.data) {
+                            playPCM(inline.data);
+                        }
+                    }
+                }
+            }
+        };
+
+        ws.onerror = (e) => {
+            console.error('[Bot] WS Error:', e);
+        };
+
+        ws.onclose = (event) => {
+            console.log(`[Bot] WS Closed — Code: ${event.code}, Reason: ${event.reason}`);
+            if (event.code !== 1000 && event.code !== 1005 && event.code) {
+                const reasons = {
+                    1007: '❌ Clave API inválida o región bloqueada.',
+                    1008: `❌ Modelo no soportado: ${MODEL}`,
+                    1011: '❌ Error interno del servidor de Google.'
+                };
+                alert(reasons[event.code] || `Conexión cerrada.\nCódigo: ${event.code}\nRazón: ${event.reason}`);
+                localStorage.removeItem('gemini_api_key');
+                apiKey = null;
+            }
+            disconnect();
+        };
+    }
+
+    // ─── Microphone ──────────────────────────────────────────────
+    async function startMic() {
+        if (!navigator.mediaDevices?.getUserMedia) {
+            alert('Tu navegador no soporta acceso al micrófono en este contexto. Usa localhost con HTTPS.');
+            throw new Error('No mic access');
+        }
+
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+            audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true, noiseSuppression: true }
+        });
+
+        micContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        if (micContext.state === 'suspended') await micContext.resume();
+
+        microphoneNode = micContext.createMediaStreamSource(mediaStream);
+
+        try {
+            await micContext.audioWorklet.addModule('audio-processor.js');
+        } catch (e) {
+            console.error('Error cargando el worklet de audio:', e);
+            alert('Fallo al cargar el motor de audio avanzado. Asegúrate de estar ejecutando en un servidor (localhost o dominio real).');
+            throw e;
+        }
+
+        scriptProcessor = new AudioWorkletNode(micContext, 'audio-processor');
+
+        scriptProcessor.port.onmessage = (e) => {
+            if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
+
+            const f32 = e.data; // Recibimos el buffer completo de 4096 muestras
+
+            // Medir volumen para depuración
+            let max = 0;
+            for (let i = 0; i < f32.length; i++) {
+                if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]);
+            }
+            if (max > 0.01 && Math.random() < 0.01) {
+                console.log('[Bot] Mic active, volume:', max.toFixed(3));
+            }
+
+            // Convertir de Float32 a Int16 (PCM)
+            const pcm16 = new Int16Array(f32.length);
+            for (let i = 0; i < f32.length; i++) {
+                const s = Math.max(-1, Math.min(1, f32[i]));
+                pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+
+            // Convertir a base64 por chunks
+            const bytes = new Uint8Array(pcm16.buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i += 8192) {
+                binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+            }
+
+            // Enviar chunk de audio a Gemini
+            session.send(JSON.stringify({
+                realtimeInput: {
+                    mediaChunks: [{
+                        mimeType: 'audio/pcm;rate=16000',
+                        data: btoa(binary)
+                    }]
+                }
+            }));
+        };
+
+        microphoneNode.connect(scriptProcessor);
+        scriptProcessor.connect(micContext.destination);
+        console.log('[Bot] Mic streaming started via AudioWorklet (AI Grade)');
+    }
+
+    // ─── Audio Playback ──────────────────────────────────────────
+    function playPCM(base64) {
+        if (!audioContext) return;
+        try {
+            const binary = atob(base64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+            const pcm16 = new Int16Array(bytes.buffer);
+            const buf = audioContext.createBuffer(1, pcm16.length, 24000);
+            const ch = buf.getChannelData(0);
+            for (let i = 0; i < pcm16.length; i++) ch[i] = pcm16[i] / 0x8000;
+
+            const src = audioContext.createBufferSource();
+            src.buffer = buf;
+            src.connect(audioContext.destination);
+
+            const now = audioContext.currentTime;
+            if (nextAudioTime < now) nextAudioTime = now + 0.05;
+            src.start(nextAudioTime);
+            nextAudioTime += buf.duration;
+        } catch (e) {
+            console.error('[Bot] Playback error:', e);
+        }
+    }
+
+    // ─── Disconnect ──────────────────────────────────────────────
+    function disconnect() {
+        isActive = false;
+
+        if (session) {
+            session.onclose = null;
+            session.close();
+            session = null;
+        }
+        if (scriptProcessor) { scriptProcessor.disconnect(); scriptProcessor = null; }
+        if (microphoneNode) { microphoneNode.disconnect(); microphoneNode = null; }
+        if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+        if (micContext) { micContext.close(); micContext = null; }
+
+        // Generar Informe en el área nueva
+        if (transcriptArea.textContent.length > 10) {
+            visualWrapper.style.display = 'none';
+            transcriptArea.style.display = 'none';
+            reportArea.style.display = 'block';
+
+            // Simular un resumen inteligente basado en las palabras clave detectadas
+            const text = transcriptArea.textContent.toLowerCase();
+            let recommendation = "Basado en nuestra conversación, recomendamos iniciar con una auditoría de **Google Workspace** para mejorar la colaboración interna.";
+
+            if (text.includes('cloud') || text.includes('vertex') || text.includes('ia')) {
+                recommendation = "Tu perfil requiere **Arquitectura de Cloud Avanzada**. Sugerimos implementar un piloto con **Vertex AI** para automatizar tus procesos de atención al cliente.";
+            } else if (text.includes('ads') || text.includes('marketing') || text.includes('ventas')) {
+                recommendation = "Detectamos oportunidad en **Google Ads**. Arcano Solutions puede optimizar tus campañas actuales para reducir el costo por lead en un 20%.";
+            }
+
+            reportText.innerHTML = recommendation;
+            statusText.textContent = 'INFORME GENERADO';
+
+            // Mostrar el formulario de captura
+            const leadForm = document.getElementById('lead-capture-form');
+            if (leadForm) {
+                leadForm.style.display = 'block';
+                const saveBtn = document.getElementById('save-lead-btn');
+                saveBtn.onclick = async () => {
+                    const name = document.getElementById('lead-name').value;
+                    const email = document.getElementById('lead-email').value;
+                    
+                    if (!name || !email) {
+                        alert('Por favor, ingresa tu nombre y correo.');
+                        return;
+                    }
+                    
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                    
+                    try {
+                        const response = await fetch('/api/save_lead', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                name: name,
+                                email: email,
+                                interest: 'Consulta Arcano Live AI',
+                                message: recommendation
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            leadForm.innerHTML = '<p style="color: #55e6a5; font-weight: 600; text-align: center;"><i class="fas fa-check-circle"></i> ¡Guardado con éxito! Un especialista analizará el reporte y te contactará.</p>';
+                        } else {
+                            throw new Error('Error en el servidor');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Hubo un problema de conexión al guardar.');
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar y Enviar';
+                    }
+                };
+            }
+        }
+
+        // Actualizar el Hero
+        if (heroTitle && transcriptArea.textContent.length > 10) {
+            heroTitle.style.fontSize = '2.5rem';
+            heroTitle.innerHTML = "¡Analizamos tus necesidades!<br><span style='font-size: 1.2rem; color: #55e6a5; font-weight: 300;'>Arcano Solutions te contactará con una propuesta personalizada basada en nuestra charla.</span>";
+        }
+
+        nextAudioTime = 0;
+        setStatus('idle');
+        transcriptArea.style.display = 'none';
+        botOrb.style.transform = '';
+    }
+});

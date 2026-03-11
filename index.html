@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcano Solutions | IA & Automatización Empresarial</title>
+    <meta name="description"
+        content="Transformamos tu empresa en una operación eficiente, segura y potenciada con IA. Ciberseguridad, ERP, y Automatización.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bot_styles.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+    <!-- HUD Removed for standard modern feel -->
+    <nav class="navbar">
+        <div class="logo">ARCANO<span class="dot">.</span></div>
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#servicios">Servicios</a>
+            <a href="#metodo">Método</a>
+            <a href="#kits">Precios</a>
+            <a href="login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso Cliente</a>
+            <a href="index_en.html" class="lang-switch">EN</a>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <header id="inicio" class="hero">
+        <!-- AI Bot Integration -->
+        <div class="ai-bot-container reveal-up">
+            <h2 class="bot-title">Arcano Live AI</h2>
+            <p class="bot-subtitle">Conversa en tiempo real con nuestro experto en automatización</p>
+
+            <div class="bot-visual-wrapper">
+                <!-- AI Aura Rings -->
+                <div class="bot-ring ring-1"></div>
+                <div class="bot-ring ring-2"></div>
+                <div class="bot-ring ring-3"></div>
+
+                <div class="bot-orb" id="bot-orb">
+                    <div class="ai-waves"></div>
+                    <i class="fas fa-microchip" id="bot-icon"></i>
+                </div>
+            </div>
+
+            <div id="bot-transcript" class="bot-transcript-area"></div>
+
+            <div id="bot-report" class="bot-report-area">
+                <div class="report-header"><i class="fas fa-file-alt"></i> Informe de Estrategia Digital</div>
+                <div id="report-text" class="report-content">Generando recomendación personalizada...</div>
+                
+                <div id="lead-capture-form" style="margin-top: 15px; display: none; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <p style="font-size: 0.9rem; margin-bottom: 10px; color: #a1a1aa;">Guarda este informe y permite que un especialista te contacte:</p>
+                    <input type="text" id="lead-name" placeholder="Tu Nombre" style="width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-family: 'Space Grotesk', sans-serif;" required>
+                    <input type="email" id="lead-email" placeholder="Tu Correo Electrónico" style="width: 100%; margin-bottom: 10px; padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: white; font-family: 'Space Grotesk', sans-serif;" required>
+                    <button id="save-lead-btn" class="btn-primary" style="width: 100%; padding: 12px; border-radius: 6px; border: none; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-weight: 600;"><i class="fas fa-save"></i> Guardar y Enviar</button>
+                </div>
+            </div>
+
+            <div class="bot-controls">
+                <button id="start-bot-btn" class="btn-primary btn-large">
+                    <i class="fas fa-play"></i> Iniciar Conversación
+                </button>
+                <div class="bot-status-container">
+                    <span class="status-indicator" id="bot-status-indicator"></span>
+                    <span class="status-text" id="bot-status-text">DESCONECTADO</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-content reveal-up" style="margin-top: 40px;">
+            <span class="badge-new stagger-1">Nueva Era Operativa</span>
+            <h1 class="stagger-2">Potencia tu empresa con <span class="gradient-text">Inteligencia Artificial</span>
+            </h1>
+            <p class="stagger-3">Fusionamos IA aplicada, ciberseguridad y automatización para crear operaciones
+                eficientes y seguras. Sin
+                promesas vacías, solo métricas reales.</p>
+            <div class="hero-btns stagger-4">
+                <a href="#contacto" class="btn-primary">Solicitar Diagnóstico <i class="fas fa-arrow-right"></i></a>
+                <a href="#servicios" class="btn-secondary">Explorar Servicios</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <canvas id="particle-canvas"></canvas>
+            <div class="glow-orb"></div>
+        </div>
+    </header>
+
+    <!-- Results / Trust Bar -->
+    <section class="results-bar reveal-up">
+        <div class="result-item stagger-1">
+            <span class="big-number">99.9%</span>
+            <span class="label">Uptime Garantizado</span>
+        </div>
+        <div class="result-item stagger-2">
+            <span class="big-number">+40%</span>
+            <span class="label">Eficiencia Operativa</span>
+        </div>
+        <div class="result-item stagger-3">
+            <span class="big-number">$2M+</span>
+            <span class="label">Ahorros Generados</span>
+        </div>
+        <div class="result-item stagger-4">
+            <span class="big-number">0</span>
+            <span class="label">Brechas de Seguridad</span>
+        </div>
+    </section>
+
+    <section id="features" class="features-bar reveal-up">
+        <div class="feature-item stagger-1">
+            <i class="fas fa-brain"></i>
+            <span>IA Generativa</span>
+        </div>
+        <div class="feature-item stagger-2">
+            <i class="fas fa-shield-alt"></i>
+            <span>SecOps</span>
+        </div>
+        <div class="feature-item stagger-3">
+            <i class="fas fa-code-branch"></i>
+            <span>DevOps</span>
+        </div>
+        <div class="feature-item stagger-4">
+            <i class="fas fa-database"></i>
+            <span>Big Data</span>
+        </div>
+    </section>
+
+    <!-- Tech Stack Marquee -->
+    <section class="tech-stack-section">
+        <div class="tech-track">
+            <div class="tech-item"><i class="fab fa-python"></i> Python</div>
+            <div class="tech-item"><i class="fab fa-react"></i> React</div>
+            <div class="tech-item"><i class="fab fa-aws"></i> AWS</div>
+            <div class="tech-item"><i class="fab fa-docker"></i> Docker</div>
+            <div class="tech-item"><i class="fas fa-database"></i> PostgreSQL</div>
+            <div class="tech-item"><i class="fab fa-js"></i> NodeJS</div>
+            <div class="tech-item"><i class="fas fa-cube"></i> Terraform</div>
+            <div class="tech-item"><i class="fas fa-lock"></i> Kali</div>
+            <!-- Duplicate for infinite scroll -->
+            <div class="tech-item"><i class="fab fa-python"></i> Python</div>
+            <div class="tech-item"><i class="fab fa-react"></i> React</div>
+            <div class="tech-item"><i class="fab fa-aws"></i> AWS</div>
+            <div class="tech-item"><i class="fab fa-docker"></i> Docker</div>
+            <div class="tech-item"><i class="fas fa-database"></i> PostgreSQL</div>
+            <div class="tech-item"><i class="fab fa-js"></i> NodeJS</div>
+            <div class="tech-item"><i class="fas fa-cube"></i> Terraform</div>
+            <div class="tech-item"><i class="fas fa-lock"></i> Kali</div>
+        </div>
+    </section>
+
+    <section id="servicios" class="services">
+        <div class="section-header reveal-up">
+            <h2>Ecosistema Integral</h2>
+            <p>Todo lo que necesitas para operar con orden y escalar sin caos.</p>
+        </div>
+        <div class="cards-grid">
+            <a href="services/ia-automation.html" class="card reveal-up stagger-1">
+                <div class="card-icon"><i class="fas fa-robot"></i></div>
+                <h3>IA & Automatización</h3>
+                <p>Asistentes internos, bots y workflows que eliminan la tarea manual y aceleran tu negocio.</p>
+            </a>
+            <a href="services/erp-crm.html" class="card reveal-up stagger-2">
+                <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+                <h3>ERP & CRM</h3>
+                <p>Implementación e integración completa. Finanzas, ventas y operaciones unificadas.</p>
+            </a>
+            <a href="services/cybersecurity.html" class="card reveal-up stagger-3">
+                <div class="card-icon"><i class="fas fa-lock"></i></div>
+                <h3>Ciberseguridad</h3>
+                <p>Protección de identidad (IAM), MFA y continuidad operativa ante riesgos.</p>
+            </a>
+            <a href="services/architecture.html" class="card reveal-up stagger-1">
+                <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                <h3>Arquitectura</h3>
+                <p>Diseño de sistemas coherentes, APIs y flujos de datos conectados end-to-end.</p>
+            </a>
+            <a href="services/governance.html" class="card reveal-up stagger-2">
+                <div class="card-icon"><i class="fas fa-book"></i></div>
+                <h3>Gobierno</h3>
+                <p>Playbooks y documentación clara para escalar equipos sin perder el control.</p>
+            </a>
+            <a href="services/management.html" class="card reveal-up stagger-3">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Dirección</h3>
+                <p>PMO ligera y gestión estratégica con roadmap a 90-180 días.</p>
+            </a>
+            <a href="services/admin-automation.html" class="card reveal-up stagger-1">
+                <div class="card-icon"><i class="fas fa-file-invoice"></i></div>
+                <h3>Admin Automation</h3>
+                <p>Gestión documental, onboarding y procesos administrativos en piloto automático.</p>
+            </a>
+            <a href="services/marketing.html" class="card reveal-up stagger-2">
+                <div class="card-icon"><i class="fas fa-bullhorn"></i></div>
+                <h3>Marketing Growth</h3>
+                <p>Estrategias de captación y fidelización impulsadas por datos y analítica avanzada.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Industries Section (New) -->
+    <section class="industries">
+        <div class="section-header reveal-up">
+            <h2>Verticales de Impacto</h2>
+            <p>Soluciones adaptadas a la realidad de tu industria.</p>
+        </div>
+        <div class="industry-grid reveal-up">
+            <div class="ind-card">
+                <i class="fas fa-coins"></i>
+                <h3>Fintech</h3>
+                <p>Detección de fraude y automatización de conciliaciones.</p>
+            </div>
+            <div class="ind-card">
+                <i class="fas fa-heartbeat"></i>
+                <h3>HealthTech</h3>
+                <p>Gestión de pacientes y seguridad de datos sensibles (HIPAA).</p>
+            </div>
+            <div class="ind-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Retail & E-comm</h3>
+                <p>Personalización de experiencia y logística predictiva.</p>
+            </div>
+            <div class="ind-card">
+                <i class="fas fa-industry"></i>
+                <h3>Manufactura</h3>
+                <p>Mantenimiento predictivo y gemelos digitales.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="metodo" class="methodology">
+        <div class="section-header reveal-up">
+            <h2>Metodología Ágil</h2>
+            <p>De la idea a la producción en ciclos rápidos y seguros.</p>
+        </div>
+        <div class="timeline">
+            <div class="timeline-item left reveal-up">
+                <div class="content">
+                    <h3>01. Auditoría (Discovery)</h3>
+                    <p>Mapeamos tu infraestructura actual, detectamos vulnerabilidades y oportunidades de
+                        automatización.</p>
+                </div>
+            </div>
+            <div class="timeline-item right reveal-up">
+                <div class="content">
+                    <h3>02. Estrategia (Blueprint)</h3>
+                    <p>Diseñamos la arquitectura ideal. No parches, soluciones escalables.</p>
+                </div>
+            </div>
+            <div class="timeline-item left reveal-up">
+                <div class="content">
+                    <h3>03. Ejecución (Build)</h3>
+                    <p>Desarrollo ágil con sprints de 2 semanas. Ves avances tangibles constantemente.</p>
+                </div>
+            </div>
+            <div class="timeline-item right reveal-up">
+                <div class="content">
+                    <h3>04. Escalamiento (Run)</h3>
+                    <p>Implementación en producción, monitoreo y optimización continua.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="full-service" class="full-service">
+        <div class="section-header reveal-up">
+            <h2>ARCANO <span class="gradient-text">360°</span></h2>
+            <p>La transformación real no ocurre por partes. Ocurre cuando todo conecta.</p>
+        </div>
+        <div class="full-service-content reveal-up stagger-1">
+            <div class="fs-visual">
+                <div class="fs-circle c-1">IA</div>
+                <div class="fs-circle c-2">Cyber</div>
+                <div class="fs-circle c-3">Data</div>
+                <div class="fs-core">CORE</div>
+                <div class="fs-lines"></div>
+            </div>
+            <div class="fs-text">
+                <h3>Arquitectura Empresarial Unificada</h3>
+                <p>De nada sirve un CRM potente si tu Ciberseguridad es débil. De nada sirve IA si tus datos son un
+                    caos.</p>
+                <p><strong>Arcano 360</strong> es nuestro servicio "Full Stack" para empresas:</p>
+                <ul class="fs-list">
+                    <li><i class="fas fa-check-circle"></i> <strong>Auditoría Total:</strong> Revisamos procesos, stack
+                        tecnológico y seguridad.</li>
+                    <li><i class="fas fa-check-circle"></i> <strong>Reingeniería Operativa:</strong> Diseñamos tu
+                        empresa como un sistema de software eficiente.</li>
+                    <li><i class="fas fa-check-circle"></i> <strong>Implementación End-to-End:</strong> Nosotros
+                        instalamos, conectamos y documentamos todo.</li>
+                    <li><i class="fas fa-check-circle"></i> <strong>Soporte Continuo:</strong> Nos convertimos en tu
+                        departamento de Innovación externo.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Lab / Neural Engine (New) -->
+    <section class="ai-lab">
+        <div class="lab-content reveal-up">
+            <h2>Arcano <span class="gradient-text">Neural Engine</span></h2>
+            <p>Monitoreo proactivo impulsado por nuestros modelos propietarios.</p>
+
+            <div class="terminal-window stagger-1">
+                <div class="terminal-header">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                    <div class="terminal-title">arcano_daemon — bash — 80x24</div>
+                </div>
+                <div class="terminal-body">
+                    <div class="line"><span class="prompt">root@arcano:~#</span> ./init_security_protocol.sh</div>
+                    <div class="line">Initializing Neural Defense Grid... <span class="success">[OK]</span></div>
+                    <div class="line">Analyzing traffic patterns...</div>
+                    <div class="line">Detected anomaly in vector 7. Isolating... <span class="success">[DONE]</span>
+                    </div>
+                    <div class="line">Optimizing database queries... 45ms -> 12ms</div>
+                    <div class="line"><span class="prompt">root@arcano:~#</span> _<span class="cursor"></span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kits" class="kits">
+        <div class="section-header">
+            <h2>Modelos de Inversión</h2>
+            <p>Escala a tu ritmo o transforma todo hoy.</p>
+        </div>
+        <div class="kits-container">
+            <div class="kit-card reveal-up stagger-1">
+                <h3>Módulos <span class="badge-new" style="margin:0; padding: 2px 8px; font-size: 0.7rem;">FLEX</span>
+                </h3>
+                <div class="price">A Medida</div>
+                <ul class="kit-features">
+                    <li><i class="fas fa-check"></i> Consultoría por Proyecto</li>
+                    <li><i class="fas fa-check"></i> Implementación de IA Específica</li>
+                    <li><i class="fas fa-check"></i> Pentesting & Ciberseguridad</li>
+                    <li><i class="fas fa-check"></i> Auditoría de Procesos</li>
+                </ul>
+                <a href="#contacto" class="btn-outline">Cotizar Módulo</a>
+            </div>
+            <div class="kit-card featured reveal-up stagger-2">
+                <div class="popular-tag">TRANSFORMACIÓN TOTAL</div>
+                <h3>Arcano <span class="gradient-text">OS</span></h3>
+                <div class="price">Full Service</div>
+                <p class="kit-desc">Tu empresa operando en piloto automático inteligente.</p>
+                <ul class="kit-features">
+                    <li><i class="fas fa-star"></i> <strong>CTO Fraccional incluido</strong></li>
+                    <li><i class="fas fa-check"></i> Ecosistema 360° (IA + Cyber + ERP)</li>
+                    <li><i class="fas fa-check"></i> Equipo dedicado de Ingeniería</li>
+                    <li><i class="fas fa-check"></i> Roadmap a 12 meses</li>
+                    <li><i class="fas fa-check"></i> Soporte 24/7 Prioritario</li>
+                </ul>
+                <a href="#contacto" class="btn-primary">Aplicar para Arcano OS</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="contact">
+        <div class="contact-container reveal-up">
+            <div class="contact-text stagger-1">
+                <h2>Hablemos de negocios, no de humo.</h2>
+                <p>Agenda un diagnóstico ejecutivo. Entendemos tus objetivos y te damos un plan claro.</p>
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>ventas@arcanosolutions.com</span>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form stagger-2">
+                <div class="form-group">
+                    <input type="text" placeholder="Nombre" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Correo Corporativo" required>
+                </div>
+                <div class="form-group">
+                    <select>
+                        <option value="" disabled selected>Interés Principal</option>
+                        <option value="ai">IA & Automatización</option>
+                        <option value="cyber">Ciberseguridad</option>
+                        <option value="erp">ERP/CRM</option>
+                        <option value="admin">Automatización Admin</option>
+                        <option value="marketing">Marketing & Growth</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Solicitar Agenda</button>
+            </form>
+        </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ARCANO.</div>
+            <div class="footer-links">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+            </div>
+            <p class="copyright">&copy; 2026 Arcano Solutions. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+
+
+    <script src="script.js"></script>
+    <script src="gemini_bot.js?v=3"></script>
+</body>
+
+</html>

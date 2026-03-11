@@ -1,0 +1,7 @@
+.env
+node_modules/
+android/
+*.log
+database.sql
+deploy_hostinger.zip
+.DS_Store

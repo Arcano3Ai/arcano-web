@@ -1,0 +1,5 @@
+# Bloquear acceso a archivos sensibles
+<FilesMatch "^\.env|config\.php$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
