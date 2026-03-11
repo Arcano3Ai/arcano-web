@@ -59,7 +59,7 @@ if (!apiKey) {
     console.error("CRITICAL: GEMINI_API_KEY is missing in .env file.");
 }
 
-const WS_URL = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1alpha.GenerativeService.BidiGenerateContent`;
+const WS_URL = `wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent`;
 
 wss.on('connection', (clientWs) => {
     console.log('[Proxy] Client connected');
