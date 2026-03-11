@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let apiKey = null;
 
-    const MODEL = 'models/gemini-2.0-flash-exp';
+    const MODEL = 'models/gemini-2.0-flash';
 
     // Determinar la URL correcta del WebSocket (Local vs Producción)
     const isLocal = window.location.hostname === 'localhost' ||
