@@ -31,6 +31,33 @@ app.use((req, res, next) => {
 });
 
 // --- API ENDPOINTS ---
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        // Simulación de login profesional para el reto
+        if (email && password) {
+            return res.json({ 
+                status: 'success', 
+                user: { name: 'Cliente Estratégico', role: 'Administrador VIP' },
+                redirect: '/portal/dashboard.html'
+            });
+        }
+        res.status(401).json({ status: 'error', message: 'Credenciales inválidas' });
+    } catch (err) {
+        res.status(500).json({ error: 'Error en el servidor' });
+    }
+});
+
+app.get('/api/dashboard_data', (req, res) => {
+    // Datos simulados de monitoreo de IA y Cloud para el panel
+    res.json({
+        ai_usage: [12, 19, 3, 5, 2, 3, 10],
+        cloud_credits: 240.50,
+        neural_efficiency: 98.4,
+        active_bots: 4
+    });
+});
+
 app.post('/api/generate_report', async (req, res) => {
     try {
         const { transcript } = req.body;
