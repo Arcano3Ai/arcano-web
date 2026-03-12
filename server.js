@@ -55,13 +55,13 @@ app.post('/api/generate_report', async (req, res) => {
         CONVERSACIÓN:
         ${transcript}`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
-                    temperature: 0.4,
+                    temperature: 0.3, // Aún más preciso para estrategia
                     topP: 0.95,
                 }
             })
