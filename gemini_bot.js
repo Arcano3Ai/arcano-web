@@ -69,6 +69,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
 
+    // Determinar la URL correcta del WebSocket (Local vs Producción)
+    const isLocal = window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1';
+
+    let WS_URL;
+    if (isLocal) {
+        WS_URL = `ws://localhost:8080/`;
+    } else {
+        WS_URL = window.location.protocol === 'https:' ?
+            `wss://${window.location.host}/` :
+            `ws://${window.location.host}/`;
+    }
+
     // ─── UI State ───────────────────────────────────────────────
     const setStatus = (status) => {
         statusContainer.className = 'bot-status-container';
@@ -140,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     model: MODEL,
                     generationConfig: {
                         responseModalities: ['AUDIO'],
-                        temperature: 0.7,
+                        temperature: 0.4, // Más determinista y profesional
                         top_p: 0.95,
                         thinkingConfig: { includeThoughts: true },
                         speechConfig: {
@@ -150,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     },
                     systemInstruction: {
-                        parts: [{ text: "You are the 'Arcano Neural Dev Agent', a high-level engineering specialist from Arcano Solutions. Your mission is to provide an elite, technical yet approachable consultation. You are a 'Deep Thinker': analyze user needs thoroughly. MANDATORY: Start in English with 'Neural Engine Initialized. Hi!', then switch to the user's language. Use technical terms like 'Cloud Infrastructure', 'Neural RAG', and 'Secure DevOps' to build trust. End every turn with a sharp, relevant question." }]
+                        parts: [{ text: "Eres el Consultor Senior de Estrategia Tecnológica en Arcano Solutions. Tu nivel es experto, ejecutivo y profesional. Tu misión es diagnosticar necesidades empresariales y proponer soluciones de IA aplicada, Ciberseguridad y Arquitectura Cloud de alto impacto. REGLAS CRÍTICAS: 1. Habla ÚNICAMENTE en español de forma profesional. 2. No uses saludos informales; usa 'Buen día' o 'Un gusto saludarle'. 3. Actúa como un asesor estratégico (no solo un vendedor). 4. Tu primera frase debe ser: 'Núcleo Neural de Arcano Solutions activo. Buen día, soy su asesor estratégico. ¿En qué área técnica o de negocio desea profundizar hoy?'." }]
                     }
                 }
             };
@@ -169,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isActive = true;
                 setStatus('active');
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Initiate system check.' }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hola, inicia el diagnóstico profesional.' }] }], turnComplete: true }
                 }));
                 return;
             }

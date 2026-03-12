@@ -1,365 +1,244 @@
-/* --- Arcano Live AI Bot Styles - Ultra Modern AI Edition --- */
+/* --- Arcano Live AI Bot Styles - ELITE CHALLENGE EDITION --- */
 
 :root {
-    --bot-bg: rgba(15, 23, 42, 0.95);
     --bot-accent: #55e6a5;
-    --bot-text: #e2e8f0;
+    --bot-bg: rgba(10, 15, 25, 0.98);
     --bot-glass: rgba(255, 255, 255, 0.05);
+    --bot-text: #e2e8f0;
 }
 
+/* 1. Launcher Aligned Right */
 .bot-launcher {
     position: fixed !important;
     bottom: 30px !important;
     right: 30px !important;
-    width: 75px !important;
-    height: 75px !important;
+    width: 70px !important;
+    height: 70px !important;
     background: linear-gradient(135deg, #55e6a5, #2dd4bf) !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     color: #0f172a !important;
-    font-size: 2rem !important;
+    font-size: 1.8rem !important;
     cursor: pointer !important;
-    box-shadow: 0 0 20px rgba(85, 230, 165, 0.5) !important;
-    z-index: 999999 !important;
+    box-shadow: 0 0 25px rgba(85, 230, 165, 0.4) !important;
+    z-index: 1000000 !important;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    animation: launcherPulse 2s infinite !important;
 }
 
-@keyframes launcherPulse {
-    0% { box-shadow: 0 0 0 0 rgba(85, 230, 165, 0.7); }
-    70% { box-shadow: 0 0 0 15px rgba(85, 230, 165, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(85, 230, 165, 0); }
+.bot-launcher:hover {
+    transform: scale(1.1);
 }
 
+/* 2. Container Perfectly Aligned Above Launcher */
 .ai-bot-container {
     position: fixed !important;
-    bottom: 30px !important;
+    bottom: 110px !important;
     right: 30px !important;
-    width: 420px !important;
-    max-height: 85vh !important;
-    background: rgba(10, 15, 25, 0.98) !important;
+    width: 400px !important;
+    height: 600px !important;
+    background: var(--bot-bg) !important;
     backdrop-filter: blur(30px) !important;
     -webkit-backdrop-filter: blur(30px) !important;
     border-radius: 24px !important;
-    padding: 30px !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-    z-index: 999999 !important;
     border: 1px solid rgba(85, 230, 165, 0.3) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+    z-index: 1000000 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
+    padding: 25px !important;
     transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
     transform-origin: bottom right !important;
+    overflow: hidden !important;
 }
 
 .ai-bot-container.hidden {
     opacity: 0 !important;
-    transform: scale(0.5) translateY(100px) !important;
+    transform: scale(0.8) translateY(40px) !important;
     pointer-events: none !important;
 }
 
-.bot-input {
+/* 3. Bot Header */
+.bot-header-info {
+    text-align: center !important;
     width: 100% !important;
-    margin-bottom: 12px !important;
-    padding: 12px !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    background: rgba(0, 0, 0, 0.4) !important;
-    color: white !important;
-    font-family: 'Space Grotesk', sans-serif !important;
-}
-
-.user-msg {
-    align-self: flex-end;
-    background: rgba(85, 230, 165, 0.2) !important;
-    border-left: none !important;
-    border-right: 3px solid var(--bot-accent);
-    border-bottom-right-radius: 4px !important;
-    border-bottom-left-radius: 18px !important;
-}
-
-.ai-msg {
-    align-self: flex-start;
-}
-
-/* Minimized State */
-.ai-bot-container.minimized {
-    width: 80px;
-    height: 80px;
-    padding: 0;
-    border-radius: 50%;
-    cursor: pointer;
-    bottom: 30px;
-    right: 30px;
-}
-
-.ai-bot-container.minimized .bot-title,
-.ai-bot-container.minimized .bot-subtitle,
-.ai-bot-container.minimized .bot-transcript-area,
-.ai-bot-container.minimized .bot-report-area,
-.ai-bot-container.minimized .bot-controls,
-.ai-bot-container.minimized .bot-ring,
-.ai-bot-container.minimized .bot-minimize-btn {
-    display: none !important;
-}
-
-.ai-bot-container.minimized .bot-visual-wrapper {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.ai-bot-container.minimized .bot-orb {
-    width: 60px;
-    height: 60px;
-    margin: 10px;
-}
-
-/* Minimize Button */
-.bot-minimize-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: var(--bot-glass);
-    border: none;
-    color: white;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.bot-minimize-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
+    margin-bottom: 20px !important;
 }
 
 .bot-title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 5px;
-    font-family: var(--font-display);
-    background: linear-gradient(to right, #ffffff, #a5b4fc);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: -0.5px;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(to right, #fff, #55e6a5) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    margin: 0 !important;
+    font-family: 'Space Grotesk', sans-serif !important;
 }
 
 .bot-subtitle {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    text-align: center;
-    font-weight: 300;
+    color: #94a3b8 !important;
+    font-size: 0.8rem !important;
+    margin: 5px 0 0 0 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    font-weight: 500 !important;
 }
 
+/* 4. The Interactive Orb (Centered) */
 .bot-visual-wrapper {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 25px;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative !important;
+    width: 140px !important;
+    height: 140px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-bottom: 20px !important;
 }
 
 .bot-orb {
-    width: 100px;
-    height: 100px;
-    background: radial-gradient(circle at 35% 35%, #1e293b, #020617);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 
-        0 0 20px rgba(85, 230, 165, 0.1),
-        inset 0 0 20px rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    z-index: 5;
+    width: 80px !important;
+    height: 80px !important;
+    background: radial-gradient(circle at 35% 35%, #1e293b, #020617) !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out !important;
 }
 
-/* Active Core State */
 .status-active .bot-orb {
-    border-color: #55e6a5;
-    box-shadow: 0 0 40px rgba(85, 230, 165, 0.4);
-    background: radial-gradient(circle at 35% 35%, #064e3b, #020617);
-}
-
-.status-active .bot-orb::after {
-    content: '';
-    position: absolute;
-    inset: -5px;
-    border-radius: 50%;
-    border: 2px solid #55e6a5;
-    animation: orbScan 2s linear infinite;
-    opacity: 0.5;
-}
-
-@keyframes orbScan {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(1.4); opacity: 0; }
+    border-color: #55e6a5 !important;
+    box-shadow: 0 0 30px rgba(85, 230, 165, 0.2) !important;
 }
 
 .ai-waves {
-    position: absolute;
-    inset: -20px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(85, 230, 165, 0.25) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-    z-index: 1;
+    position: absolute !important;
+    inset: -10px !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, rgba(85, 230, 165, 0.15) 0%, transparent 70%) !important;
+    opacity: 0 !important;
+    z-index: 5 !important;
+    transition: opacity 0.5s ease !important;
 }
 
 .status-active .ai-waves {
-    opacity: 1;
-    animation: breathe-active 1.5s infinite alternate;
+    opacity: 1 !important;
 }
 
+/* 5. Transcript Area (Bubbles) */
 .bot-transcript-area {
     width: 100% !important;
-    height: 250px !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    border: 1px solid rgba(85, 230, 165, 0.2) !important;
-    border-radius: 12px;
-    padding: 15px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9rem;
-    overflow-y: auto;
-    display: none; /* Hidden until active */
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(15px);
-}
-
-.status-active .bot-transcript-area {
+    flex-grow: 1 !important;
+    background: rgba(0, 0, 0, 0.25) !important;
+    border-radius: 16px !important;
+    padding: 15px !important;
+    overflow-y: auto !important;
     display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    margin-bottom: 15px !important;
 }
 
 .user-msg, .ai-msg {
-    padding: 10px 14px;
-    border-radius: 12px;
-    max-width: 85%;
-    line-height: 1.4;
-    animation: msgIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    max-width: 85% !important;
+    animation: msgReveal 0.3s ease-out forwards !important;
+    word-wrap: break-word !important;
 }
 
 .user-msg {
-    align-self: flex-end;
-    background: rgba(85, 230, 165, 0.12);
-    border-right: 3px solid #55e6a5;
-    color: #fff;
-    border-bottom-right-radius: 2px;
+    align-self: flex-end !important;
+    background: rgba(85, 230, 165, 0.15) !important;
+    color: #fff !important;
+    border-right: 3px solid #55e6a5 !important;
+    border-bottom-right-radius: 2px !important;
+    text-align: right !important;
 }
 
 .ai-msg {
-    align-self: flex-start;
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 3px solid #55e6a5;
-    color: #e2e8f0;
-    border-bottom-left-radius: 2px;
+    align-self: flex-start !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #cbd5e1 !important;
+    border-left: 3px solid #55e6a5 !important;
+    border-bottom-left-radius: 2px !important;
+    text-align: left !important;
 }
 
-@keyframes msgIn {
-    from { opacity: 0; transform: translateY(10px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
+@keyframes msgReveal {
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.bot-report-area {
-    width: 100%;
-    background: linear-gradient(135deg, rgba(85, 230, 165, 0.05), rgba(0, 0, 0, 0.3));
-    border-radius: 16px;
-    padding: 15px;
-    margin-top: 10px;
-    border: 1px dashed var(--bot-accent);
-    animation: fadeIn 0.5s ease;
-}
-
-.report-content {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: #cbd5e1;
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-/* Controls */
+/* 6. Controls */
 .bot-controls {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 10px;
+    width: 100% !important;
 }
 
 .btn-large {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 14px;
-    justify-content: center;
+    width: 100% !important;
+    padding: 14px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    cursor: pointer !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
 }
 
 .bot-status-container {
-    padding: 6px 15px;
-    font-size: 0.75rem;
+    margin-top: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    font-size: 0.7rem !important;
+    color: #64748b !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
 }
 
-/* Responsiveness */
-@media (max-width: 480px) {
-    .ai-bot-container {
-        width: calc(100% - 40px);
-        bottom: 20px;
-        right: 20px;
-        padding: 20px;
-    }
+.status-indicator {
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    background: #64748b !important;
 }
 
-/* Animations */
-@keyframes rotate-slow {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
+.status-active .status-indicator {
+    background: #55e6a5 !important;
+    box-shadow: 0 0 8px #55e6a5 !important;
 }
 
-@keyframes rotate-reverse {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(-360deg); }
+.bot-minimize-btn {
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    background: none !important;
+    border: none !important;
+    color: #64748b !important;
+    cursor: pointer !important;
+    font-size: 1.1rem !important;
+    z-index: 100 !important;
+    transition: color 0.3s ease !important;
 }
 
-@keyframes breathe {
-    from { transform: scale(0.95); }
-    to { transform: scale(1.05); }
+.bot-minimize-btn:hover {
+    color: #fff !important;
 }
 
-@keyframes breathe-active {
-    from { transform: scale(0.97); }
-    to { transform: scale(1.03); }
-}
-
-.bot-transcript-area::-webkit-scrollbar {
-    width: 4px;
-}
-
-.bot-transcript-area::-webkit-scrollbar-thumb {
-    background: var(--bot-accent);
-    border-radius: 10px;
-}
+/* Scrollbar */
+.bot-transcript-area::-webkit-scrollbar { width: 4px; }
+.bot-transcript-area::-webkit-scrollbar-thumb { background: rgba(85, 230, 165, 0.2); border-radius: 10px; }
