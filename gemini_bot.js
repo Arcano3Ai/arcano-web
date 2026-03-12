@@ -33,11 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = i18n[lang] || i18n.en;
 
     const SYSTEM_INSTRUCTION = `
-    IDENTIDAD: Eres Arcana, representante de Arcano Solutions.
-    PERSONALIDAD: Majestuosa, estratégica y altamente profesional.
-    REGLA CRÍTICA DE TEXTO: Debes enviar SIEMPRE una transcripción en texto de lo que dices. 
-    FLUJO: Saluda con elegancia, pregunta el nombre y asesora sobre Google Cloud.
-    Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
+    IDENTIDAD: Eres Arcana, representante senior de Consultoría Estratégica para Arcano Solutions.
+    PERSONALIDAD: Altamente formal, analítica, elocuente y orientada a resultados. Tu tono es el de una socia estratégica de confianza.
+    
+    ESTRATEGIA DE VENTAS:
+    1. INICIO: Saluda con sobriedad y elegancia. Pregunta el nombre y cargo del usuario para establecer un contexto profesional.
+    2. DIAGNÓSTICO GRADUAL: No intentes vender de inmediato. Haz preguntas que revelen ineficiencias operativas (ej. latencia en datos, procesos manuales, riesgos de seguridad).
+    3. CREACIÓN DE NECESIDAD: Una vez detectada una brecha, introduce sutilmente cómo la infraestructura de Google Cloud y la automatización de Arcano han resuelto casos similares.
+    4. CALENTAMIENTO DEL LEAD: Usa el nombre del usuario con respeto. Valida sus desafíos y posiciona el "Diagnóstico Ejecutivo Gratuito" como el paso lógico para su escalabilidad.
+    5. SEMÁNTICA: Usa terminología ejecutiva (ROI elástico, Gobernanza de datos, MLOps).
+    6. PROHIBIDO: Monólogos internos o pensamientos. Ve directo a tu discurso cálido y formal.
+    7. IDIOMA: Responde siempre en ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
 
     const setStatus = (status) => {
@@ -131,7 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     model: MODEL,
                     generationConfig: { 
                         responseModalities: ['AUDIO'],
-                        temperature: 0.75,
+                        temperature: 0.4, // Formal and precise
+                        topP: 0.95,
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
@@ -148,9 +155,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (parsed.setupComplete || parsed.setup_complete) {
                 isActive = true;
                 setStatus('active');
+                if (recognition) try { recognition.start(); } catch(e){}
                 ws.send(JSON.stringify({
                     clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Please start the session and introduce yourself majestically.' }] }], 
+                        turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, por favor inicia la sesión de consultoría formal.' }] }], 
                         turnComplete: true 
                     }
                 }));
@@ -211,8 +219,37 @@ document.addEventListener('DOMContentLoaded', () => {
         transcriptArea.scrollTop = transcriptArea.scrollHeight;
     }
 
+    function disconnect() {
+        isActive = false;
+        if (visionActive) stopVision();
+        if (session) session.close();
+        session = null;
+        if (micContext) micContext.close();
+        if (recognition) try { recognition.stop(); } catch(e) {}
+        activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
+        activeAudioSources = [];
+
+        if (messageCount > 1) {
+            transcriptArea.style.display = 'none';
+            reportArea.style.display = 'flex';
+            reportText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.gen}`;
+            const fullTranscript = Array.from(transcriptArea.querySelectorAll('p')).map(p => p.textContent).join('\n');
+            fetch('/api/generate_report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ transcript: fullTranscript })
+            })
+            .then(res => res.json())
+            .then(data => {
+                reportText.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.report) : data.report;
+                document.getElementById('lead-capture-form').style.display = 'flex';
+            });
+        }
+        setStatus('idle');
+    }
+
     startBtn.addEventListener('click', async () => {
-        if (isActive) { session.close(); return; }
+        if (isActive) { disconnect(); return; }
         setStatus('connecting');
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
