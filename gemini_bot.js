@@ -25,6 +25,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let visionActive = false;
     let videoStream = null;
     let frameInterval = null;
+    let mediaStream = null;
+    let audioContext = null;
+    let nextAudioTime = 0;
+    let scriptProcessor = null;
+    let microphoneNode = null;
+    let micContext = null;
+    let recognition = null; 
+    let sessionTimer = null;
+    const SESSION_LIMIT = 180000; // 3 minutos
+
+    // ─── Configuración de Red (WebSocket) ───────────────────────
+    const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    
+    let WS_URL;
+    if (isLocal) {
+        WS_URL = `ws://${window.location.hostname}:8080/`;
+    } else {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        WS_URL = `${protocol}//${window.location.host}/`;
+    }
 
     // ─── Vision Logic (Capture and Send Frames) ────────────────
     async function startVision() {
@@ -55,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }]
                     }
                 }));
-            }, 1000); // 1 frame per second for stability
+            }, 1000);
         } catch (e) {
             console.error("Vision Error:", e);
             alert("No se pudo acceder a la cámara.");
@@ -77,20 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else startVision();
     });
 
-    // ─── Configuración de Red (WebSocket) ───────────────────────
-    const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    // Fix definitivo para dominios personalizados en Cloud Run
-    let WS_URL;
-    if (isLocal) {
-        WS_URL = `ws://${window.location.hostname}:8080/`;
-    } else {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        WS_URL = `${protocol}//${window.location.host}/`;
-    }
-
-    // ─── STT Initialization (Captura de Texto Usuario) ──────────
+    // ─── STT Initialization ─────────────────────────────────────
     function initRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -143,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setStatus('idle');
 
-    // ─── Eventos de Interfaz ───────────────────────────────────
+    // ─── Interfaz ──────────────────────────────────────────────
     minimizeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         botContainer.classList.add('hidden');
@@ -176,9 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
         transcriptArea.scrollTop = transcriptArea.scrollHeight;
     }
 
-    // ─── Conexión WebSocket ────────────────────────────────────
+    // ─── WebSocket ─────────────────────────────────────────────
     function connect() {
-        console.log('[Proxy] Connecting to:', WS_URL);
         const ws = new WebSocket(WS_URL);
         session = ws;
 
@@ -232,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onerror = (e) => { console.error('WS Error:', e); setStatus('idle'); };
     }
 
-    // ─── Audio & Mic ───────────────────────────────────────────
+    // ─── Mic & Audio ───────────────────────────────────────────
     async function startMic() {
         mediaStream = await navigator.mediaDevices.getUserMedia({
             audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true }
@@ -246,7 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
             const f32 = e.data;
             
-            // Reactividad del Orbe
             let max = 0;
             for (let i = 0; i < f32.length; i++) { if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]); }
             requestAnimationFrame(() => {
@@ -292,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function disconnect() {
+        if (visionActive) stopVision();
         isActive = false;
         if (session) { session.close(); session = null; }
         if (scriptProcessor) { scriptProcessor.disconnect(); scriptProcessor = null; }
@@ -301,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (transcriptArea.textContent.length > 10) {
             visualWrapper.style.display = 'none';
             transcriptArea.style.display = 'none';
+            visionBtn.parentElement.style.display = 'none';
             reportArea.style.display = 'block';
             reportText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando Estrategia...';
 
@@ -325,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const res = await fetch('/api/save_lead', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ name, email, interest: 'Google Expert Consulting', message: data.report })
+                                body: JSON.stringify({ name, email, interest: 'Google Shark Consulting', message: data.report })
                             });
                             if (res.ok) leadForm.innerHTML = '<p style="color: #55e6a5; text-align:center;">¡Estrategia enviada con éxito!</p>';
                         } catch (e) { alert('Error al guardar'); }
