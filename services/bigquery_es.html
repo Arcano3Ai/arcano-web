@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BigQuery | Arcano Solutions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../styles.css?v=1.6">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo-container">
+            <div class="logo"><a href="../index_es.html">ARCANO<span class="dot">.</span></a></div>
+            <div class="partner-badge-nav">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP" class="google-mini-logo">
+                <span>Premier Partner</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="../index_es.html#inicio">Inicio</a>
+            <a href="../index_es.html#google-catalog">Cloud</a>
+            <a href="../index_es.html#servicios">Servicios</a>
+            <div class="lang-selector">
+                <a href="bigquery.html">EN</a>
+                <a href="bigquery_es.html" class="active">ES</a>
+            </div>
+            <a href="../login_es.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso</a>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </nav>
+
+    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(59, 130, 246, 0.15);">
+        <div class="hero-visual">
+            <canvas id="particle-canvas"></canvas>
+        </div>
+
+        <div class="container reveal-up" style="z-index: 20; text-align: center; position: relative;">
+            <div class="google-partner-tag">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                <span>Google Cloud Premier Partner</span>
+            </div>
+            <h1 class="monumental-title">Big<span class="gradient-text">Query</span></h1>
+            <p class="monumental-subtitle">Almacén de datos multicloud serverless, altamente escalable y rentable, diseñado para la agilidad empresarial. Convierta los datos en información en segundos.</p>
+        </div>
+    </header>
+
+    <main class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px; margin: 0 auto; padding: 100px 5%;">
+        <div class="section-header reveal-up" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem;">Analítica a Escala</h2>
+            <p>Potencie su negocio con analítica en tiempo real y aprendizaje automático integrado.</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card reveal-up stagger-1">
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-database"></i></div>
+                <h3>Almacén Serverless</h3>
+                <p>Totalmente gestionado y sin servidor, para que pueda centrarse en los datos en lugar de gestionar la infraestructura.</p>
+            </div>
+            <div class="card reveal-up stagger-2">
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-brain"></i></div>
+                <h3>BigQuery ML</h3>
+                <p>Cree y ejecute modelos de aprendizaje automático en BigQuery utilizando consultas SQL estándar.</p>
+            </div>
+            <div class="card reveal-up stagger-3">
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-water"></i></div>
+                <h3>BigLake</h3>
+                <p>Unifique almacenes y lagos de datos analizando datos en diferentes nubes y formatos de almacenamiento.</p>
+            </div>
+            <div class="card reveal-up stagger-4">
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-bolt"></i></div>
+                <h3>Analítica en Tiempo Real</h3>
+                <p>Analice datos en streaming en tiempo real y obtenga visibilidad empresarial actualizada al minuto.</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="gcp-integration" style="padding: 80px 5%; background: rgba(0,0,0,0.2); position: relative; z-index: 20;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header reveal-up" style="text-align: center; margin-bottom: 50px;">
+                <div class="google-partner-tag" style="margin: 0 auto 20px;">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                    <span>Data Stack</span>
+                </div>
+                <h2>Impulsado por Google Cloud</h2>
+                <p>Ecosistema de procesamiento y visualización de datos de extremo a extremo.</p>
+            </div>
+            <div class="gcp-products-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3>Dataform</h3>
+                    <p>Desarrolle, pruebe y despliegue pipelines de transformación de datos basados en SQL en BigQuery.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon"><i class="fas fa-share-nodes"></i></div>
+                    <h3>Analytics Hub</h3>
+                    <p>Comparta datos e información de forma segura a través de los límites organizativos.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3>Looker</h3>
+                    <p>Plataforma empresarial para inteligencia de negocios, aplicaciones de datos y analítica integrada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
+        <div class="contact-container">
+            <div class="contact-text">
+                <h2>Active sus Datos.</h2>
+                <p>Descubra cómo BigQuery puede transformar su proceso de toma de decisiones con Arcano.</p>
+            </div>
+            <div>
+                <a href="../index_es.html#contacto" class="btn-primary">Consultar Estrategia de Datos <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ARCANO.</div>
+            <div class="footer-links">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+            </div>
+            <p class="copyright">&copy; 2026 Arcano Solutions. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <script src="../script.js?v=1.6"></script>
+</body>
+
+</html>
