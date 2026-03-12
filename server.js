@@ -37,12 +37,19 @@ app.post('/api/generate_report', async (req, res) => {
             return res.status(400).json({ error: 'Transcripción insuficiente.' });
         }
 
-        const prompt = `Analiza la siguiente conversación entre un cliente y un experto de Arcano Solutions. 
-        Genera un informe ejecutivo conciso (máximo 3 párrafos) con:
-        1. Resumen de necesidades detectadas.
-        2. Recomendación técnica específica (Google Workspace, GCP, Vertex AI, etc.).
-        3. Próximo paso sugerido.
-        Usa un tono profesional y persuasivo. Usa formato Markdown para negritas.
+        const prompt = `Actúa como el Analista Principal de Arcano Solutions. 
+        Analiza la siguiente conversación entre un cliente y nuestro agente de IA. 
+        Genera un "Reporte de Estrategia Digital" altamente profesional y estructurado usando Markdown. 
+        
+        Debes incluir:
+        ### 1. Diagnóstico Operativo
+        (Breve resumen de los dolores o necesidades detectadas)
+        ### 2. Arquitectura Propuesta
+        (Recomendación técnica específica, ej. Google Workspace, GCP, Vertex AI, RPA, con una justificación clara de negocio)
+        ### 3. Siguiente Paso de Acción
+        (Call to action claro para nuestro equipo de ventas/ingeniería)
+        
+        Mantén un tono consultivo, de alto valor ("Big 4" consulting style). Sé conciso.
         
         CONVERSACIÓN:
         ${transcript}`;

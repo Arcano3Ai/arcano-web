@@ -347,7 +347,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 const recommendation = data.report || "No se pudo generar el informe profundo.";
-                reportText.innerHTML = recommendation.replace(/\n/g, '<br>');
+                
+                // Usar Marked.js para renderizar el Markdown a HTML estructurado
+                if (typeof marked !== 'undefined') {
+                    reportText.innerHTML = marked.parse(recommendation);
+                } else {
+                    reportText.innerHTML = recommendation.replace(/\n/g, '<br>');
+                }
                 
                 // Mostrar el formulario de captura
                 const leadForm = document.getElementById('lead-capture-form');

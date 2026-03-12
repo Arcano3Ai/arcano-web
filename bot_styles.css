@@ -310,8 +310,40 @@
 
 .report-content {
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    color: #e2e8f0;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.report-content h3 {
+    color: #55e6a5;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(85, 230, 165, 0.2);
+    padding-bottom: 5px;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.report-content p {
+    margin-bottom: 15px;
+}
+
+.report-content strong {
     color: #fff;
+    font-weight: 600;
+}
+
+.report-content ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.report-content li {
+    margin-bottom: 5px;
 }
 
 @keyframes fadeIn {
