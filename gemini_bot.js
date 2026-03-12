@@ -34,9 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const SESSION_LIMIT = 180000; // 3 minutes
 
     let activeAudioSources = [];
+    let messageCount = 0; // To prevent empty reports
 
     // ─── Network Config ────────────────────────────────────────
-    const MODEL = 'models/gemini-2.0-flash-exp';
+    // Change to a very stable model string
+    const MODEL = 'models/gemini-2.0-flash-exp'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
@@ -58,7 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             email: 'Corporate Email',
             sendBtn: 'SEND STRATEGY NOW',
             success: 'Strategy sent successfully!',
-            error: 'Error saving lead'
+            error: 'Error saving lead',
+            connError: 'Connection failed. Please check your API key or network.'
         },
         es: {
             ready: 'SISTEMA LISTO',
@@ -75,7 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
             email: 'Correo Corporativo',
             sendBtn: 'ENVIAR ESTRATEGIA AHORA',
             success: '¡Estrategia enviada con éxito!',
-            error: 'Error al guardar el prospecto'
+            error: 'Error al guardar el prospecto',
+            connError: 'Error de conexión. Verifique su API Key o red.'
         }
     };
     const t = i18n[lang] || i18n.en;
@@ -148,13 +152,16 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'active':
                 botContainer.classList.add('status-active');
                 statusText.textContent = t.active;
-                // UI RESET for new session
+                
+                // RESET UI FOR NEW CONVERSATION
+                transcriptArea.innerHTML = ''; 
                 transcriptArea.style.display = 'flex';
                 reportArea.style.display = 'none';
                 visualWrapper.style.opacity = '1';
+                visualWrapper.style.display = 'flex';
                 visionBtn.parentElement.style.display = 'inline-block';
-                transcriptArea.innerHTML = ''; 
-                
+                messageCount = 0;
+
                 startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
                 
                 sessionTimer = setTimeout(() => {
@@ -173,9 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         }
         
-        // UI Preparation
-        reportArea.style.display = 'none';
+        // Preparation
+        transcriptArea.innerHTML = `<p class="ai-msg">${t.initializing}</p>`;
         transcriptArea.style.display = 'flex';
+        reportArea.style.display = 'none';
         
         setStatus('connecting');
         try {
@@ -183,7 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
             await startMic();
             connect();
         } catch (e) { 
-            console.error(e);
+            console.error('[Bot] Mic start error:', e);
+            alert(t.micError);
             setStatus('idle'); 
         }
     });
@@ -194,13 +203,17 @@ document.addEventListener('DOMContentLoaded', () => {
         p.textContent = (role === 'ai' ? '🤖 ' : '👤 ') + text;
         transcriptArea.appendChild(p);
         transcriptArea.scrollTop = transcriptArea.scrollHeight;
+        if (isActive) messageCount++;
     }
 
     // ─── WebSocket Connection ───────────────────────────────────
     function connect() {
+        console.log('[Bot] Connecting to:', WS_URL);
         const ws = new WebSocket(WS_URL);
         session = ws;
+        
         ws.onopen = () => {
+            console.log('[Bot] WebSocket Opened');
             const setupMsg = {
                 setup: {
                     model: MODEL,
@@ -211,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: {
-                        parts: [{ text: `You are Arcano OS, an Elite Senior Consultant. Powered by Google Cloud. TONE: Strategic, professional, authoritative. MISSION: Persuade the user that Arcano + GCP is the best strategic choice. LANGUAGE: ${lang==='es'?'Spanish':'English'}. START: Brief intro about Google Cloud.` }]
+                        parts: [{ text: `You are Arcano OS, an Elite Senior Consultant. Powered by Google Cloud. TONE: Strategic, professional, authoritative. MISSION: Persuade the user that Arcano + GCP is the best strategic choice. Mention Google Cloud advantages. LANGUAGE: ${lang==='es'?'Spanish':'English'}.` }]
                     }
                 }
             };
@@ -225,10 +238,12 @@ document.addEventListener('DOMContentLoaded', () => {
             try { data = JSON.parse(raw); } catch (e) { return; }
 
             if ((data.setupComplete || data.setup_complete) && !isActive) {
+                console.log('[Bot] Setup Complete');
                 isActive = true;
                 setStatus('active');
+                // Initial prompt to start conversation
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hello.' }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hello, please start the professional consultancy.' }] }], turnComplete: true }
                 }));
                 return;
             }
@@ -244,8 +259,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         };
-        ws.onclose = () => { if(isActive) disconnect(); else setStatus('idle'); };
-        ws.onerror = (e) => { console.error(e); setStatus('idle'); };
+
+        ws.onclose = (e) => { 
+            console.log('[Bot] WebSocket Closed:', e.code, e.reason);
+            if (isActive) {
+                disconnect(); 
+            } else {
+                if (e.code !== 1000) alert(t.connError);
+                setStatus('idle');
+            }
+        };
+
+        ws.onerror = (e) => { 
+            console.error('[Bot] WebSocket Error:', e);
+            setStatus('idle'); 
+        };
     }
 
     // ─── Microphone ───────────────────────────────────────────
@@ -262,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let max = 0;
             for (let i = 0; i < f32.length; i++) { if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]); }
             
-            // Interruption Logic: Threshold > 0.12
+            // Interruption Logic
             if (max > 0.12) {
                 stopAIAudio();
             }
@@ -322,8 +350,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
         if (micContext) { micContext.close(); micContext = null; }
 
-        // ONLY generate report if we actually had a conversation
-        if (wasActive && transcriptArea.children.length > 1) {
+        // ONLY generate report if there were at least 3 messages (avoid false starts)
+        if (wasActive && messageCount >= 3) {
             transcriptArea.style.display = 'none';
             visionBtn.parentElement.style.display = 'none';
             reportArea.style.display = 'flex';
@@ -362,6 +390,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
                 }
             });
+        } else {
+            // Reset UI if it was a false start
+            transcriptArea.style.display = 'flex';
+            reportArea.style.display = 'none';
         }
         setStatus('idle');
     }
