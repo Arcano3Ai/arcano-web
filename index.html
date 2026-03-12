@@ -43,68 +43,63 @@
 
     <header id="inicio" class="hero">
         <div class="hero-bot-integrated reveal-up">
-            <!-- Left Side: Identity & Visual -->
-            <div class="bot-visual-side">
-                <div class="google-partner-tag">
+            <!-- Neural Core (Central Gravity Source) -->
+            <div class="neural-core-container">
+                <div class="energy-ring"></div>
+                <div class="bot-orb-large" id="bot-orb">
+                    <div class="core-inner"></div>
+                </div>
+                <video id="bot-video-preview" autoplay playsinline muted style="display:none;"></video>
+            </div>
+
+            <!-- Floating Branding -->
+            <div class="floating-branding">
+                <div class="google-partner-tag-elegant">
                     <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
-                    <span>Google Cloud Partner</span>
+                    <span>Premier Partner</span>
                 </div>
                 
                 <div class="bot-header-info-hero">
-                    <div class="google-tech-stack">
-                        <i class="fab fa-google-drive" title="Workspace"></i>
-                        <i class="fas fa-cloud" title="GCP"></i>
-                        <i class="fas fa-brain" title="Vertex AI"></i>
-                    </div>
                     <h1 class="bot-title-hero">Arcano <span class="gradient-text">OS</span></h1>
-                    <p class="bot-subtitle-hero">Consultoría de Élite • Partner Premier</p>
-                </div>
-
-                <div class="bot-visual-wrapper-large">
-                    <div class="ai-waves-large"></div>
-                    <div class="bot-orb-large" id="bot-orb">
-                        <i class="fas fa-microchip" id="bot-icon"></i>
-                    </div>
-                    <video id="bot-video-preview" autoplay playsinline muted></video>
-                </div>
-
-                <div class="bot-status-container-hero">
-                    <span class="status-indicator" id="bot-status-indicator"></span>
-                    <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
+                    <p class="bot-subtitle-hero">Elite AI Systems • Strategic Intelligence</p>
                 </div>
             </div>
 
-            <!-- Right Side: Interaction Area -->
-            <div class="bot-interaction-side">
-                <div class="terminal-frame">
-                    <div id="bot-transcript" class="bot-transcript-area-hero">
-                        <p class="ai-msg">Bienvenido al Núcleo de Estrategia Arcano. Iniciemos su diagnóstico corporativo.</p>
+            <!-- Floating Interaction -->
+            <div class="floating-interaction">
+                <div class="terminal-ghost">
+                    <div id="bot-transcript" class="transcript-ghost">
+                        <p class="ai-msg">Bienvenido al Núcleo Arcano. Iniciando protocolo de diagnóstico corporativo...</p>
                     </div>
 
                     <div id="bot-report" class="bot-report-area-hero" style="display: none;">
                         <div class="report-header">
                             <span><i class="fas fa-file-alt"></i> Estrategia Generada</span>
-                            <span class="consulting-badge">Ready for Delivery</span>
                         </div>
                         <div id="report-text" class="report-content-hero"></div>
                         
                         <div id="lead-capture-form" class="lead-form-hero">
-                            <h3 style="margin-bottom: 15px; font-size: 1.2rem;">Enviar Reporte a mi Correo</h3>
-                            <input type="text" id="lead-name" placeholder="Nombre Completo" class="bot-input-hero">
+                            <input type="text" id="lead-name" placeholder="Nombre" class="bot-input-hero">
                             <input type="email" id="lead-email" placeholder="Email Corporativo" class="bot-input-hero">
-                            <button id="save-lead-btn" class="btn-primary" style="width: 100%;">ENVIAR ESTRATEGIA AHORA</button>
+                            <button id="save-lead-btn" class="btn-antigravity" style="width: 100%;">ENVIAR ESTRATEGIA</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="bot-controls-hero">
-                    <button id="start-bot-btn" class="btn-primary btn-xl">
+                    <button id="start-bot-btn" class="btn-antigravity">
                         <i class="fas fa-terminal"></i> INICIAR CONSULTORÍA
                     </button>
-                    <button id="toggle-vision-btn" class="btn-secondary btn-vision-hero">
-                        <i class="fas fa-eye"></i> Activar Visión
+                    <button id="toggle-vision-btn" class="btn-antigravity" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                        <i class="fas fa-eye"></i> VISIÓN
                     </button>
                 </div>
+            </div>
+
+            <!-- Status -->
+            <div class="bot-status-container-hero">
+                <span class="status-indicator" id="bot-status-indicator"></span>
+                <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
             </div>
         </div>
         

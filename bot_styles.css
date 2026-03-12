@@ -1,239 +1,283 @@
-/* --- Arcano Integrated Hero Bot Styles --- */
+/* --- Arcano Antigravity UI System --- */
 
 :root {
-    --bot-accent: #55e6a5;
-    --bot-accent-rgb: 85, 230, 165;
-    --bot-bg-glass: rgba(15, 23, 42, 0.4);
-    --bot-text: #e2e8f0;
-    --bot-border: rgba(255, 255, 255, 0.08);
+    --core-glow: #3b82f6;
+    --core-inner: #fff;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --font-space: 'Space Grotesk', sans-serif;
 }
 
-/* 1. Container & Layout (Dashboard 2-Column) */
+/* 1. Layout: Centralized & Airy */
 .hero-bot-integrated {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 40px;
+    position: relative;
     width: 100%;
-    max-width: 1400px !important;
-    margin: 0 auto;
-    padding: 60px;
-    background: rgba(15, 23, 42, 0.1);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border-radius: 40px;
-    border: 1px solid var(--bot-border);
-    box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6);
-    align-items: center;
-}
-
-/* 2. Visual Side (Left) */
-.bot-visual-side {
+    min-height: 90vh;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-    padding-right: 40px;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: visible;
 }
 
-.bot-header-info-hero {
-    margin-bottom: 40px;
-}
-
-.bot-title-hero {
-    font-size: 5.5rem !important;
-    font-weight: 800 !important;
-    margin: 10px 0 !important;
-    line-height: 0.9 !important;
-    letter-spacing: -5px !important;
-}
-
-.bot-subtitle-hero {
-    font-size: 1.4rem;
-    color: #94a3b8;
-    font-weight: 400;
-}
-
-.bot-visual-wrapper-large {
+/* 2. Neural Core (The Gravity Source) */
+.neural-core-container {
     position: relative;
-    width: 320px;
-    height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 20px 0;
+    z-index: 10;
+    margin-bottom: 40px;
+    animation: float-slow 12s infinite ease-in-out;
 }
 
 .bot-orb-large {
-    width: 220px;
-    height: 220px;
-    background: radial-gradient(circle at 35% 35%, #1e293b, #020617);
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle at center, 
+        var(--core-inner) 0%, 
+        #60a5fa 15%, 
+        #2563eb 40%, 
+        #1e3a8a 70%, 
+        #0f172a 100%);
     border-radius: 50%;
+    box-shadow: 
+        0 0 50px var(--core-glow),
+        0 0 100px rgba(59, 130, 246, 0.5),
+        0 0 200px rgba(59, 130, 246, 0.2),
+        inset 0 0 80px rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 60px rgba(var(--bot-accent-rgb), 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    z-index: 10;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: antigravity 6s infinite ease-in-out;
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    animation: core-glow 4s infinite alternate ease-in-out;
 }
 
-@keyframes antigravity {
-    0%, 100% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-15px) rotate(1deg); }
-    50% { transform: translateY(0) rotate(0deg); }
-    75% { transform: translateY(15px) rotate(-1deg); }
+.core-inner {
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle at center, #fff 0%, transparent 80%);
+    filter: blur(15px);
+    animation: core-pulse 4s infinite alternate ease-in-out;
 }
 
-.status-active .bot-orb-large {
-    border-color: var(--bot-accent);
-    box-shadow: 0 0 100px rgba(var(--bot-accent-rgb), 0.4);
-    animation: antigravityActive 3s infinite ease-in-out;
+.energy-ring {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 50%;
+    animation: rotate-ring 30s linear infinite;
+    pointer-events: none;
 }
 
-@keyframes antigravityActive {
-    0%, 100% { transform: scale(1.05) translateY(0); }
-    50% { transform: scale(1.1) translateY(-20px); }
+.energy-ring::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 15px #fff, 0 0 30px var(--core-glow);
 }
 
-.bot-orb-large #bot-icon {
-    font-size: 5rem;
+/* 3. Floating Branding */
+.floating-branding {
+    position: absolute;
+    left: 8%;
+    top: 25%;
+    max-width: 500px;
+    z-index: 20;
+    animation: float-medium 15s infinite ease-in-out;
+}
+
+.bot-title-hero {
+    font-family: var(--font-space) !important;
+    font-size: 8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.05em !important;
+    line-height: 0.85 !important;
+    margin: 0 0 20px 0 !important;
+    text-transform: uppercase;
+}
+
+.bot-subtitle-hero {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+/* 4. Elegant Badge */
+.google-partner-tag-elegant {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    opacity: 0.8;
+}
+
+.google-partner-tag-elegant img {
+    height: 24px;
+    filter: grayscale(1) brightness(2);
+}
+
+.google-partner-tag-elegant span {
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    font-weight: 500;
     color: #fff;
-    filter: drop-shadow(0 0 25px rgba(var(--bot-accent-rgb), 0.6));
 }
 
-/* 3. Interaction Side (Right) */
-.bot-interaction-side {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    width: 100%;
+/* 5. Ghost Terminal Interaction */
+.floating-interaction {
+    position: absolute;
+    right: 8%;
+    bottom: 15%;
+    width: 450px;
+    z-index: 20;
+    animation: float-slow 18s infinite ease-in-out reverse;
 }
 
-.terminal-frame {
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 32px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    overflow: hidden;
+.terminal-ghost {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-.bot-transcript-area-hero {
-    height: 450px;
-    padding: 35px;
+.transcript-ghost {
+    height: 300px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    scroll-behavior: smooth;
+    padding-right: 10px;
+    scrollbar-width: none;
 }
 
-.user-msg, .ai-msg {
-    padding: 18px 24px;
-    border-radius: 20px;
+.transcript-ghost::-webkit-scrollbar { display: none; }
+
+.ai-msg, .user-msg {
+    padding: 0;
+    background: transparent;
+    border: none;
     font-size: 1.1rem;
-    line-height: 1.6;
-    max-width: 85%;
+    line-height: 1.5;
+    max-width: 100%;
 }
 
 .ai-msg {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    align-self: flex-start;
+    color: #fff;
+    font-weight: 400;
 }
 
 .user-msg {
-    align-self: flex-end;
-    background: linear-gradient(135deg, rgba(var(--bot-accent-rgb), 0.2), rgba(var(--bot-accent-rgb), 0.05));
-    border: 1px solid rgba(var(--bot-accent-rgb), 0.2);
+    color: var(--core-glow);
+    text-align: right;
+    font-weight: 500;
 }
 
-/* 4. Controls */
+/* 6. Controls */
 .bot-controls-hero {
     display: flex;
-    gap: 20px;
+    gap: 15px;
+    margin-top: 25px;
 }
 
-.btn-xl {
-    flex: 2;
-    padding: 24px !important;
-    font-size: 1.2rem !important;
-    border-radius: 20px !important;
-    background: #fff !important;
-    color: #000 !important;
+.btn-antigravity {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 18px 32px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-.btn-vision-hero {
-    flex: 1;
-    padding: 24px !important;
-    border-radius: 20px !important;
+.btn-antigravity:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.4);
 }
 
-/* 5. Report Area */
-.bot-report-area-hero {
-    padding: 40px;
-    animation: reportIn 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+/* Animations */
+@keyframes float-slow {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(20px, -30px) rotate(1deg); }
+    66% { transform: translate(-15px, 20px) rotate(-0.5deg); }
 }
 
-@keyframes reportIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes float-medium {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, -20px); }
 }
 
-.report-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 20px;
+@keyframes rotate-ring {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
-.report-content-hero {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    margin-bottom: 40px;
+@keyframes core-pulse {
+    from { transform: scale(0.8); opacity: 0.5; }
+    to { transform: scale(1.2); opacity: 0.8; }
 }
 
-.lead-form-hero {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 30px;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+@keyframes core-glow {
+    from { box-shadow: 0 0 50px var(--core-glow); }
+    to { box-shadow: 0 0 100px var(--core-glow), 0 0 200px rgba(59, 130, 246, 0.4); }
 }
 
-.bot-input-hero {
-    width: 100%;
-    padding: 18px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: #fff;
-    margin-bottom: 15px;
-    font-size: 1rem;
-}
-
-/* Status Indicator */
+/* Status */
 .bot-status-container-hero {
+    position: absolute;
+    bottom: 5%;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 20px;
+    gap: 15px;
+    opacity: 0.6;
 }
 
-/* Mobile Fixes */
-@media (max-width: 1100px) {
-    .hero-bot-integrated {
-        grid-template-columns: 1fr;
-        padding: 40px 25px;
-    }
-    .bot-visual-side {
-        padding-right: 0;
-        border-right: none;
-        align-items: center;
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    background: var(--core-glow);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--core-glow);
+}
+
+.status-text {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    font-weight: 600;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 1200px) {
+    .bot-title-hero { font-size: 5rem !important; }
+    .floating-branding, .floating-interaction {
+        position: relative;
+        left: auto;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        width: 90%;
+        margin: 20px auto;
         text-align: center;
-        margin-bottom: 40px;
     }
-    .bot-title-hero {
-        font-size: 3.5rem !important;
-    }
+    .user-msg { text-align: center; }
 }
