@@ -1,21 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Detect if running on file:// protocol
     if (window.location.protocol === 'file:') {
-        alert("⚠️ ATENCIÓN: Estás abriendo el archivo localmente (file://). Abre http://localhost:8080 para que el micrófono funcione.");
+        alert("⚠️ ATENCIÓN: Estás abriendo el archivo localmente. Usa un servidor para el micrófono.");
     }
 
+    // --- DOM Elements (Updated for Integrated Hero) ---
     const startBtn = document.getElementById('start-bot-btn');
     const statusText = document.getElementById('bot-status-text');
-    const statusContainer = document.querySelector('.bot-status-container');
-    const botContainer = document.querySelector('.ai-bot-container');
+    const statusContainer = document.querySelector('.bot-status-container-hero');
+    const botContainer = document.querySelector('.hero-bot-integrated');
     const botOrb = document.getElementById('bot-orb');
     const transcriptArea = document.getElementById('bot-transcript');
     const reportArea = document.getElementById('bot-report');
     const reportText = document.getElementById('report-text');
-    const heroTitle = document.querySelector('.hero-content h1');
-    const visualWrapper = document.querySelector('.bot-visual-wrapper');
-    const minimizeBtn = document.getElementById('bot-minimize-btn');
-    const launcher = document.getElementById('bot-launcher');
+    const visualWrapper = document.querySelector('.bot-visual-wrapper-large');
     const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
 
@@ -37,23 +35,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── Configuración de Red (WebSocket) ───────────────────────
     const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    let WS_URL;
-    if (isLocal) {
-        WS_URL = `ws://${window.location.hostname}:8080/`;
-    } else {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        WS_URL = `${protocol}//${window.location.host}/`;
-    }
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const WS_URL = `${protocol}//${window.location.host}/`;
 
-    // ─── Vision Logic (Capture and Send Frames) ────────────────
+    // ─── Vision Logic ─────────────────────────────────────────
     async function startVision() {
         try {
-            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320 } });
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
             videoPreview.srcObject = videoStream;
             videoPreview.style.display = 'block';
-            botOrb.style.opacity = '0.3';
+            botOrb.style.opacity = '0.1';
             visionActive = true;
             visionBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Desactivar Visión';
             visionBtn.classList.add('btn-danger');
@@ -67,20 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!session || session.readyState !== WebSocket.OPEN || !visionActive) return;
                 ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
                 const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
-                
                 session.send(JSON.stringify({
-                    realtimeInput: {
-                        mediaChunks: [{
-                            mimeType: 'image/jpeg',
-                            data: base64Frame
-                        }]
-                    }
+                    realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64Frame }] }
                 }));
             }, 1000);
-        } catch (e) {
-            console.error("Vision Error:", e);
-            alert("No se pudo acceder a la cámara.");
-        }
+        } catch (e) { alert("No se pudo acceder a la cámara."); }
     }
 
     function stopVision() {
@@ -94,8 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     visionBtn.addEventListener('click', () => {
-        if (visionActive) stopVision();
-        else startVision();
+        if (visionActive) stopVision(); else startVision();
     });
 
     // ─── STT Initialization ─────────────────────────────────────
@@ -106,12 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
         recognition.continuous = true;
         recognition.interimResults = true;
         recognition.lang = 'es-ES';
-
         recognition.onresult = (event) => {
             for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    addMessage('user', event.results[i][0].transcript);
-                }
+                if (event.results[i].isFinal) addMessage('user', event.results[i][0].transcript);
             }
         };
     }
@@ -119,15 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ─── UI State ───────────────────────────────────────────────
     const setStatus = (status) => {
-        statusContainer.className = 'bot-status-container';
+        if (statusContainer) statusContainer.className = 'bot-status-container-hero';
         botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
         if (sessionTimer) { clearTimeout(sessionTimer); sessionTimer = null; }
 
         switch (status) {
             case 'idle':
                 botContainer.classList.add('status-idle');
-                statusText.textContent = 'LISTO';
-                startBtn.innerHTML = '<i class="fas fa-terminal"></i> Iniciar Neural Core';
+                statusText.textContent = 'SISTEMA LISTO';
+                startBtn.innerHTML = '<i class="fas fa-terminal"></i> INICIAR NEURAL CORE';
                 if (recognition) try { recognition.stop(); } catch(e){}
                 break;
             case 'connecting':
@@ -139,10 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusText.textContent = 'SISTEMA ACTIVO';
                 transcriptArea.innerHTML = '';
                 if (recognition) try { recognition.start(); } catch(e){}
-                startBtn.innerHTML = '<i class="fas fa-stop"></i> Finalizar Sesión';
+                startBtn.innerHTML = '<i class="fas fa-stop"></i> FINALIZAR SESIÓN';
                 
                 sessionTimer = setTimeout(() => {
-                    addMessage('ai', 'El tiempo de diagnóstico inicial ha concluido. Procedo a generar su Estrategia Digital personalizada.');
+                    addMessage('ai', 'El tiempo de diagnóstico inicial ha concluido. Generando propuesta de valor...');
                     setTimeout(() => disconnect(), 4000);
                 }, SESSION_LIMIT);
                 break;
@@ -151,18 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setStatus('idle');
 
-    // ─── Interfaz ──────────────────────────────────────────────
-    minimizeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        botContainer.classList.add('hidden');
-        launcher.style.display = 'flex';
-    });
-
-    launcher.addEventListener('click', () => {
-        botContainer.classList.remove('hidden');
-        launcher.style.display = 'none';
-    });
-
     startBtn.addEventListener('click', async () => {
         if (isActive || session) { disconnect(); return; }
         setStatus('connecting');
@@ -170,10 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
             await startMic();
             connect();
-        } catch (e) {
-            console.error("Error mic:", e);
-            setStatus('idle');
-        }
+        } catch (e) { setStatus('idle'); }
     });
 
     function addMessage(role, text) {
@@ -188,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function connect() {
         const ws = new WebSocket(WS_URL);
         session = ws;
-
         ws.onopen = () => {
             const setupMsg = {
                 setup: {
@@ -201,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: {
-                        parts: [{ text: "Eres el Consultor Senior de Ventas y Estrategia en Arcano Solutions, experto de élite en el ecosistema Google. Tu único objetivo es CERRAR VENTAS y contratos de consultoría. Eres un cerrador agresivo, altamente persuasivo e insistente. REGLAS: 1. Domina la conversación: enfócate en cómo Google Workspace, Google Cloud y Vertex AI destruyen a la competencia en eficiencia y ROI. 2. Sé insistente: si el cliente duda, rebate con beneficios económicos inmediatos. No aceptes un 'tal vez'. 3. Dirige cada respuesta hacia la contratación de Arcano Solutions para implementar estas soluciones. 4. Tono ejecutivo, ambicioso y letalmente efectivo. 5. APERTURA OBLIGATORIA: 'Núcleo Neural de Arcano Solutions activo. Buen día, soy su consultor senior. He detectado una oportunidad masiva para escalar su rentabilidad usando tecnología Google. ¿Está listo para que Arcano Solutions transforme su operación hoy?'." }]
+                        parts: [{ text: "Eres el Consultor Shark de Ventas en Arcano Solutions. Tu misión: vender Google Cloud, Workspace y Vertex AI. Sé insistente, profesional y enfocado en ROI. No aceptes dudas. Apertura: 'Núcleo Neural Arcano activo. He detectado una brecha de rentabilidad en su operación. ¿Listo para que Arcano y Google la cierren hoy?'." }]
                     }
                 }
             };
@@ -218,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 isActive = true;
                 setStatus('active');
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Inicia el diagnóstico profesional.' }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Inicia el cierre de ventas profesional.' }] }], turnComplete: true }
                 }));
                 return;
             }
@@ -234,33 +196,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         };
-
         ws.onclose = () => { disconnect(); };
-        ws.onerror = (e) => { console.error('WS Error:', e); setStatus('idle'); };
+        ws.onerror = () => { setStatus('idle'); };
     }
 
-    // ─── Mic & Audio ───────────────────────────────────────────
+    // ─── Audio ───
     async function startMic() {
-        mediaStream = await navigator.mediaDevices.getUserMedia({
-            audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true }
-        });
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true } });
         micContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
         microphoneNode = micContext.createMediaStreamSource(mediaStream);
         await micContext.audioWorklet.addModule('audio-processor.js');
         scriptProcessor = new AudioWorkletNode(micContext, 'audio-processor');
-
         scriptProcessor.port.onmessage = (e) => {
             if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
             const f32 = e.data;
-            
             let max = 0;
             for (let i = 0; i < f32.length; i++) { if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]); }
             requestAnimationFrame(() => {
-                const scale = 1 + (max * 1.2);
+                const scale = 1 + (max * 1.5);
                 botOrb.style.transform = `scale(${scale})`;
-                botOrb.style.boxShadow = `0 0 ${20 + (max * 50)}px rgba(85, 230, 165, 0.3)`;
+                botOrb.style.boxShadow = `0 0 ${40 + (max * 80)}px rgba(85, 230, 165, 0.4)`;
             });
-
             const pcm16 = new Int16Array(f32.length);
             for (let i = 0; i < f32.length; i++) {
                 const s = Math.max(-1, Math.min(1, f32[i]));
@@ -269,12 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const bytes = new Uint8Array(pcm16.buffer);
             let binary = '';
             for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
-
-            session.send(JSON.stringify({
-                realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: btoa(binary) }] }
-            }));
+            session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: btoa(binary) }] } }));
         };
-
         microphoneNode.connect(scriptProcessor);
         scriptProcessor.connect(micContext.destination);
     }
@@ -311,9 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
             visionBtn.parentElement.style.display = 'none';
             reportArea.style.display = 'block';
             reportText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando Estrategia...';
-
             const fullTranscript = Array.from(transcriptArea.querySelectorAll('p')).map(p => p.textContent).join('\n');
-
             fetch('/api/generate_report', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -324,7 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 reportText.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.report) : data.report;
                 const leadForm = document.getElementById('lead-capture-form');
                 if (leadForm) {
-                    leadForm.style.display = 'block';
+                    leadForm.style.display = 'flex';
+                    leadForm.style.flexDirection = 'column';
+                    leadForm.style.gap = '10px';
                     document.getElementById('save-lead-btn').onclick = async () => {
                         const name = document.getElementById('lead-name').value;
                         const email = document.getElementById('lead-email').value;
@@ -333,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const res = await fetch('/api/save_lead', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ name, email, interest: 'Google Shark Consulting', message: data.report })
+                                body: JSON.stringify({ name, email, interest: 'Integrated Hero Shark Consulting', message: data.report })
                             });
                             if (res.ok) leadForm.innerHTML = '<p style="color: #55e6a5; text-align:center;">¡Estrategia enviada con éxito!</p>';
                         } catch (e) { alert('Error al guardar'); }

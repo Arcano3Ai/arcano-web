@@ -1,373 +1,208 @@
-/* --- Arcano Live AI Bot Styles - ELITE CHALLENGE EDITION --- */
+/* --- Arcano Integrated Hero Bot Styles --- */
 
 :root {
     --bot-accent: #55e6a5;
-    --bot-bg: rgba(10, 15, 25, 0.98);
-    --bot-glass: rgba(255, 255, 255, 0.05);
+    --bot-bg-glass: rgba(15, 23, 42, 0.6);
     --bot-text: #e2e8f0;
 }
 
-/* 1. Launcher */
-.bot-launcher {
-    position: fixed !important;
-    bottom: 30px !important;
-    right: 30px !important;
-    width: 70px !important;
-    height: 70px !important;
-    background: linear-gradient(135deg, #55e6a5, #2dd4bf) !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: #0f172a !important;
-    font-size: 1.8rem !important;
-    cursor: pointer !important;
-    box-shadow: 0 0 25px rgba(85, 230, 165, 0.4) !important;
-    z-index: 1000000 !important;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+/* 1. Container & Layout (Integrated, not fixed) */
+.hero-bot-integrated {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+    align-items: start;
 }
 
-/* 2. Container */
-.ai-bot-container {
-    position: fixed !important;
-    bottom: 110px !important;
-    right: 30px !important;
-    width: 400px !important;
-    height: 600px !important;
-    background: var(--bot-bg) !important;
-    backdrop-filter: blur(30px) !important;
-    -webkit-backdrop-filter: blur(30px) !important;
-    border-radius: 24px !important;
-    border: 1px solid rgba(85, 230, 165, 0.3) !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
-    z-index: 1000000 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    padding: 25px !important;
-    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
-    transform-origin: bottom right !important;
-    overflow: hidden !important;
+/* 2. Visual Side (Left) */
+.bot-visual-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: sticky;
+    top: 150px;
 }
 
-.ai-bot-container.hidden {
-    opacity: 0 !important;
-    transform: scale(0.8) translateY(40px) !important;
-    pointer-events: none !important;
+.bot-visual-wrapper-large {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
 }
 
-/* 3. Bot Header */
-.bot-header-info {
-    text-align: center !important;
-    width: 100% !important;
-    margin-bottom: 20px !important;
+.bot-orb-large {
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle at 35% 35%, #1e293b, #020617);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 40px rgba(85, 230, 165, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    z-index: 10;
+    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
 }
 
-.bot-title {
-    font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    background: linear-gradient(to right, #fff, #55e6a5) !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    color: transparent !important;
-    margin: 0 !important;
-    font-family: 'Space Grotesk', sans-serif !important;
+.status-active .bot-orb-large {
+    border-color: var(--bot-accent);
+    box-shadow: 0 0 60px rgba(85, 230, 165, 0.3);
 }
 
-.bot-subtitle {
-    color: #94a3b8 !important;
-    font-size: 0.8rem !important;
-    margin: 5px 0 0 0 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1.5px !important;
-    font-weight: 500 !important;
+.bot-orb-large #bot-icon {
+    font-size: 4rem;
+    color: #fff;
+    filter: drop-shadow(0 0 15px rgba(85, 230, 165, 0.5));
 }
 
-/* 4. The Interactive Orb */
-.bot-visual-wrapper {
-    position: relative !important;
-    width: 140px !important;
-    height: 140px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-bottom: 20px !important;
+.ai-waves-large {
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(85, 230, 165, 0.15) 0%, transparent 70%);
+    opacity: 0;
+    z-index: 5;
+    transition: opacity 0.5s ease;
 }
 
-.bot-orb {
-    width: 80px !important;
-    height: 80px !important;
-    background: radial-gradient(circle at 35% 35%, #1e293b, #020617) !important;
-    border-radius: 50% !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 10 !important;
-    transition: transform 0.1s ease-out, box-shadow 0.1s ease-out !important;
+.status-active .ai-waves-large {
+    opacity: 1;
+    animation: orbBreathe 2s infinite alternate;
 }
 
-.status-active .bot-orb {
-    border-color: #55e6a5 !important;
-    box-shadow: 0 0 30px rgba(85, 230, 165, 0.2) !important;
+@keyframes orbBreathe {
+    from { transform: scale(0.95); opacity: 0.2; }
+    to { transform: scale(1.2); opacity: 0.5; }
 }
 
-.ai-waves {
-    position: absolute !important;
-    inset: -10px !important;
-    border-radius: 50% !important;
-    background: radial-gradient(circle, rgba(85, 230, 165, 0.15) 0%, transparent 70%) !important;
-    opacity: 0 !important;
-    z-index: 5 !important;
-    transition: opacity 0.5s ease !important;
+#bot-video-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    z-index: 8;
+    display: none;
+    border: 3px solid var(--bot-accent);
+    box-shadow: 0 0 30px rgba(85, 230, 165, 0.4);
 }
 
-.status-active .ai-waves { opacity: 1 !important; }
+/* 3. Interaction Side (Right) */
+.bot-header-info-hero {
+    margin-bottom: 30px;
+}
 
-/* 5. Transcript Area (Bubbles) */
-.bot-transcript-area {
-    width: 100% !important;
-    flex-grow: 1 !important;
-    background: rgba(0, 0, 0, 0.25) !important;
-    border-radius: 16px !important;
-    padding: 15px !important;
-    overflow-y: auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    margin-bottom: 15px !important;
+.bot-title-hero {
+    font-size: 3rem !important;
+    margin: 15px 0 !important;
+    line-height: 1.1 !important;
+}
+
+.bot-subtitle-hero {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+.bot-transcript-area-hero {
+    width: 100%;
+    height: 350px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 25px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-bottom: 30px;
 }
 
 .user-msg, .ai-msg {
-    padding: 10px 14px !important;
-    border-radius: 12px !important;
-    font-size: 0.85rem !important;
-    line-height: 1.4 !important;
-    max-width: 85% !important;
-    animation: msgReveal 0.3s ease-out forwards !important;
-    word-wrap: break-word !important;
+    padding: 12px 18px;
+    border-radius: 15px;
+    font-size: 1rem;
+    line-height: 1.5;
+    max-width: 85%;
+    animation: msgIn 0.4s ease-out forwards;
 }
 
 .user-msg {
-    align-self: flex-end !important;
-    background: rgba(85, 230, 165, 0.15) !important;
-    color: #fff !important;
-    border-right: 3px solid #55e6a5 !important;
-    border-bottom-right-radius: 2px !important;
-    text-align: right !important;
+    align-self: flex-end;
+    background: rgba(85, 230, 165, 0.15);
+    border-right: 3px solid var(--bot-accent);
+    color: #fff;
 }
 
 .ai-msg {
-    align-self: flex-start !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    color: #cbd5e1 !important;
-    border-left: 3px solid #55e6a5 !important;
-    border-bottom-left-radius: 2px !important;
-    text-align: left !important;
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--bot-accent);
+    color: #e2e8f0;
 }
 
-@keyframes msgReveal {
-    from { opacity: 0; transform: translateY(8px); }
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 6. Report Area */
-.bot-report-area {
-    width: 100% !important;
-    background: linear-gradient(135deg, rgba(85, 230, 165, 0.08), rgba(10, 15, 25, 0.95)) !important;
-    border-radius: 20px !important;
-    padding: 20px !important;
-    margin-top: 10px !important;
-    border: 1px solid rgba(85, 230, 165, 0.2) !important;
-    max-height: 400px !important;
-    overflow-y: auto !important;
+/* 4. Controls */
+.bot-controls-hero {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.report-header {
-    font-size: 0.75rem !important;
-    text-transform: uppercase !important;
-    letter-spacing: 2px !important;
-    color: #55e6a5 !important;
-    margin-bottom: 15px !important;
-    font-weight: 700 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    width: 100% !important;
+.btn-xl {
+    padding: 20px 40px !important;
+    font-size: 1.2rem !important;
+    letter-spacing: 1px;
 }
 
-.consulting-badge {
-    background: rgba(85, 230, 165, 0.15) !important;
-    padding: 4px 10px !important;
-    border-radius: 20px !important;
-    font-size: 0.65rem !important;
-    border: 1px solid var(--bot-accent) !important;
-    animation: pulse-soft 2s infinite !important;
+.bot-status-container-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
 }
 
-@keyframes pulse-soft {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
+/* 5. Report Area Integrated */
+.bot-report-area-hero {
+    background: linear-gradient(135deg, rgba(85, 230, 165, 0.1), rgba(10, 15, 25, 0.95));
+    border-radius: 24px;
+    padding: 30px;
+    border: 1px solid rgba(85, 230, 165, 0.2);
+    margin-top: 20px;
 }
 
-.neural-watermark {
-    position: absolute !important;
-    bottom: 10px !important;
-    right: 20px !important;
-    font-size: 0.6rem !important;
-    color: rgba(255, 255, 255, 0.1) !important;
-    text-transform: uppercase !important;
-    letter-spacing: 3px !important;
-    pointer-events: none !important;
+.report-content-hero {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 20px 0;
 }
 
-.report-content {
-    font-size: 0.9rem !important;
-    line-height: 1.6 !important;
-    color: #e2e8f0 !important;
-    margin-bottom: 20px !important;
-}
-
-.bot-input {
-    width: 100% !important;
-    background: rgba(0, 0, 0, 0.3) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 10px !important;
-    padding: 12px 15px !important;
-    color: #fff !important;
-    font-size: 0.9rem !important;
-    margin-bottom: 12px !important;
-    transition: all 0.3s ease !important;
-    font-family: 'Space Grotesk', sans-serif !important;
-}
-
-/* 7. Controls */
-.bot-controls { width: 100% !important; }
-
-.btn-large, #save-lead-btn {
-    width: 100% !important;
-    padding: 14px !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    border-radius: 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    cursor: pointer !important;
-    border: none !important;
-}
-
-#save-lead-btn {
-    background: #55e6a5 !important;
-    color: #0f172a !important;
-    margin-top: 10px !important;
-}
-
-.bot-status-container {
-    margin-top: 12px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 8px !important;
-    font-size: 0.7rem !important;
-    color: #64748b !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-}
-
-.status-indicator {
-    width: 6px !important;
-    height: 6px !important;
-    border-radius: 50% !important;
-    background: #64748b !important;
-}
-
-.status-active .status-indicator {
-    background: #55e6a5 !important;
-    box-shadow: 0 0 8px #55e6a5 !important;
-}
-
-.bot-minimize-btn {
-    position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
-    background: none !important;
-    border: none !important;
-    color: #64748b !important;
-    cursor: pointer !important;
-    font-size: 1.1rem !important;
-    z-index: 100 !important;
-}
-
-/* 8. MOBILE FIXES (HIGHEST PRIORITY) */
-@media screen and (max-width: 600px) {
-    .bot-launcher {
-        bottom: 20px !important;
-        right: 20px !important;
-        width: 65px !important;
-        height: 65px !important;
+/* 6. Mobile Fixes */
+@media (max-width: 1024px) {
+    .bot-visual-wrapper-large {
+        width: 200px;
+        height: 200px;
     }
-
-    .ai-bot-container {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        max-height: 100vh !important;
-        border-radius: 0 !important;
-        margin: 0 !important;
-        padding: 60px 20px 20px 20px !important;
-        z-index: 2000000 !important;
+    .bot-orb-large {
+        width: 120px;
+        height: 120px;
     }
-
-    .ai-bot-container.hidden {
-        transform: translateY(100%) !important;
-        opacity: 0 !important;
-        display: none !important;
-    }
-
-    .bot-visual-wrapper {
-        height: 100px !important;
-        margin-bottom: 5px !important;
-    }
-
-    .bot-orb {
-        width: 60px !important;
-        height: 60px !important;
-    }
-
-    .bot-transcript-area {
-        min-height: 150px !important;
-        margin-bottom: 10px !important;
-    }
-
-    .bot-minimize-btn {
-        top: 20px !important;
-        right: 20px !important;
-        font-size: 1.8rem !important;
-        width: 44px !important;
-        height: 44px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        color: #fff !important;
-    }
-
-    .bot-title { font-size: 1.2rem !important; }
-    .bot-subtitle { font-size: 0.75rem !important; }
-    
-    .btn-large, #save-lead-btn {
-        padding: 18px !important;
-        font-size: 1rem !important;
-    }
+    .bot-orb-large #bot-icon { font-size: 2.5rem; }
+    .bot-title-hero { font-size: 2.2rem !important; }
 }
 
-/* Scrollbar */
-.bot-transcript-area::-webkit-scrollbar { width: 4px; }
-.bot-transcript-area::-webkit-scrollbar-thumb { background: rgba(85, 230, 165, 0.2); border-radius: 10px; }
+/* Hide Floating components */
+.bot-launcher, .ai-bot-container { display: none !important; }
