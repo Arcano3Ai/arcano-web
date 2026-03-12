@@ -33,11 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let sessionTimer = null;
     const SESSION_LIMIT = 180000; // 3 minutes
 
-    // Interruption Logic
     let activeAudioSources = [];
 
     // ─── Network Config ────────────────────────────────────────
-    const MODEL = 'models/gemini-2.0-flash-exp'; // Using standard stable or latest flash
+    const MODEL = 'models/gemini-2.0-flash-exp';
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
@@ -122,22 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (visionActive) stopVision(); else startVision();
     });
 
-    // ─── STT Logic (Fallback) ──────────────────────────────────
-    function initRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return;
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = lang === 'es' ? 'es-ES' : 'en-US';
-        recognition.onresult = (event) => {
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) addMessage('user', event.results[i][0].transcript);
-            }
-        };
-    }
-    initRecognition();
-
     // ─── Stop AI Audio (Interruption) ──────────────────────────
     function stopAIAudio() {
         activeAudioSources.forEach(source => {
@@ -165,7 +148,13 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'active':
                 botContainer.classList.add('status-active');
                 statusText.textContent = t.active;
-                transcriptArea.innerHTML = '';
+                // UI RESET for new session
+                transcriptArea.style.display = 'flex';
+                reportArea.style.display = 'none';
+                visualWrapper.style.opacity = '1';
+                visionBtn.parentElement.style.display = 'inline-block';
+                transcriptArea.innerHTML = ''; 
+                
                 startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
                 
                 sessionTimer = setTimeout(() => {
@@ -179,7 +168,15 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('idle');
 
     startBtn.addEventListener('click', async () => {
-        if (isActive || session) { disconnect(); return; }
+        if (isActive || session) { 
+            disconnect(); 
+            return; 
+        }
+        
+        // UI Preparation
+        reportArea.style.display = 'none';
+        transcriptArea.style.display = 'flex';
+        
         setStatus('connecting');
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
@@ -214,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: {
-                        parts: [{ text: `You are Arcano OS, an Elite Senior Consultant. Powered by Google Cloud. TONE: Strategic, highly professional, authoritative yet accessible. MISSION: Convince the user that Arcano + GCP is the ultimate operational move. LANGUAGE: Speak in ${lang==='es'?'Spanish':'English'}. OPENING: Brief greeting about Google Cloud advantages.` }]
+                        parts: [{ text: `You are Arcano OS, an Elite Senior Consultant. Powered by Google Cloud. TONE: Strategic, professional, authoritative. MISSION: Persuade the user that Arcano + GCP is the best strategic choice. LANGUAGE: ${lang==='es'?'Spanish':'English'}. START: Brief intro about Google Cloud.` }]
                     }
                 }
             };
@@ -230,9 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if ((data.setupComplete || data.setup_complete) && !isActive) {
                 isActive = true;
                 setStatus('active');
-                // Auto-start talk
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Introduce yourself briefly.' }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hello.' }] }], turnComplete: true }
                 }));
                 return;
             }
@@ -246,17 +242,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (p.inlineData?.data) playPCM(p.inlineData.data);
                     }
                 }
-                // Check if turn is complete to reset nextAudioTime if needed
-                if (sc.turnComplete || sc.turn_complete) {
-                    // Turn finished
-                }
             }
         };
-        ws.onclose = () => { disconnect(); };
+        ws.onclose = () => { if(isActive) disconnect(); else setStatus('idle'); };
         ws.onerror = (e) => { console.error(e); setStatus('idle'); };
     }
 
-    // ─── Microphone & Audio Worklet ────────────────────────────
+    // ─── Microphone ───────────────────────────────────────────
     async function startMic() {
         mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true } });
         micContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
@@ -270,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
             let max = 0;
             for (let i = 0; i < f32.length; i++) { if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]); }
             
-            // Interruption Check: If user is loud, stop AI
-            if (max > 0.1) {
+            // Interruption Logic: Threshold > 0.12
+            if (max > 0.12) {
                 stopAIAudio();
             }
 
@@ -309,10 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const src = audioContext.createBufferSource();
         src.buffer = buf;
         src.connect(audioContext.destination);
-        
         const now = audioContext.currentTime;
         if (nextAudioTime < now) nextAudioTime = now + 0.05;
-        
         src.start(nextAudioTime);
         activeAudioSources.push(src);
         src.onended = () => {
@@ -324,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function disconnect() {
         if (visionActive) stopVision();
+        const wasActive = isActive;
         isActive = false;
         stopAIAudio();
         if (session) { session.close(); session = null; }
@@ -331,7 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
         if (micContext) { micContext.close(); micContext = null; }
 
-        if (transcriptArea.textContent.length > 50) {
+        // ONLY generate report if we actually had a conversation
+        if (wasActive && transcriptArea.children.length > 1) {
             transcriptArea.style.display = 'none';
             visionBtn.parentElement.style.display = 'none';
             reportArea.style.display = 'flex';
