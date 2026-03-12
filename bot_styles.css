@@ -27,9 +27,7 @@
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-.bot-launcher:hover {
-    transform: scale(1.1);
-}
+.bot-launcher:hover { transform: scale(1.1); }
 
 /* 2. Container Perfectly Aligned Above Launcher */
 .ai-bot-container {
@@ -126,9 +124,7 @@
     transition: opacity 0.5s ease !important;
 }
 
-.status-active .ai-waves {
-    opacity: 1 !important;
-}
+.status-active .ai-waves { opacity: 1 !important; }
 
 /* 5. Transcript Area (Bubbles) */
 .bot-transcript-area {
@@ -178,15 +174,66 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 6. Controls */
+/* 6. Report Area & Lead Form (Premium) */
+.bot-report-area {
+    width: 100% !important;
+    background: linear-gradient(135deg, rgba(85, 230, 165, 0.08), rgba(10, 15, 25, 0.95)) !important;
+    border-radius: 20px !important;
+    padding: 20px !important;
+    margin-top: 10px !important;
+    border: 1px solid rgba(85, 230, 165, 0.2) !important;
+    animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) !important;
+    max-height: 400px !important;
+    overflow-y: auto !important;
+}
+
+.report-header {
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    color: #55e6a5 !important;
+    margin-bottom: 15px !important;
+    font-weight: 700 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+}
+
+.report-content {
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    color: #e2e8f0 !important;
+    margin-bottom: 20px !important;
+}
+
+.bot-input {
+    width: 100% !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    padding: 12px 15px !important;
+    color: #fff !important;
+    font-size: 0.9rem !important;
+    margin-bottom: 12px !important;
+    transition: all 0.3s ease !important;
+    font-family: 'Space Grotesk', sans-serif !important;
+}
+
+.bot-input:focus {
+    border-color: #55e6a5 !important;
+    background: rgba(85, 230, 165, 0.05) !important;
+    outline: none !important;
+}
+
+/* 7. Controls */
 .bot-controls {
     width: 100% !important;
 }
 
-.btn-large {
+.btn-large, #save-lead-btn {
     width: 100% !important;
     padding: 14px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     font-size: 0.95rem !important;
     border-radius: 12px !important;
     display: flex !important;
@@ -195,7 +242,18 @@
     gap: 10px !important;
     cursor: pointer !important;
     border: none !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+#save-lead-btn {
+    background: #55e6a5 !important;
+    color: #0f172a !important;
+    margin-top: 10px !important;
+}
+
+#save-lead-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(85, 230, 165, 0.4) !important;
 }
 
 .bot-status-container {
@@ -232,12 +290,9 @@
     cursor: pointer !important;
     font-size: 1.1rem !important;
     z-index: 100 !important;
-    transition: color 0.3s ease !important;
 }
 
-.bot-minimize-btn:hover {
-    color: #fff !important;
-}
+.bot-minimize-btn:hover { color: #fff !important; }
 
 /* Scrollbar */
 .bot-transcript-area::-webkit-scrollbar { width: 4px; }
