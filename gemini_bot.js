@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let messageCount = 0;
     let recognition = null;
 
-    const MODEL = 'models/gemini-2.0-flash'; // Optimized for speed over the latest preview
+    const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
