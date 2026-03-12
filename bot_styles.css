@@ -294,6 +294,63 @@
 
 .bot-minimize-btn:hover { color: #fff !important; }
 
+/* 8. Mobile Optimization (Native App Feel) */
+@media (max-width: 600px) {
+    .bot-launcher {
+        bottom: 20px !important;
+        right: 20px !important;
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 1.5rem !important;
+    }
+
+    .ai-bot-container {
+        bottom: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 100% !important; /* Full screen feel */
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        padding: 20px !important;
+        bottom: 0 !important;
+    }
+
+    .ai-bot-container.hidden {
+        transform: translateY(100%) !important; /* Slide down animation */
+        opacity: 0 !important;
+    }
+
+    .bot-visual-wrapper {
+        height: 120px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .bot-orb {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    .bot-title {
+        font-size: 1.3rem !important;
+    }
+
+    .bot-transcript-area {
+        min-height: 200px !important;
+    }
+
+    .btn-large, #save-lead-btn {
+        padding: 16px !important; /* Better for thumbs */
+        font-size: 1rem !important;
+    }
+
+    .bot-minimize-btn {
+        top: 20px !important;
+        right: 20px !important;
+        font-size: 1.5rem !important;
+        padding: 10px !important;
+    }
+}
+
 /* Scrollbar */
 .bot-transcript-area::-webkit-scrollbar { width: 4px; }
 .bot-transcript-area::-webkit-scrollbar-thumb { background: rgba(85, 230, 165, 0.2); border-radius: 10px; }
