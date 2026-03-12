@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "rewrites": [
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "arcano-web",
+          "region": "us-central1"
+        }
+      }
+    ]
+  }
+}
