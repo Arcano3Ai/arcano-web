@@ -10,11 +10,11 @@
 
 /* 1. Layout: Centralized & Airy */
 .hero-bot-integrated {
-    position: relative;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    min-height: 90vh;
+    height: 100%;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     background: transparent !important;
@@ -22,7 +22,8 @@
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
-    overflow: visible;
+    overflow: hidden;
+    z-index: 10;
 }
 
 /* 2. Neural Core (The Gravity Source) */
@@ -32,7 +33,6 @@
     align-items: center;
     justify-content: center;
     z-index: 10;
-    margin-bottom: 40px;
     animation: float-slow 12s infinite ease-in-out;
 }
 
