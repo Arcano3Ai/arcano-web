@@ -105,7 +105,7 @@
             </div>
         </div>
         
-        <div class="hero-visual-bg">
+        <div class="hero-visual">
             <canvas id="particle-canvas"></canvas>
         </div>
     </header>
@@ -453,65 +453,6 @@
     </footer>
 
 
-
-    <!-- AI Bot Floating Launcher -->
-    <div id="bot-launcher" class="bot-launcher" style="display: flex;">
-        <i class="fas fa-comment-dots"></i>
-    </div>
-
-    <!-- AI Bot Floating Widget -->
-    <div class="ai-bot-container hidden">
-        <button class="bot-minimize-btn" id="bot-minimize-btn" title="Minimizar">
-            <i class="fas fa-times"></i>
-        </button>
-        
-        <div class="bot-header-info">
-            <h2 class="bot-title">Consultoría Arcano</h2>
-            <p class="bot-subtitle">Estrategia & IA</p>
-        </div>
-
-        <div class="bot-visual-wrapper">
-            <div class="ai-waves"></div>
-            <div class="bot-orb" id="bot-orb">
-                <i class="fas fa-microchip" id="bot-icon"></i>
-            </div>
-            <!-- Video Preview for Vision -->
-            <video id="bot-video-preview" autoplay playsinline muted style="display: none; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; z-index: 4; border: 2px solid var(--bot-accent);"></video>
-        </div>
-
-        <div class="vision-control" style="margin-bottom: 15px;">
-            <button id="toggle-vision-btn" class="btn-secondary" style="width: 100%; font-size: 0.8rem; padding: 8px;">
-                <i class="fas fa-eye"></i> Activar Visión Neural
-            </button>
-        </div>
-
-        <div id="bot-transcript" class="bot-transcript-area"></div>
-
-        <div id="bot-report" class="bot-report-area" style="display: none;">
-            <div class="report-header">
-                <span><i class="fas fa-file-alt"></i> Estrategia Digital</span>
-                <span class="consulting-badge">Análisis Deep Arcano</span>
-            </div>
-            <div id="report-text" class="report-content"></div>
-            <div class="neural-watermark">Neural Engine v2.5</div>
-            
-            <div id="lead-capture-form" style="margin-top: 15px; display: none; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                <input type="text" id="lead-name" placeholder="Tu Nombre" class="bot-input">
-                <input type="email" id="lead-email" placeholder="Tu Correo" class="bot-input">
-                <button id="save-lead-btn" class="btn-primary" style="width: 100%;">Guardar Reporte</button>
-            </div>
-        </div>
-
-        <div class="bot-controls">
-            <button id="start-bot-btn" class="btn-primary btn-large">
-                <i class="fas fa-terminal"></i> Iniciar Neural Core
-            </button>
-            <div class="bot-status-container">
-                <span class="status-indicator" id="bot-status-indicator"></span>
-                <span class="status-text" id="bot-status-text">LISTO</span>
-            </div>
-        </div>
-    </div>
 
     <script src="script.js?v=1.1"></script>
     <script src="gemini_bot.js?v=1.1"></script>
