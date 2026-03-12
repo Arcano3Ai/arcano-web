@@ -1169,14 +1169,16 @@ footer {
 }
 
 .monumental-title {
-    font-size: clamp(6rem, 18vw, 14rem);
+    font-size: clamp(4rem, 12vw, 9rem);
     font-weight: 700;
-    line-height: 0.85;
+    line-height: 0.9;
     letter-spacing: -0.05em;
     text-transform: uppercase;
     margin-bottom: 20px;
     z-index: 20;
     font-family: var(--font-display);
+    text-align: center;
+    width: 100%;
 }
 
 .monumental-subtitle {
