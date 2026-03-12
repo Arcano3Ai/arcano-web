@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', error: 'Connection Error', visionStart: 'VISION', visionStop: 'STOP VISION' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', error: 'Error de Conexión', visionStart: 'VISIÓN', visionStop: 'DETENER VISIÓN' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', error: 'Connection Error', visionStart: 'VISION', visionStop: 'STOP VISION', gen: 'Generating Diagnosis...', send: 'SEND TO MY EMAIL' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', error: 'Error de Conexión', visionStart: 'VISIÓN', visionStop: 'DETENER VISIÓN', gen: 'Generando Diagnóstico...', send: 'ENVIAR A MI CORREO' }
     };
     const t = i18n[lang] || i18n.en;
 
@@ -36,19 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     Eres el Vendedor Senior de Soluciones Google Cloud en Arcano Solutions. 
     Tu objetivo es cerrar contratos de consultoría estratégica y vender el ecosistema de Google Cloud (GCP, Vertex AI, Workspace).
 
-    INFORMACIÓN DE ARCANO SOLUTIONS:
-    - Eslogan: "Sistema operativo para empresas del futuro. Sin promesas vacías, solo métricas reales."
-    - Propuesta: Reducción del 87% en tareas manuales y 3x en velocidad operativa.
-    - Servicios: IA & Automatización, ERP & CRM, Ciberseguridad, Arquitectura de Sistemas, Gobierno Corporativo, PMO, Marketing Growth.
-    - Metodología: Resultados tangibles en 2 semanas.
-    - Objetivo de la charla: Captar leads para un "Diagnóstico Ejecutivo Gratuito".
-
-    REGLAS DE COMPORTAMIENTO:
-    1. Tono: Autoritario, estratégico, persuasivo y altamente profesional (estilo Big 4).
-    2. Enfoque: Maximizar el ROI del cliente usando infraestructura de Google Cloud.
-    3. Multimodalidad: Puedes "ver" a través de la cámara si el usuario la activa. Úsala para analizar su entorno, diagramas o documentos.
-    4. Idioma: Responde siempre en ${lang === 'es' ? 'Español' : 'Inglés'}.
-    5. Cierre: Sé insistente en agendar el diagnóstico gratuito.
+    REGLAS DE COMUNICACIÓN:
+    1. No transcribas todo lo que dices. Solo registra en la pantalla los "Puntos Clave" y "Vectores de Decisión".
+    2. Cuando identifiques una necesidad del cliente, confírmala visualmente como un punto clave.
+    3. Tono: Persuación de alto nivel, autoritario pero consultivo.
+    4. Objetivo: Al final, el usuario debe recibir su "Diagnóstico Inicial Arcano" por correo.
+    5. Idioma: Responde siempre en ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
 
     const setStatus = (status) => {
@@ -68,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusText.textContent = t.active;
                 startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
                 transcriptArea.innerHTML = '';
+                transcriptArea.style.display = 'flex';
+                reportArea.style.display = 'none';
                 messageCount = 0;
                 break;
             case 'error':
@@ -175,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setStatus('active');
                 ws.send(JSON.stringify({
                     clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Hola, preséntate como el consultor senior de Arcano y Google Cloud.' }] }], 
+                        turns: [{ role: 'user', parts: [{ text: 'Hola, preséntate brevemente.' }] }], 
                         turnComplete: true 
                     }
                 }));
@@ -185,11 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (sc?.modelTurn?.parts) {
                 sc.modelTurn.parts.forEach(p => {
                     if (p.text) {
-                        const msg = document.createElement('p');
-                        msg.className = 'ai-msg';
-                        msg.textContent = '🤖 ' + p.text;
-                        transcriptArea.appendChild(msg);
-                        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+                        addMessage('ai', p.text);
                         messageCount++;
                     }
                     if (p.inlineData?.data) playPCM(p.inlineData.data);
@@ -233,6 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return stream;
     }
 
+    function addMessage(role, text) {
+        if (role === 'ai' && text.length < 15) return;
+        const p = document.createElement('p');
+        p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
+        const icon = role === 'ai' ? '🔹 ' : '👤 ';
+        p.textContent = icon + text;
+        transcriptArea.appendChild(p);
+        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+    }
+
     function disconnect() {
         isActive = false;
         if (visionActive) stopVision();
@@ -241,6 +242,48 @@ document.addEventListener('DOMContentLoaded', () => {
         if (micContext) micContext.close();
         activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
         activeAudioSources = [];
+
+        if (messageCount > 1) {
+            transcriptArea.style.display = 'none';
+            reportArea.style.display = 'flex';
+            reportText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.gen}`;
+            const fullTranscript = Array.from(transcriptArea.querySelectorAll('p')).map(p => p.textContent).join('\n');
+            fetch('/api/generate_report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ transcript: fullTranscript })
+            })
+            .then(res => res.json())
+            .then(data => {
+                reportText.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.report) : data.report;
+                const leadForm = document.getElementById('lead-capture-form');
+                if (leadForm) {
+                    leadForm.style.display = 'flex';
+                    const btn = document.getElementById('save-lead-btn');
+                    btn.innerHTML = t.send;
+                    btn.onclick = async () => {
+                        const name = document.getElementById('lead-name').value;
+                        const email = document.getElementById('lead-email').value;
+                        if (!name || !email) return;
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                        try {
+                            const res = await fetch('/api/save_lead', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, email, interest: 'Google Cloud Strategic Diagnosis', message: data.report })
+                            });
+                            if (res.ok) {
+                                leadForm.innerHTML = `<div style="color: #55e6a5; text-align:center; padding: 20px;">
+                                    <i class="fas fa-check-circle" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>
+                                    ¡Enviado con éxito!
+                                </div>`;
+                            }
+                        } catch (e) { alert('Error'); btn.disabled = false; btn.innerHTML = t.send; }
+                    };
+                }
+            });
+        }
         setStatus('idle');
     }
 
