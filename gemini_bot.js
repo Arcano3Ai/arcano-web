@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let messageCount = 0;
 
     // IMPORTANT: Model name for Multimodal Live API
-    const MODEL = 'models/gemini-2.0-flash'; 
+    const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
