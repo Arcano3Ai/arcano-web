@@ -63,7 +63,7 @@ h3,
 h4 {
     font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.05em;
     color: #fff;
 }
 
@@ -607,19 +607,38 @@ h4 {
     color: var(--text-muted);
 }
 
-/* Results Stats */
+/* Results Stats with Animation */
 .results-bar {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     border-top: 1px solid var(--border-light);
     border-bottom: 1px solid var(--border-light);
     background: linear-gradient(90deg, #020204, #0a0a0c, #020204);
+    position: relative;
+    overflow: hidden;
+}
+
+.results-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+    background-size: 200% 100%;
+    animation: stats-glow 8s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes stats-glow {
+    0% { background-position: -100% 0; }
+    100% { background-position: 100% 0; }
 }
 
 .result-item {
     text-align: center;
     padding: 60px 20px;
     border-right: 1px solid var(--border-light);
+    position: relative;
+    z-index: 2;
 }
 
 .result-item:last-child {

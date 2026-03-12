@@ -56,6 +56,21 @@
     justify-content: center;
     transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
     animation: core-glow 4s infinite alternate ease-in-out;
+    position: relative;
+    overflow: hidden; /* For video clipping */
+}
+
+#bot-video-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    z-index: 15;
+    border: 4px solid var(--core-glow);
+    display: none;
+    filter: saturate(1.2) contrast(1.1);
 }
 
 .core-inner {
