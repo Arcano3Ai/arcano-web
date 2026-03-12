@@ -117,13 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = parsed.serverContent ?? parsed.server_content;
             if (sc?.modelTurn?.parts) {
                 sc.modelTurn.parts.forEach(p => {
-                    if (p.thought || p.thinking) return;
-                    if (p.text) {
-                        const msg = document.createElement('p');
-                        msg.className = 'ai-msg';
-                        msg.textContent = '🔹 ' + p.text;
-                        transcriptArea.appendChild(msg);
-                        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+                    // CRITICAL: Block any part that looks like internal thought (contains ** or starts with 'Considering')
+                    if (p.thought || p.thinking || (p.text && (p.text.includes('**') || p.text.includes('Considering')))) return;
+
+                    if (p.text && p.text.trim().length > 0) {
+                        addMessage('ai', p.text.trim());
                         messageCount++;
                     }
                     if (p.inlineData?.data) playPCM(p.inlineData.data);
