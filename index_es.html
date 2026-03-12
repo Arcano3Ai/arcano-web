@@ -6,14 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Arcano Solutions | IA de Élite e Infraestructura Cloud</title>
     <meta name="description"
-        content="Transformamos empresas en operaciones eficientes, seguras y potenciadas por IA. Ciberseguridad, ERP y Automatización a escala.">
+        content="Transformamos tu empresa en una operación eficiente, segura y potenciada por IA. Ciberseguridad, ERP y Automatización.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=1.4">
-    <link rel="stylesheet" href="bot_styles.css?v=1.4">
+    <link rel="stylesheet" href="styles.css?v=1.5">
+    <link rel="stylesheet" href="bot_styles.css?v=1.5">
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -29,13 +30,11 @@
             </div>
         </div>
         <div class="nav-links">
-            <a href="#inicio">Interacción</a>
-            <a href="#about">El OS</a>
-            <a href="#google-catalog">Ecosistema</a>
+            <a href="#inicio">Inicio</a>
+            <a href="#google-catalog">Nube</a>
             <a href="#servicios">Servicios</a>
             <div class="lang-selector">
                 <a href="index.html">EN</a>
-                <span>|</span>
                 <a href="index_es.html" class="active">ES</a>
             </div>
             <a href="login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso</a>
@@ -45,203 +44,197 @@
         </div>
     </nav>
 
-    <!-- HERO: INTERACTION CENTER -->
-    <header id="inicio" class="hero cloud-parallax-container">
-        <div class="hero-visual parallax-layer" data-speed="0.2">
+    <header id="inicio" class="hero">
+        <div class="hero-visual">
             <canvas id="particle-canvas"></canvas>
         </div>
 
         <div class="hero-bot-integrated reveal-up">
-            <!-- Central Gravity Source -->
+            <!-- Neural Core (Central Gravity Source) -->
             <div class="neural-core-container">
                 <div class="energy-ring"></div>
                 <div class="bot-orb-large" id="bot-orb">
                     <div class="core-inner"></div>
-                    <video id="bot-video-preview" autoplay playsinline muted></video>
                 </div>
+                <video id="bot-video-preview" autoplay playsinline muted style="display:none;"></video>
             </div>
 
-            <!-- Left: Floating Branding -->
-            <div class="floating-branding reveal-up">
+            <!-- Floating Branding -->
+            <div class="floating-branding">
                 <div class="google-partner-tag-elegant">
                     <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
-                    <span>Partner Premier</span>
+                    <span>Premier Partner</span>
                 </div>
-                <h1 class="bot-title-hero">ARCANO</h1>
-                <p class="bot-subtitle-hero">Elite Engineering OS</p>
+                
+                <div class="bot-header-info-hero">
+                    <h1 class="bot-title-hero">Arcano <span class="gradient-text">OS</span></h1>
+                    <p class="bot-subtitle-hero">Sistemas de IA de Élite • Inteligencia Estratégica</p>
+                </div>
             </div>
 
-            <!-- Right: Floating Interaction -->
+            <!-- Floating Interaction -->
             <div class="floating-interaction">
                 <div class="terminal-ghost">
                     <div id="bot-transcript" class="transcript-ghost">
-                        <p class="ai-msg">Núcleo Arcano Activo. Accediendo a diagnósticos estratégicos...</p>
+                        <p class="ai-msg">Bienvenido al Núcleo Arcano. Iniciando protocolo de diagnóstico corporativo...</p>
                     </div>
+
                     <div id="bot-report" class="bot-report-area-hero" style="display: none;">
-                        <div class="report-header"><span><i class="fas fa-file-alt"></i> Informe de Inteligencia</span></div>
+                        <div class="report-header">
+                            <span><i class="fas fa-file-alt"></i> Estrategia Generada</span>
+                        </div>
                         <div id="report-text" class="report-content-hero"></div>
+                        
                         <div id="lead-capture-form" class="lead-form-hero">
-                            <input type="text" id="lead-name" placeholder="Nombre Completo" class="bot-input-hero">
-                            <input type="email" id="lead-email" placeholder="Correo Corporativo" class="bot-input-hero">
-                            <button id="save-lead-btn" class="btn-antigravity" style="width: 100%;">DESCARGAR ESTRATEGIA</button>
+                            <input type="text" id="lead-name" placeholder="Nombre" class="bot-input-hero">
+                            <input type="email" id="lead-email" placeholder="Email Corporativo" class="bot-input-hero">
+                            <button id="save-lead-btn" class="btn-antigravity" style="width: 100%;">ENVIAR ESTRATEGIA</button>
                         </div>
                     </div>
                 </div>
+
                 <div class="bot-controls-hero">
-                    <div class="vision-wrapper">
-                        <button id="toggle-vision-btn" class="btn-antigravity btn-ghost">
-                            <i class="fas fa-eye"></i> VISIÓN
-                        </button>
-                        <span class="vision-tooltip">Análisis Multimodal de Escena</span>
-                    </div>
                     <button id="start-bot-btn" class="btn-antigravity">
                         <i class="fas fa-terminal"></i> INICIAR CONSULTORÍA
                     </button>
+                    <div class="vision-wrapper">
+                        <button id="toggle-vision-btn" class="btn-antigravity" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                            <i class="fas fa-eye"></i> VISIÓN
+                        </button>
+                        <span class="vision-tooltip">Análisis de diagramas, documentos y entorno</span>
+                    </div>
                 </div>
             </div>
 
+            <!-- Status -->
             <div class="bot-status-container-hero">
                 <span class="status-indicator" id="bot-status-indicator"></span>
-                <span class="status-text" id="bot-status-text">SISTEMA NEURAL ONLINE</span>
+                <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
             </div>
-        </div>
-
-        <!-- Infrastructure HUD (Bottom of Hero) -->
-        <div class="performance-welcome-overlay">
-            <span class="badge-new">Infraestructura Global</span>
-            <p class="mini-hero-desc">99.9% Uptime SLA • Respaldo Google Cloud</p>
         </div>
     </header>
 
-    <!-- TRANSITION: MONUMENTAL BRANDING -->
+    <!-- Transition Branding (Moved below Hero) -->
     <section id="about" class="intro-branding">
         <div class="container reveal-up">
-            <div class="google-partner-tag-elegant">
-                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
-                <span>Partner Premier de Google Cloud</span>
-            </div>
             <h1 class="monumental-title">Arcano <span class="gradient-text">OS</span></h1>
-            <p class="monumental-subtitle">Inteligencia Estratégica para la Empresa Global.</p>
-            <div class="intro-stats">
-                <div class="intro-stat-item">
-                    <span class="stat-val">Élite</span>
-                    <span class="stat-lab">Consultoría</span>
-                </div>
-                <div class="intro-stat-item">
-                    <span class="stat-val">Escala</span>
-                    <span class="stat-lab">Automatización</span>
-                </div>
-                <div class="intro-stat-item">
-                    <span class="stat-val">Confianza</span>
-                    <span class="stat-lab">Ciberseguridad</span>
-                </div>
-            </div>
+            <p class="monumental-subtitle">El primer sistema operativo para estrategia corporativa de alto impacto.</p>
+        </div>
+    </section>
+
+    <!-- Results / Trust Bar -->
+    <section class="results-bar reveal-up">
+        <div class="results-header">
+            <h2>Infraestructura de Clase Mundial / Métricas en tiempo real</h2>
+        </div>
+        <div class="result-item stagger-1">
+            <span class="big-number">99.9%</span>
+            <span class="label">Uptime Cloud</span>
+        </div>
+        <div class="result-item stagger-2">
+            <span class="big-number">$0*</span>
+            <span class="label">Inversión Inicial</span>
+        </div>
+        <div class="result-item stagger-3">
+            <span class="big-number">300+</span>
+            <span class="label">Servicios Google</span>
+        </div>
+        <div class="result-item stagger-4">
+            <span class="big-number">∞</span>
+            <span class="label">Escalabilidad IA</span>
         </div>
     </section>
 
     <!-- Google Cloud Core Catalog -->
-    <section id="google-catalog" class="services ambient-transition">
+    <section id="google-catalog" class="services">
         <div class="section-header reveal-up">
-            <span class="badge-new">El Stack</span>
-            <h2>Potencia <span class="gradient-text">Cloud</span></h2>
-            <p>Aprovechando la infraestructura más avanzada del mundo para construir su futuro. Como Partner Premier de Google Cloud, Arcano Solutions ofrece confiabilidad de nivel empresarial e innovación de vanguardia.</p>
+            <span class="badge-new">Stack Tecnológico</span>
+            <h2>Potenciado por <span class="gradient-text">Google Cloud</span></h2>
+            <p>Infraestructura de clase mundial para escalar su empresa con seguridad y agilidad.</p>
         </div>
         <div class="cards-grid">
-            <div class="card reveal-up stagger-1" data-service="ia">
+            <div class="card reveal-up stagger-1">
                 <div class="card-icon"><i class="fas fa-brain"></i></div>
                 <h3>Vertex AI</h3>
-                <p>Plataforma de IA generativa líder en la industria. Despliegue modelos Gemini con seguridad y escala empresarial.</p>
+                <p>Plataforma integral de IA. Despliegue modelos Gemini con gobernanza y escala empresarial.</p>
             </div>
-            <div class="card reveal-up stagger-2" data-service="arch">
+            <div class="card reveal-up stagger-2">
                 <div class="card-icon"><i class="fas fa-database"></i></div>
                 <h3>BigQuery</h3>
-                <p>Analítica a escala de petabytes. Convierta silos de datos en motores de decisión en tiempo real con eficiencia serverless.</p>
+                <p>Data warehouse sin servidor y altamente escalable. Analítica masiva en segundos para decisiones basadas en datos.</p>
             </div>
-            <div class="card reveal-up stagger-3" data-service="cyber">
-                <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
-                <h3>Security Command Center</h3>
-                <p>Detección y respuesta ante amenazas globales. Inteligencia impulsada por Mandiant a su alcance.</p>
+            <div class="card reveal-up stagger-3">
+                <div class="card-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Cloud Security</h3>
+                <p>Protección avanzada de activos. Security Command Center y servicios integrados de defensa proactiva.</p>
             </div>
-            <div class="card reveal-up stagger-1" data-service="ia">
+            <div class="card reveal-up stagger-1">
                 <div class="card-icon"><i class="fas fa-server"></i></div>
                 <h3>Cloud Run</h3>
-                <p>Computación serverless moderna. Concéntrese en el código, mientras GCP se encarga del auto-escalado y la seguridad.</p>
+                <p>Ejecute contenedores en un entorno totalmente gestionado. Escalado automático y eficiencia de costos absoluta.</p>
             </div>
-            <div class="card reveal-up stagger-2" data-service="arch">
+            <div class="card reveal-up stagger-2">
                 <div class="card-icon"><i class="fas fa-cubes"></i></div>
-                <h3>GKE Enterprise</h3>
-                <p>Kubernetes industrial. Gestione flotas de contenedores en cualquier entorno híbrido o multi-cloud.</p>
+                <h3>GKE</h3>
+                <p>Google Kubernetes Engine. La forma más robusta y automatizada de orquestar microservicios a escala.</p>
             </div>
-            <div class="card reveal-up stagger-3" data-service="cyber">
-                <div class="card-icon"><i class="fas fa-lock"></i></div>
-                <h3>Identity & Access</h3>
-                <p>IAM escalable. Proteja cada endpoint y usuario con una arquitectura global de confianza cero.</p>
+            <div class="card reveal-up stagger-3">
+                <div class="card-icon"><i class="fas fa-id-card"></i></div>
+                <h3>Identity Platform</h3>
+                <p>Gestión de identidad y acceso segura. Autenticación de nivel empresarial para cada usuario y aplicación.</p>
             </div>
         </div>
     </section>
 
-    <!-- Arcano Ecosystem -->
     <section id="servicios" class="services">
         <div class="section-header reveal-up">
-            <span class="badge-new">Capacidades</span>
-            <h2>Ecosistema <span class="gradient-text">Arcano</span></h2>
-            <p>Soluciones integrales diseñadas para una transformación operativa de alto impacto y crecimiento exponencial.</p>
+            <h2>Ecosistema Integral</h2>
+            <p>Todo lo que necesitas para operar con orden y escalar sin caos.</p>
         </div>
         <div class="cards-grid">
-            <a href="services/ia-automation.html" class="card reveal-up stagger-1" data-service="ia"><div class="card-icon"><i class="fas fa-robot"></i></div><h3>IA y Automatización</h3><p>Elimine cuellos de botella manuales con flujos de trabajo autónomos personalizados e inteligencia predictiva.</p></a>
-            <a href="services/erp-crm.html" class="card reveal-up stagger-2" data-service="erp"><div class="card-icon"><i class="fas fa-layer-group"></i></div><h3>ERP y CRM</h3><p>Operaciones unificadas y visibilidad financiera mediante integraciones fluidas de plataformas globales.</p></a>
-            <a href="services/cybersecurity.html" class="card reveal-up stagger-3" data-service="cyber"><div class="card-icon"><i class="fas fa-lock"></i></div><h3>Ciberseguridad</h3><p>Defensa proactiva y protección de identidad para la continuidad del negocio global y el cumplimiento normativo.</p></a>
-            <a href="services/architecture.html" class="card reveal-up stagger-1" data-service="arch"><div class="card-icon"><i class="fas fa-network-wired"></i></div><h3>Arquitectura</h3><p>Diseño de sistemas empresariales. Pipelines de datos robustos, conectividad API y modernización de legado.</p></a>
-            <a href="services/governance.html" class="card reveal-up stagger-2" data-service="gov"><div class="card-icon"><i class="fas fa-book"></i></div><h3>Gobierno</h3><p>Playbooks operativos, políticas de seguridad y documentación para un escalamiento sostenible y seguro.</p></a>
-            <a href="services/management.html" class="card reveal-up stagger-3" data-service="mgmt"><div class="card-icon"><i class="fas fa-chart-line"></i></div><h3>Dirección y PMO</h3><p>Servicios de CTO Fraccional y gestión impulsada por roadmaps para equipos de ingeniería orientados a resultados.</p></a>
+            <a href="services/ia-automation.html" class="card reveal-up stagger-1" data-service="ia">
+                <div class="card-icon"><i class="fas fa-robot"></i></div>
+                <h3>IA & Automatización</h3>
+                <p>Asistentes internos, bots y workflows que eliminan la tarea manual y aceleran tu negocio.</p>
+            </a>
+            <a href="services/erp-crm.html" class="card reveal-up stagger-2" data-service="erp">
+                <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+                <h3>ERP & CRM</h3>
+                <p>Implementación e integración completa. Finanzas, ventas y operaciones unificadas.</p>
+            </a>
+            <a href="services/cybersecurity.html" class="card reveal-up stagger-3" data-service="cyber">
+                <div class="card-icon"><i class="fas fa-lock"></i></div>
+                <h3>Ciberseguridad</h3>
+                <p>Protección de identidad (IAM), MFA y continuidad operativa ante riesgos.</p>
+            </a>
+            <a href="services/architecture.html" class="card reveal-up stagger-1" data-service="arch">
+                <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                <h3>Arquitectura</h3>
+                <p>Diseño de sistemas coherentes, APIs y flujos de datos conectados end-to-end.</p>
+            </a>
+            <a href="services/governance.html" class="card reveal-up stagger-2" data-service="gov">
+                <div class="card-icon"><i class="fas fa-book"></i></div>
+                <h3>Gobierno</h3>
+                <p>Playbooks y documentación clara para escalar equipos sin perder el control.</p>
+            </a>
+            <a href="services/management.html" class="card reveal-up stagger-3" data-service="mgmt">
+                <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Dirección</h3>
+                <p>PMO ligera y gestión estratégica con roadmap a 90-180 días.</p>
+            </a>
         </div>
     </section>
 
-    <!-- Partnership Section -->
-    <section class="free-tier-section reveal-up">
-        <div class="section-header">
-            <span class="badge-new">Alianza Estratégica</span>
-            <h2>Google Cloud <span class="gradient-text">Partner Premier</span></h2>
-            <p>Nuestra profunda integración con Google Cloud nos permite ofrecer beneficios exclusivos y soporte técnico avanzado a nuestros clientes.</p>
-        </div>
-        <div class="free-tier-grid">
-            <div class="tier-card stagger-1">
-                <i class="fas fa-certificate"></i>
-                <h3>Experiencia Certificada</h3>
-                <p>Docenas de certificaciones en Análisis de Datos, Seguridad y Arquitectura Cloud.</p>
-            </div>
-            <div class="tier-card stagger-2">
-                <i class="fas fa-rocket"></i>
-                <h3>Acceso Anticipado</h3>
-                <p>Sea el primero en desplegar nuevas tecnologías de Google Cloud y modelos de IA como Gemini 1.5 Pro.</p>
-            </div>
-            <div class="tier-card stagger-3">
-                <i class="fas fa-handshake"></i>
-                <h3>Soporte Directo</h3>
-                <p>Línea directa con ingenieros de Google Cloud para la resolución rápida de problemas críticos de infraestructura.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Results Bar -->
-    <section class="results-bar reveal-up">
-        <div class="result-item stagger-1"><span class="big-number">99.9%</span><span class="label">Disponibilidad Cloud</span></div>
-        <div class="result-item stagger-2"><span class="big-number">$0*</span><span class="label">Evaluación de Migración</span></div>
-        <div class="result-item stagger-3"><span class="big-number">300+</span><span class="label">Soluciones GCP</span></div>
-        <div class="result-item stagger-4"><span class="big-number">∞</span><span class="label">Capacidad de IA</span></div>
-    </section>
-
-    <!-- Methodology & Contact (Standard Landing Flow) -->
-    <section id="contact" class="contact">
+    <section id="contacto" class="contact">
         <div class="contact-container reveal-up">
-            <div class="contact-text">
-                <h2>¿Listo para Evolucionar?</h2>
-                <p>Conéctese con nuestro equipo de ingeniería para una auditoría estratégica.</p>
+            <div class="contact-text stagger-1">
+                <h2>Hablemos de negocios.</h2>
+                <p>Agenda un diagnóstico ejecutivo. Entendemos tus objetivos y te damos un plan claro.</p>
             </div>
-            <form class="contact-form">
+            <form class="contact-form stagger-2">
                 <div class="form-group"><input type="text" placeholder="Nombre" required></div>
                 <div class="form-group"><input type="email" placeholder="Email Corporativo" required></div>
-                <button type="submit" class="btn-primary">INICIAR CONVERSACIÓN</button>
+                <button type="submit" class="btn-primary">Solicitar Agenda</button>
             </form>
         </div>
     </section>
@@ -249,11 +242,12 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ARCANO.</div>
-            <p class="copyright">&copy; 2026 Arcano Solutions. Partner Premier de Google Cloud.</p>
+            <p class="copyright">&copy; 2026 Arcano Solutions. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <script src="script.js?v=1.4"></script>
-    <script src="gemini_bot.js?v=1.4"></script>
+    <script src="script.js?v=1.5"></script>
+    <script src="gemini_bot.js?v=1.5"></script>
 </body>
+
 </html>

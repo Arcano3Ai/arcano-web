@@ -296,13 +296,25 @@ h4 {
 .hero {
     position: relative;
     min-height: 100vh;
-    padding: 160px 5% 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     z-index: 10;
+}
+
+.hero-visual {
+    position: absolute;
+    inset: 0;
+    z-index: 1; /* Lowest layer */
+    pointer-events: none;
+}
+
+.hero-bot-integrated {
+    position: relative;
+    z-index: 20; /* Above animation */
+    width: 100%;
 }
 
 /* Google Color Accents */
@@ -1150,6 +1162,33 @@ footer {
 }
 
 /* Utils */
+/* Monumental Style Restore */
+.cloud-parallax-container {
+    background-color: #020204;
+    background-image: radial-gradient(circle at 50% 50%, var(--ambient-color, rgba(59, 130, 246, 0.1)), transparent 70%);
+}
+
+.monumental-title {
+    font-size: clamp(6rem, 18vw, 14rem);
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    z-index: 20;
+    font-family: var(--font-display);
+}
+
+.monumental-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.5rem);
+    color: var(--text-muted);
+    max-width: 800px;
+    margin: 0 auto;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
 /* Fail-safe: Default visible */
 .reveal-up {
     opacity: 1;
