@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 botContainer.classList.add('status-idle');
                 statusText.textContent = t.ready;
                 startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${t.start}`;
+                // Don't clear transcriptArea immediately here to avoid flicker
                 break;
             case 'connecting':
                 botContainer.classList.add('status-connecting');
@@ -60,9 +61,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 botContainer.classList.add('status-active');
                 statusText.textContent = t.active;
                 startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
-                transcriptArea.innerHTML = '';
-                transcriptArea.style.display = 'flex';
-                reportArea.style.display = 'none';
+                
+                // Use a soft transition for clearing
+                transcriptArea.style.opacity = '0';
+                setTimeout(() => {
+                    transcriptArea.innerHTML = '';
+                    transcriptArea.style.opacity = '1';
+                    transcriptArea.style.display = 'flex';
+                    reportArea.style.display = 'none';
+                }, 200);
+                
                 messageCount = 0;
                 break;
         }
