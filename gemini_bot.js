@@ -38,25 +38,36 @@ document.addEventListener('DOMContentLoaded', () => {
     let scriptProcessor = null;
     let microphoneNode = null;
     let micContext = null;
+    let recognition = null; // Local STT for user experience
 
-    let apiKey = null;
+    // ─── STT Initialization ─────────────────────────────────────
+    function initRecognition() {
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            console.warn('Speech Recognition not supported in this browser.');
+            return;
+        }
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'es-ES';
+
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    addMessage('user', event.results[i][0].transcript);
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+            // Optional: update a temporary interim bubble if desired
+        };
+    }
+
+    initRecognition();
 
     const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
-
-    // Determinar la URL correcta del WebSocket (Local vs Producción)
-    const isLocal = window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1';
-
-    let WS_URL;
-    if (isLocal) {
-        // En local, siempre forzamos el puerto 8080 del servidor Node
-        WS_URL = `ws://localhost:8080/`;
-    } else {
-        // En producción, usamos el mismo host y protocolo (ws o wss)
-        WS_URL = window.location.protocol === 'https:' ?
-            `wss://${window.location.host}/` :
-            `ws://${window.location.host}/`;
-    }
 
     // ─── UI State ───────────────────────────────────────────────
     const setStatus = (status) => {
@@ -65,28 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (status) {
             case 'idle':
                 botContainer.classList.add('status-idle');
-                statusContainer.classList.add('status-idle-text');
-                statusText.textContent = 'DESCONECTADO';
-                startBtn.innerHTML = '<i class="fas fa-play"></i> Iniciar Conversación';
-                startBtn.classList.remove('btn-danger');
+                statusText.textContent = 'LISTO';
+                startBtn.innerHTML = '<i class="fas fa-terminal"></i> Iniciar Neural Core';
+                if (recognition) recognition.stop();
                 break;
             case 'connecting':
                 botContainer.classList.add('status-connecting');
-                statusContainer.classList.add('status-connecting-text');
-                statusText.textContent = 'CONECTANDO E INICIANDO NEURAL ENGINE...';
-                startBtn.innerHTML = '<i class="fas fa-stop"></i> Cancelar';
-                startBtn.classList.add('btn-danger');
+                statusText.textContent = 'INICIALIZANDO...';
                 break;
             case 'active':
                 botContainer.classList.add('status-active');
-                statusContainer.classList.add('status-active-text');
                 statusText.textContent = 'SISTEMA ACTIVO';
-                transcriptArea.style.display = 'block';
-                reportArea.style.display = 'none';
-                visualWrapper.style.display = 'block';
-                transcriptArea.innerHTML = ''; // Clear old chat
-                startBtn.innerHTML = '<i class="fas fa-stop"></i> Finalizar y generar informe';
-                startBtn.classList.add('btn-danger');
+                transcriptArea.innerHTML = '';
+                if (recognition) recognition.start();
+                startBtn.innerHTML = '<i class="fas fa-stop"></i> Finalizar Sesión';
                 break;
         }
     };

@@ -184,24 +184,38 @@
         0 0 20px rgba(85, 230, 165, 0.1),
         inset 0 0 20px rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
     z-index: 5;
 }
 
-.bot-orb #bot-icon {
-    font-size: 2.2rem;
-    color: #fff;
-    filter: drop-shadow(0 0 10px rgba(85, 230, 165, 0.4));
-    z-index: 6;
-    transition: all 0.3s ease;
+/* Active Core State */
+.status-active .bot-orb {
+    border-color: #55e6a5;
+    box-shadow: 0 0 40px rgba(85, 230, 165, 0.4);
+    background: radial-gradient(circle at 35% 35%, #064e3b, #020617);
+}
+
+.status-active .bot-orb::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 2px solid #55e6a5;
+    animation: orbScan 2s linear infinite;
+    opacity: 0.5;
+}
+
+@keyframes orbScan {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.4); opacity: 0; }
 }
 
 .ai-waves {
     position: absolute;
-    inset: -15px;
+    inset: -20px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(85, 230, 165, 0.2) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(85, 230, 165, 0.25) 0%, transparent 70%);
     opacity: 0;
     transition: opacity 0.5s ease;
     pointer-events: none;
@@ -210,35 +224,28 @@
 
 .status-active .ai-waves {
     opacity: 1;
-}
-
-/* Neural Grid Background */
-.ai-bot-container::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(85, 230, 165, 0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
-    opacity: 0.3;
-    pointer-events: none;
-    z-index: -1;
+    animation: breathe-active 1.5s infinite alternate;
 }
 
 .bot-transcript-area {
-    width: 100%;
-    height: 200px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    width: 100% !important;
+    height: 250px !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(85, 230, 165, 0.2) !important;
     border-radius: 12px;
     padding: 15px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     overflow-y: auto;
-    display: flex;
+    display: none; /* Hidden until active */
     flex-direction: column;
     gap: 12px;
     margin-bottom: 20px;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
+    backdrop-filter: blur(15px);
+}
+
+.status-active .bot-transcript-area {
+    display: flex !important;
 }
 
 .user-msg, .ai-msg {
