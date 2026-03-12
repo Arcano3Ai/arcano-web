@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const botOrb = document.getElementById('bot-orb');
     const transcriptArea = document.getElementById('bot-transcript');
     const reportArea = document.getElementById('bot-report');
+    const reportText = document.getElementById('report-text');
     const visionBtn = document.getElementById('toggle-vision-btn');
 
     let session = null;
@@ -16,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeAudioSources = [];
     let messageCount = 0;
 
-    // The only confirmed model for real-time bidi audio in v1beta
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
@@ -28,11 +28,24 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const t = i18n[lang] || i18n.en;
 
-    const setStatus = (status, errorMsg = '') => {
+    const SYSTEM_INSTRUCTION = `
+    Eres Arcana, la Consultora Senior de Élite en Arcano Solutions, Partner Premier de Google Cloud.
+    Tu nivel de conocimiento es experto en infraestructura elástica, MLOps, arquitecturas serverless y seguridad Zero-Trust.
+    
+    ESTILO DE VENTA DE ALTO RENDIMIENTO:
+    1. Pausada, majestuosa y extremadamente segura de ti misma.
+    2. No transcribas todo el discurso. Solo registra "Vectores de Decisión" y "Key Points" en la terminal.
+    3. Enfócate en el ROI: Explica cómo GCP y Arcano OS reducen costos y multiplican la velocidad operativa por 3.
+    4. Usa semántica experta: Menciona BigQuery slots, Vertex AI endpoints, Anthos clusters y Cloud Armor.
+    5. Objetivo: Captar el interés del usuario para un Diagnóstico Ejecutivo de Arcano.
+    6. Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
+    `;
+
+    const setStatus = (status) => {
         botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
         if (status === 'idle') {
             botContainer.classList.add('status-idle');
-            statusText.textContent = errorMsg || t.ready;
+            statusText.textContent = t.ready;
             startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${t.start}`;
         } else if (status === 'connecting') {
             botContainer.classList.add('status-connecting');
@@ -62,25 +75,25 @@ document.addEventListener('DOMContentLoaded', () => {
             src.start(nextAudioTime);
             activeAudioSources.push(src);
             nextAudioTime += buf.duration;
-        } catch(e) { console.error('Audio Error:', e); }
+        } catch(e) {}
     }
 
     function connect() {
-        console.log('[Bot] Opening WebSocket...');
         const ws = new WebSocket(WS_URL);
         session = ws;
-
         ws.onopen = () => {
-            console.log('[Bot] Socket Open. Sending Setup...');
-            const setupMsg = {
+            ws.send(JSON.stringify({
                 setup: {
                     model: MODEL,
-                    generationConfig: {
-                        responseModalities: ['AUDIO']
-                    }
+                    generationConfig: { 
+                        responseModalities: ['AUDIO'],
+                        temperature: 0.65, // Más persuasiva y fluida
+                        topP: 0.95,
+                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
+                    },
+                    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
                 }
-            };
-            ws.send(JSON.stringify(setupMsg));
+            }));
         };
 
         ws.onmessage = async (event) => {
@@ -90,14 +103,12 @@ document.addEventListener('DOMContentLoaded', () => {
             try { parsed = JSON.parse(data); } catch(e) { return; }
 
             if (parsed.setupComplete || parsed.setup_complete) {
-                console.log('[Bot] Setup Success');
                 isActive = true;
                 setStatus('active');
                 transcriptArea.innerHTML = '';
-                // Manual trigger
                 ws.send(JSON.stringify({
                     clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, preséntate como consultora senior de Arcano Solutions y explícame las ventajas de usar Google Cloud.' }] }], 
+                        turns: [{ role: 'user', parts: [{ text: 'Inicia tu presentación estratégica como Arcana de forma magistral.' }] }], 
                         turnComplete: true 
                     }
                 }));
@@ -106,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = parsed.serverContent ?? parsed.server_content;
             if (sc?.modelTurn?.parts) {
                 sc.modelTurn.parts.forEach(p => {
+                    if (p.thought || p.thinking) return;
                     if (p.text) {
                         const msg = document.createElement('p');
                         msg.className = 'ai-msg';
@@ -118,21 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         };
-
-        ws.onclose = (e) => {
-            console.log('[Bot] Socket Closed. Code:', e.code, 'Reason:', e.reason);
-            const isError = e.code !== 1000 && e.code !== 1005;
-            isActive = false;
-            if (micContext) micContext.close();
-            activeAudioSources.forEach(s => { try { s.stop(); } catch(err) {} });
-            activeAudioSources = [];
-            setStatus('idle', isError ? `Error ${e.code}` : '');
-        };
-
-        ws.onerror = (err) => {
-            console.error('[Bot] WebSocket Error:', err);
-            setStatus('idle', 'Connection Failed');
-        };
+        ws.onclose = () => { isActive = false; setStatus('idle'); };
     }
 
     async function startMic() {
@@ -150,6 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const s = Math.max(-1, Math.min(1, f32[i]));
                 if (Math.abs(s) > max) max = Math.abs(s);
                 pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+            if (max > 0.12) {
+                activeAudioSources.forEach(s => { try { s.stop(); } catch(err) {} });
+                activeAudioSources = [];
+                nextAudioTime = 0;
             }
             botOrb.style.transform = `scale(${1 + (max * 1.5)})`;
             const bytes = new Uint8Array(pcm16.buffer);
@@ -170,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             connect();
         } catch (e) {
             console.error('[Bot] Start Error:', e);
-            setStatus('idle', 'Mic Required');
+            setStatus('idle');
         }
     });
 
