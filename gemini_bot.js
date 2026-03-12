@@ -1,13 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Detect if running on file:// protocol
-    if (window.location.protocol === 'file:') {
-        alert("⚠️ ATENCIÓN: Estás abriendo el archivo localmente. Usa un servidor para el micrófono.");
-    }
-
     // --- DOM Elements ---
     const startBtn = document.getElementById('start-bot-btn');
     const statusText = document.getElementById('bot-status-text');
-    const statusContainer = document.querySelector('.bot-status-container-hero');
     const botContainer = document.querySelector('.hero-bot-integrated');
     const botOrb = document.getElementById('bot-orb');
     const transcriptArea = document.getElementById('bot-transcript');
@@ -22,123 +16,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let isActive = false;
     let visionActive = false;
     let videoStream = null;
-    let frameInterval = null;
     let mediaStream = null;
     let audioContext = null;
-    let nextAudioTime = 0;
-    let scriptProcessor = null;
-    let microphoneNode = null;
     let micContext = null;
-    let recognition = null; 
-    let sessionTimer = null;
-    const SESSION_LIMIT = 180000; // 3 minutes
-
+    let scriptProcessor = null;
+    let nextAudioTime = 0;
     let activeAudioSources = [];
-    let messageCount = 0; // To prevent empty reports
+    let messageCount = 0;
 
-    // ─── Network Config ────────────────────────────────────────
-    // Change to a very stable model string
     const MODEL = 'models/gemini-2.0-flash-exp'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
-    // ─── Language Support ─────────────────────────────────────
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: {
-            ready: 'SYSTEM READY',
-            initializing: 'INITIALIZING...',
-            active: 'SYSTEM ACTIVE',
-            start: 'START CONSULTANCY',
-            stop: 'END SESSION',
-            vision: 'VISION',
-            limit: 'Initial diagnostic time has concluded. Generating value proposal...',
-            micError: 'Microphone access denied.',
-            generating: 'Generating Strategic Strategy...',
-            sendReport: 'Send Report to my Email',
-            name: 'Full Name',
-            email: 'Corporate Email',
-            sendBtn: 'SEND STRATEGY NOW',
-            success: 'Strategy sent successfully!',
-            error: 'Error saving lead',
-            connError: 'Connection failed. Please check your API key or network.'
-        },
-        es: {
-            ready: 'SISTEMA LISTO',
-            initializing: 'INICIALIZANDO...',
-            active: 'SISTEMA ACTIVO',
-            start: 'INICIAR CONSULTORÍA',
-            stop: 'FINALIZAR SESIÓN',
-            vision: 'VISIÓN',
-            limit: 'El tiempo de diagnóstico inicial ha concluido. Generando propuesta de valor...',
-            micError: 'Acceso al micrófono denegado.',
-            generating: 'Generando Estrategia Estratégica...',
-            sendReport: 'Enviar Reporte a mi Correo',
-            name: 'Nombre Completo',
-            email: 'Correo Corporativo',
-            sendBtn: 'ENVIAR ESTRATEGIA AHORA',
-            success: '¡Estrategia enviada con éxito!',
-            error: 'Error al guardar el prospecto',
-            connError: 'Error de conexión. Verifique su API Key o red.'
-        }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', gen: 'Generating Strategy...', send: 'SEND STRATEGY' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', gen: 'Generando Estrategia...', send: 'ENVIAR ESTRATEGIA' }
     };
     const t = i18n[lang] || i18n.en;
-
-    // ─── Vision Logic ─────────────────────────────────────────
-    async function startVision() {
-        try {
-            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
-            videoPreview.srcObject = videoStream;
-            videoPreview.style.display = 'block';
-            botOrb.style.opacity = '0.1';
-            visionActive = true;
-            visionBtn.innerHTML = '<i class="fas fa-eye-slash"></i> ' + (lang==='es'?'DESACTIVAR':'STOP');
-            visionBtn.classList.add('btn-danger');
-
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 320;
-            canvas.height = 320;
-
-            frameInterval = setInterval(() => {
-                if (!session || session.readyState !== WebSocket.OPEN || !visionActive) return;
-                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
-                const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
-                session.send(JSON.stringify({
-                    realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64Frame }] }
-                }));
-            }, 1000);
-        } catch (e) { alert("Camera access denied."); }
-    }
-
-    function stopVision() {
-        visionActive = false;
-        if (videoStream) videoStream.getTracks().forEach(t => t.stop());
-        if (frameInterval) clearInterval(frameInterval);
-        videoPreview.style.display = 'none';
-        botOrb.style.opacity = '1';
-        visionBtn.innerHTML = '<i class="fas fa-eye"></i> ' + t.vision;
-        visionBtn.classList.remove('btn-danger');
-    }
-
-    visionBtn.addEventListener('click', () => {
-        if (visionActive) stopVision(); else startVision();
-    });
-
-    // ─── Stop AI Audio (Interruption) ──────────────────────────
-    function stopAIAudio() {
-        activeAudioSources.forEach(source => {
-            try { source.stop(); } catch(e) {}
-        });
-        activeAudioSources = [];
-        nextAudioTime = 0;
-    }
 
     // ─── UI State ───────────────────────────────────────────────
     const setStatus = (status) => {
         botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
-        if (sessionTimer) { clearTimeout(sessionTimer); sessionTimer = null; }
-
         switch (status) {
             case 'idle':
                 botContainer.classList.add('status-idle');
@@ -147,175 +46,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
             case 'connecting':
                 botContainer.classList.add('status-connecting');
-                statusText.textContent = t.initializing;
+                statusText.textContent = t.init;
                 break;
             case 'active':
                 botContainer.classList.add('status-active');
                 statusText.textContent = t.active;
-                
-                // RESET UI FOR NEW CONVERSATION
-                transcriptArea.innerHTML = ''; 
+                startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
+                transcriptArea.innerHTML = '';
                 transcriptArea.style.display = 'flex';
                 reportArea.style.display = 'none';
-                visualWrapper.style.opacity = '1';
-                visualWrapper.style.display = 'flex';
-                visionBtn.parentElement.style.display = 'inline-block';
                 messageCount = 0;
-
-                startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
-                
-                sessionTimer = setTimeout(() => {
-                    addMessage('ai', t.limit);
-                    setTimeout(() => disconnect(), 4000);
-                }, SESSION_LIMIT);
                 break;
         }
     };
 
-    setStatus('idle');
-
-    startBtn.addEventListener('click', async () => {
-        if (isActive || session) { 
-            disconnect(); 
-            return; 
-        }
-        
-        // Preparation
-        transcriptArea.innerHTML = `<p class="ai-msg">${t.initializing}</p>`;
-        transcriptArea.style.display = 'flex';
-        reportArea.style.display = 'none';
-        
-        setStatus('connecting');
-        try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
-            await startMic();
-            connect();
-        } catch (e) { 
-            console.error('[Bot] Mic start error:', e);
-            alert(t.micError);
-            setStatus('idle'); 
-        }
-    });
-
-    function addMessage(role, text) {
-        const p = document.createElement('p');
-        p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
-        p.textContent = (role === 'ai' ? '🤖 ' : '👤 ') + text;
-        transcriptArea.appendChild(p);
-        transcriptArea.scrollTop = transcriptArea.scrollHeight;
-        if (isActive) messageCount++;
+    // ─── Interruption ──────────────────────────────────────────
+    function stopAIAudio() {
+        activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
+        activeAudioSources = [];
+        nextAudioTime = 0;
     }
 
-    // ─── WebSocket Connection ───────────────────────────────────
-    function connect() {
-        console.log('[Bot] Connecting to:', WS_URL);
-        const ws = new WebSocket(WS_URL);
-        session = ws;
-        
-        ws.onopen = () => {
-            console.log('[Bot] WebSocket Opened');
-            const setupMsg = {
-                setup: {
-                    model: MODEL,
-                    generationConfig: {
-                        responseModalities: ['AUDIO'],
-                        temperature: 0.4,
-                        top_p: 0.95,
-                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
-                    },
-                    systemInstruction: {
-                        parts: [{ text: `You are Arcano OS, an Elite Senior Consultant. Powered by Google Cloud. TONE: Strategic, professional, authoritative. MISSION: Persuade the user that Arcano + GCP is the best strategic choice. Mention Google Cloud advantages. LANGUAGE: ${lang==='es'?'Spanish':'English'}.` }]
-                    }
-                }
-            };
-            ws.send(JSON.stringify(setupMsg));
-        };
-
-        ws.onmessage = async (event) => {
-            let raw = event.data;
-            if (raw instanceof Blob) raw = await raw.text();
-            let data;
-            try { data = JSON.parse(raw); } catch (e) { return; }
-
-            if ((data.setupComplete || data.setup_complete) && !isActive) {
-                console.log('[Bot] Setup Complete');
-                isActive = true;
-                setStatus('active');
-                // Initial prompt to start conversation
-                ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hello, please start the professional consultancy.' }] }], turnComplete: true }
-                }));
-                return;
-            }
-
-            const sc = data.serverContent ?? data.server_content;
-            if (sc) {
-                const mt = sc.modelTurn ?? sc.model_turn;
-                if (mt?.parts) {
-                    for (const p of mt.parts) {
-                        if (p.text) addMessage('ai', p.text);
-                        if (p.inlineData?.data) playPCM(p.inlineData.data);
-                    }
-                }
-            }
-        };
-
-        ws.onclose = (e) => { 
-            console.log('[Bot] WebSocket Closed:', e.code, e.reason);
-            if (isActive) {
-                disconnect(); 
-            } else {
-                if (e.code !== 1000) alert(t.connError);
-                setStatus('idle');
-            }
-        };
-
-        ws.onerror = (e) => { 
-            console.error('[Bot] WebSocket Error:', e);
-            setStatus('idle'); 
-        };
-    }
-
-    // ─── Microphone ───────────────────────────────────────────
-    async function startMic() {
-        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true } });
-        micContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-        microphoneNode = micContext.createMediaStreamSource(mediaStream);
-        await micContext.audioWorklet.addModule('audio-processor.js');
-        scriptProcessor = new AudioWorkletNode(micContext, 'audio-processor');
-        
-        scriptProcessor.port.onmessage = (e) => {
-            if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
-            const f32 = e.data;
-            let max = 0;
-            for (let i = 0; i < f32.length; i++) { if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]); }
-            
-            // Interruption Logic
-            if (max > 0.12) {
-                stopAIAudio();
-            }
-
-            requestAnimationFrame(() => {
-                const scale = 1 + (max * 1.5);
-                botOrb.style.transform = `scale(${scale})`;
-                botOrb.style.boxShadow = `0 0 ${40 + (max * 80)}px rgba(85, 230, 165, 0.4)`;
-            });
-
-            const pcm16 = new Int16Array(f32.length);
-            for (let i = 0; i < f32.length; i++) {
-                const s = Math.max(-1, Math.min(1, f32[i]));
-                pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-            }
-            const bytes = new Uint8Array(pcm16.buffer);
-            let binary = '';
-            for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
-            session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: btoa(binary) }] } }));
-        };
-        
-        microphoneNode.connect(scriptProcessor);
-        scriptProcessor.connect(micContext.destination);
-    }
-
+    // ─── Audio Output (24kHz) ──────────────────────────────────
     function playPCM(base64) {
         if (!audioContext) return;
         const binary = atob(base64);
@@ -340,9 +92,101 @@ document.addEventListener('DOMContentLoaded', () => {
         nextAudioTime += buf.duration;
     }
 
+    // ─── WebSocket ─────────────────────────────────────────────
+    function connect() {
+        const ws = new WebSocket(WS_URL);
+        session = ws;
+        ws.onopen = () => {
+            ws.send(JSON.stringify({
+                setup: {
+                    model: MODEL,
+                    generationConfig: {
+                        responseModalities: ['AUDIO'],
+                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
+                    },
+                    systemInstruction: {
+                        parts: [{ text: `You are Arcano OS, an Elite Senior Consultant. Powered by Google Cloud. LANGUAGE: ${lang === 'es' ? 'Spanish' : 'English'}. TONE: Authoritative and Strategic. MISSION: Help the user understand the benefits of Arcano + Google Cloud.` }]
+                    }
+                }
+            }));
+        };
+
+        ws.onmessage = async (event) => {
+            let raw = event.data;
+            if (raw instanceof Blob) raw = await raw.text();
+            const data = JSON.parse(raw);
+
+            if ((data.setupComplete || data.setup_complete) && !isActive) {
+                isActive = true;
+                setStatus('active');
+                // FORCE FIRST MESSAGE
+                ws.send(JSON.stringify({
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Please introduce yourself and explain Arcano Solutions benefits.' }] }], turnComplete: true }
+                }));
+                return;
+            }
+
+            const sc = data.serverContent ?? data.server_content;
+            if (sc?.modelTurn?.parts) {
+                sc.modelTurn.parts.forEach(p => {
+                    if (p.text) {
+                        addMessage('ai', p.text);
+                        messageCount++;
+                    }
+                    if (p.inlineData?.data) playPCM(p.inlineData.data);
+                });
+            }
+        };
+        ws.onclose = () => disconnect();
+        ws.onerror = () => setStatus('idle');
+    }
+
+    // ─── Microphone (16kHz) ─────────────────────────────────────
+    async function startMic() {
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000, channelCount: 1, echoCancellation: true } });
+        micContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        await micContext.audioWorklet.addModule('audio-processor.js');
+        const micNode = micContext.createMediaStreamSource(mediaStream);
+        scriptProcessor = new AudioWorkletNode(micContext, 'audio-processor');
+        
+        scriptProcessor.port.onmessage = (e) => {
+            if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
+            const f32 = e.data;
+            let max = 0;
+            for (let i = 0; i < f32.length; i++) { if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]); }
+            
+            // Interruption
+            if (max > 0.12) stopAIAudio();
+
+            requestAnimationFrame(() => {
+                const scale = 1 + (max * 1.5);
+                botOrb.style.transform = `scale(${scale})`;
+                botOrb.style.boxShadow = `0 0 ${40 + (max * 80)}px rgba(85, 230, 165, 0.4)`;
+            });
+
+            const pcm16 = new Int16Array(f32.length);
+            for (let i = 0; i < f32.length; i++) {
+                const s = Math.max(-1, Math.min(1, f32[i]));
+                pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+            const bytes = new Uint8Array(pcm16.buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+            session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: btoa(binary) }] } }));
+        };
+        micNode.connect(scriptProcessor);
+        scriptProcessor.connect(micContext.destination);
+    }
+
+    function addMessage(role, text) {
+        const p = document.createElement('p');
+        p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
+        p.textContent = (role === 'ai' ? '🤖 ' : '👤 ') + text;
+        transcriptArea.appendChild(p);
+        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+    }
+
     function disconnect() {
-        if (visionActive) stopVision();
-        const wasActive = isActive;
         isActive = false;
         stopAIAudio();
         if (session) { session.close(); session = null; }
@@ -350,13 +194,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
         if (micContext) { micContext.close(); micContext = null; }
 
-        // ONLY generate report if there were at least 3 messages (avoid false starts)
-        if (wasActive && messageCount >= 3) {
+        if (messageCount > 1) {
             transcriptArea.style.display = 'none';
-            visionBtn.parentElement.style.display = 'none';
             reportArea.style.display = 'flex';
-            reportText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.generating}`;
-            
+            reportText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.gen}`;
             const fullTranscript = Array.from(transcriptArea.querySelectorAll('p')).map(p => p.textContent).join('\n');
             fetch('/api/generate_report', {
                 method: 'POST',
@@ -366,35 +207,21 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 reportText.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.report) : data.report;
-                const leadForm = document.getElementById('lead-capture-form');
-                if (leadForm) {
-                    leadForm.innerHTML = `
-                        <h3 style="margin-bottom: 10px; font-size: 1rem; color: #fff;">${t.sendReport}</h3>
-                        <input type="text" id="lead-name" placeholder="${t.name}" class="bot-input-hero">
-                        <input type="email" id="lead-email" placeholder="${t.email}" class="bot-input-hero">
-                        <button id="save-lead-btn" class="btn-antigravity" style="width: 100%;">${t.sendBtn}</button>
-                    `;
-                    leadForm.style.display = 'flex';
-                    document.getElementById('save-lead-btn').onclick = async () => {
-                        const name = document.getElementById('lead-name').value;
-                        const email = document.getElementById('lead-email').value;
-                        if (!name || !email) return;
-                        try {
-                            const res = await fetch('/api/save_lead', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ name, email, interest: 'Strategic AI Consulting', message: data.report })
-                            });
-                            if (res.ok) leadForm.innerHTML = `<p style="color: #55e6a5; text-align:center;">${t.success}</p>`;
-                        } catch (e) { alert(t.error); }
-                    };
-                }
+                document.getElementById('lead-capture-form').style.display = 'flex';
             });
-        } else {
-            // Reset UI if it was a false start
-            transcriptArea.style.display = 'flex';
-            reportArea.style.display = 'none';
         }
         setStatus('idle');
     }
+
+    startBtn.addEventListener('click', async () => {
+        if (isActive || session) { disconnect(); return; }
+        setStatus('connecting');
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+            await startMic();
+            connect();
+        } catch (e) { setStatus('idle'); }
+    });
+
+    setStatus('idle');
 });
