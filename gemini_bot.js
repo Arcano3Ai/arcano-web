@@ -79,6 +79,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (visionActive) stopVision(); else startVision();
     });
 
+    // ─── Multi-language Support ─────────────────────────────────
+    const lang = document.documentElement.lang || 'en';
+    const i18n = {
+        en: {
+            ready: 'SYSTEM READY',
+            initializing: 'INITIALIZING...',
+            active: 'SYSTEM ACTIVE',
+            start: 'START CONSULTANCY',
+            stop: 'END SESSION',
+            vision: 'VISION',
+            limit: 'Initial diagnostic time has concluded. Generating value proposal...',
+            micError: 'Microphone access denied.'
+        },
+        es: {
+            ready: 'SISTEMA LISTO',
+            initializing: 'INICIALIZANDO...',
+            active: 'SISTEMA ACTIVO',
+            start: 'INICIAR CONSULTORÍA',
+            stop: 'FINALIZAR SESIÓN',
+            vision: 'VISIÓN',
+            limit: 'El tiempo de diagnóstico inicial ha concluido. Generando propuesta de valor...',
+            micError: 'Acceso al micrófono denegado.'
+        }
+    };
+    const t = i18n[lang] || i18n.en;
+
     // ─── STT Initialization ─────────────────────────────────────
     function initRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return;
@@ -86,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
         recognition = new SpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'es-ES';
+        recognition.lang = lang === 'es' ? 'es-ES' : 'en-US';
         recognition.onresult = (event) => {
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) addMessage('user', event.results[i][0].transcript);
@@ -104,23 +130,23 @@ document.addEventListener('DOMContentLoaded', () => {
         switch (status) {
             case 'idle':
                 botContainer.classList.add('status-idle');
-                statusText.textContent = 'SISTEMA LISTO';
-                startBtn.innerHTML = '<i class="fas fa-terminal"></i> INICIAR NEURAL CORE';
+                statusText.textContent = t.ready;
+                startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${t.start}`;
                 if (recognition) try { recognition.stop(); } catch(e){}
                 break;
             case 'connecting':
                 botContainer.classList.add('status-connecting');
-                statusText.textContent = 'INICIALIZANDO...';
+                statusText.textContent = t.initializing;
                 break;
             case 'active':
                 botContainer.classList.add('status-active');
-                statusText.textContent = 'SISTEMA ACTIVO';
+                statusText.textContent = t.active;
                 transcriptArea.innerHTML = '';
                 if (recognition) try { recognition.start(); } catch(e){}
-                startBtn.innerHTML = '<i class="fas fa-stop"></i> FINALIZAR SESIÓN';
+                startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
                 
                 sessionTimer = setTimeout(() => {
-                    addMessage('ai', 'El tiempo de diagnóstico inicial ha concluido. Generando propuesta de valor...');
+                    addMessage('ai', t.limit);
                     setTimeout(() => disconnect(), 4000);
                 }, SESSION_LIMIT);
                 break;
