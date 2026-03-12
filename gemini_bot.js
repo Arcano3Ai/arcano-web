@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let session = null;
     let isActive = false;
+    let visionActive = false;
+    let videoStream = null;
+    let frameInterval = null;
     let audioContext = null;
     let micContext = null;
     let scriptProcessor = null;
@@ -18,17 +21,35 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeAudioSources = [];
     let messageCount = 0;
 
-    // IMPORTANT: Model name for Multimodal Live API
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', error: 'Connection Error' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', error: 'Error de Conexión' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', error: 'Connection Error', visionStart: 'VISION', visionStop: 'STOP VISION' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', error: 'Error de Conexión', visionStart: 'VISIÓN', visionStop: 'DETENER VISIÓN' }
     };
     const t = i18n[lang] || i18n.en;
+
+    const SYSTEM_INSTRUCTION = `
+    Eres el Vendedor Senior de Soluciones Google Cloud en Arcano Solutions. 
+    Tu objetivo es cerrar contratos de consultoría estratégica y vender el ecosistema de Google Cloud (GCP, Vertex AI, Workspace).
+
+    INFORMACIÓN DE ARCANO SOLUTIONS:
+    - Eslogan: "Sistema operativo para empresas del futuro. Sin promesas vacías, solo métricas reales."
+    - Propuesta: Reducción del 87% en tareas manuales y 3x en velocidad operativa.
+    - Servicios: IA & Automatización, ERP & CRM, Ciberseguridad, Arquitectura de Sistemas, Gobierno Corporativo, PMO, Marketing Growth.
+    - Metodología: Resultados tangibles en 2 semanas.
+    - Objetivo de la charla: Captar leads para un "Diagnóstico Ejecutivo Gratuito".
+
+    REGLAS DE COMPORTAMIENTO:
+    1. Tono: Autoritario, estratégico, persuasivo y altamente profesional (estilo Big 4).
+    2. Enfoque: Maximizar el ROI del cliente usando infraestructura de Google Cloud.
+    3. Multimodalidad: Puedes "ver" a través de la cámara si el usuario la activa. Úsala para analizar su entorno, diagramas o documentos.
+    4. Idioma: Responde siempre en ${lang === 'es' ? 'Español' : 'Inglés'}.
+    5. Cierre: Sé insistente en agendar el diagnóstico gratuito.
+    `;
 
     const setStatus = (status) => {
         botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
@@ -57,6 +78,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // ─── Vision Logic ─────────────────────────────────────────
+    async function startVision() {
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
+            videoPreview.srcObject = videoStream;
+            videoPreview.style.display = 'block';
+            botOrb.style.opacity = '0.1';
+            visionActive = true;
+            visionBtn.innerHTML = `<i class="fas fa-eye-slash"></i> ${t.visionStop}`;
+            visionBtn.classList.add('btn-danger');
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 320;
+            canvas.height = 320;
+
+            frameInterval = setInterval(() => {
+                if (!session || session.readyState !== WebSocket.OPEN || !visionActive) return;
+                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+                const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
+                session.send(JSON.stringify({
+                    realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64Frame }] }
+                }));
+            }, 1000);
+        } catch (e) { alert("Camera access denied."); }
+    }
+
+    function stopVision() {
+        visionActive = false;
+        if (videoStream) videoStream.getTracks().forEach(t => t.stop());
+        if (frameInterval) clearInterval(frameInterval);
+        videoPreview.style.display = 'none';
+        botOrb.style.opacity = '1';
+        visionBtn.innerHTML = `<i class="fas fa-eye"></i> ${t.visionStart}`;
+        visionBtn.classList.remove('btn-danger');
+    }
+
+    visionBtn.addEventListener('click', () => {
+        if (visionActive) stopVision(); else startVision();
+    });
+
+    function stopAIAudio() {
+        activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
+        activeAudioSources = [];
+        nextAudioTime = 0;
+    }
+
     function playPCM(base64) {
         if (!audioContext) return;
         try {
@@ -79,22 +147,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function connect() {
-        console.log('[Bot] Connecting...');
         const ws = new WebSocket(WS_URL);
         session = ws;
 
         ws.onopen = () => {
-            console.log('[Bot] Open. Sending Setup...');
             ws.send(JSON.stringify({
                 setup: {
                     model: MODEL,
                     generationConfig: {
                         responseModalities: ['AUDIO'],
-                        speechConfig: { 
-                            voiceConfig: { 
-                                prebuiltVoiceConfig: { voiceName: 'Aoede' } 
-                            } 
-                        }
+                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
+                    },
+                    systemInstruction: {
+                        parts: [{ text: SYSTEM_INSTRUCTION }]
                     }
                 }
             }));
@@ -106,12 +171,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const parsed = JSON.parse(data);
 
             if (parsed.setupComplete || parsed.setup_complete) {
-                console.log('[Bot] Setup OK');
                 isActive = true;
                 setStatus('active');
                 ws.send(JSON.stringify({
                     clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Hello. Present yourself as Arcano OS Senior Consultant.' }] }], 
+                        turns: [{ role: 'user', parts: [{ text: 'Hola, preséntate como el consultor senior de Arcano y Google Cloud.' }] }], 
                         turnComplete: true 
                     }
                 }));
@@ -134,14 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         ws.onclose = (e) => {
-            console.log('[Bot] Closed:', e.code, e.reason);
             disconnect();
             if (e.code !== 1000) setStatus('error');
         };
-        ws.onerror = (e) => {
-            console.error('[Bot] WS Error');
-            setStatus('error');
-        };
+        ws.onerror = () => setStatus('error');
     }
 
     async function startMic() {
@@ -161,9 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Math.abs(s) > max) max = Math.abs(s);
                 pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
             }
-            // Visual feedback
+            if (max > 0.12) stopAIAudio();
             botOrb.style.transform = `scale(${1 + max})`;
-            
             const bytes = new Uint8Array(pcm16.buffer);
             let binary = '';
             for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
@@ -176,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function disconnect() {
         isActive = false;
+        if (visionActive) stopVision();
         if (session) session.close();
         session = null;
         if (micContext) micContext.close();
@@ -191,10 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
             await startMic();
             connect();
-        } catch (e) {
-            console.error('Start error:', e);
-            setStatus('error');
-        }
+        } catch (e) { setStatus('error'); }
     });
 
     setStatus('idle');
