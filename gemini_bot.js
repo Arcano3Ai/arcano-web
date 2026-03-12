@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let session = null;
     let isActive = false;
+    let visionActive = false;
+    let videoStream = null;
+    let frameInterval = null;
     let audioContext = null;
     let micContext = null;
     let scriptProcessor = null;
@@ -51,13 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
             botContainer.classList.add('status-active');
             startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
             
-            transcriptArea.style.opacity = '0';
-            setTimeout(() => {
-                transcriptArea.innerHTML = '';
-                transcriptArea.style.opacity = '1';
-                transcriptArea.style.display = 'flex';
-                reportArea.style.display = 'none';
-            }, 200);
+            // Do NOT clear transcriptArea here to keep initial greeting
+            transcriptArea.style.display = 'flex';
+            reportArea.style.display = 'none';
             
             messageCount = 0;
         }
@@ -78,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
             src.connect(audioContext.destination);
             
             const now = audioContext.currentTime;
-            // Buffer increased to 0.15s for anti-stuttering
             if (nextAudioTime < now) nextAudioTime = now + 0.15;
             
             src.start(nextAudioTime);
@@ -119,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 isActive = true;
                 setStatus('active');
                 if (recognition) try { recognition.start(); } catch(e){}
-                // AI INITIATES IMMEDIATELY
                 ws.send(JSON.stringify({
                     clientContent: { 
                         turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, por favor inicia la sesión, preséntate y pregúntame mi nombre.' }] }], 
@@ -159,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Math.abs(s) > max) max = Math.abs(s);
                 pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
             }
-            // Interruption Logic
             if (max > 0.12) {
                 activeAudioSources.forEach(s => { try { s.stop(); } catch(err) {} });
                 activeAudioSources = [];
@@ -189,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (session) session.close();
         session = null;
         if (micContext) micContext.close();
+        if (recognition) try { recognition.stop(); } catch(e) {}
         activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
         activeAudioSources = [];
         setStatus('idle');
