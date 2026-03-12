@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let nextAudioTime = 0;
     let activeAudioSources = [];
     let messageCount = 0;
+    let recognition = null;
 
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -29,13 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = i18n[lang] || i18n.en;
 
     const SYSTEM_INSTRUCTION = `
-    Role: Senior Google Cloud Solutions Consultant at Arcano Solutions.
-    Rules:
-    1. Be professional, strategic, and persuasive.
-    2. Focus on GCP, Vertex AI, and Workspace.
-    3. Register "Key Points" in the transcript.
-    4. Language: ${lang === 'es' ? 'Spanish' : 'English'}.
-    5. No internal monologue in output.
+    Identidad: Eres Arcana, la Consultora Senior y Vendedora Experta en soluciones de Google Cloud para Arcano Solutions.
+    Personalidad: Pausada, elocuente, altamente estratégica y persuasiva.
+    Reglas:
+    1. Tu inicio debe ser deliberado y pausado, presentándote con autoridad.
+    2. Dominas la semántica técnica de Google Cloud: Vertex AI, BigQuery, GKE Enterprise, Anthos y arquitectura de datos.
+    3. Si detectas que el usuario conoce el tema, eleva el nivel técnico de la conversación.
+    4. Tu misión es convertir la curiosidad técnica en un Diagnóstico Ejecutivo de Arcano Solutions.
+    5. No muestres razonamientos internos. Solo tu discurso de venta élite.
+    6. Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
 
     const setStatus = (status) => {
@@ -59,6 +62,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
     };
+
+    // ─── Real-time STT (User Side) ──────────────────────────────
+    function initRecognition() {
+        if (!('webkitSpeechRecognition' in window)) return;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = lang === 'es' ? 'es-ES' : 'en-US';
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    addMessage('user', event.results[i][0].transcript);
+                }
+            }
+        };
+    }
+    initRecognition();
 
     function playPCM(base64) {
         if (!audioContext) return;
@@ -105,8 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (parsed.setupComplete || parsed.setup_complete) {
                 isActive = true;
                 setStatus('active');
+                if (recognition) recognition.start();
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hello, please introduce yourself.' }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Inicia tu presentación como Arcana de forma pausada y profesional.' }] }], turnComplete: true }
                 }));
             }
 
@@ -115,18 +138,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 sc.modelTurn.parts.forEach(p => {
                     if (p.thought || p.thinking) return;
                     if (p.text) {
-                        const msg = document.createElement('p');
-                        msg.className = 'ai-msg';
-                        msg.textContent = '🔹 ' + p.text;
-                        transcriptArea.appendChild(msg);
-                        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+                        addMessage('ai', p.text);
                         messageCount++;
                     }
                     if (p.inlineData?.data) playPCM(p.inlineData.data);
                 });
             }
         };
-        ws.onclose = () => { isActive = false; setStatus('idle'); };
+        ws.onclose = () => disconnect();
     }
 
     async function startMic() {
@@ -160,8 +179,27 @@ document.addEventListener('DOMContentLoaded', () => {
         processor.connect(micContext.destination);
     }
 
+    function addMessage(role, text) {
+        const p = document.createElement('p');
+        p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
+        p.textContent = (role === 'ai' ? '🔹 ' : '👤 ') + text;
+        transcriptArea.appendChild(p);
+        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+    }
+
+    function disconnect() {
+        isActive = false;
+        if (session) session.close();
+        session = null;
+        if (micContext) micContext.close();
+        if (recognition) try { recognition.stop(); } catch(e) {}
+        activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
+        activeAudioSources = [];
+        setStatus('idle');
+    }
+
     startBtn.addEventListener('click', async () => {
-        if (isActive) { session.close(); return; }
+        if (isActive) { disconnect(); return; }
         setStatus('connecting');
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
