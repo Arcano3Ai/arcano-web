@@ -3,64 +3,68 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Dirección & PMO | Arcano Solutions</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../styles.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
-    <!-- HUD Removed -->
     <nav class="navbar">
-        <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span
-                    class="dot">.</span></a></div>
+        <div class="logo-container">
+            <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span class="dot">.</span></a></div>
+            <div class="partner-badge-nav">
+                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_color_92x30dp.svg" alt="Google" class="google-mini-logo">
+                <span>Cloud Partner</span>
+            </div>
+        </div>
         <div class="nav-links">
             <a href="../index.html#inicio">Inicio</a>
+            <a href="../index.html#google-free-tier">Google Cloud</a>
             <a href="../index.html#servicios">Servicios</a>
-            <a href="../index.html#metodo">Método</a>
-            <a href="../index.html#kits">Precios</a>
-            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso Cliente</a>
-            <a href="../index_en.html" class="lang-switch">EN</a>
+            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso</a>
         </div>
         <div class="menu-toggle">
             <i class="fas fa-bars"></i>
         </div>
     </nav>
 
-    <header class="hero" style="min-height: 60vh;">
-        <div class="hero-content reveal-up">
+    <header class="hero">
+        <div class="reveal-up" style="text-align: center; max-width: 800px; z-index: 20;">
+            <div class="google-partner-tag" style="margin: 0 auto 25px;">
+                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24dp.svg" alt="GCP">
+                <span>Premier Partner</span>
+            </div>
             <span class="badge-new stagger-1" style="color: #fff; border-color: #fff;">Visión Estratégica</span>
-            <h1 class="stagger-2">Dirección & <span class="gradient-text"
-                    style="background: linear-gradient(90deg, #ffffff, #888888); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PMO</span>
-            </h1>
-            <p class="stagger-3">Soporte ejecutivo para empresas que crecen rápido. Priorización, roadmap y ejecución.
-            </p>
+            <h1 class="stagger-2">Dirección & <span class="gradient-text">PMO</span></h1>
+            <p class="stagger-3">Soporte ejecutivo para empresas que crecen rápido. Priorización, roadmap y ejecución.</p>
         </div>
         <div class="hero-visual">
-            <div class="glow-orb"
-                style="background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0,0,0,0) 70%);"></div>
+            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0,0,0,0) 70%);"></div>
         </div>
     </header>
 
     <section class="services">
+        <div class="section-header reveal-up">
+            <h2>Gestión de Alto Nivel</h2>
+            <p>Liderazgo técnico y estratégico para materializar tu visión de negocio.</p>
+        </div>
         <div class="cards-grid">
             <div class="card reveal-up stagger-1">
                 <div class="card-icon" style="color: #fff;"><i class="fas fa-chess"></i></div>
                 <h3>Fractional CTO/COO</h3>
-                <p>Accede a liderazgo senior por fracción de tiempo. Ideal para definir estrategia sin contratar un
-                    ejecutivo full-time.</p>
+                <p>Accede a liderazgo senior por fracción de tiempo. Ideal para definir estrategia sin contratar un ejecutivo full-time.</p>
             </div>
             <div class="card reveal-up stagger-2">
                 <div class="card-icon" style="color: #fff;"><i class="fas fa-tasks"></i></div>
                 <h3>PMO Ligera</h3>
-                <p>Oficina de gestión de proyectos ágil. Sin burocracia, solo seguimiento de hitos, bloqueos y
-                    entregables.</p>
+                <p>Oficina de gestión de proyectos ágil. Sin burocracia, solo seguimiento de hitos, bloqueos y entregables.</p>
             </div>
             <div class="card reveal-up stagger-3">
                 <div class="card-icon" style="color: #fff;"><i class="fas fa-compass"></i></div>
@@ -74,10 +78,10 @@
         <div class="contact-container">
             <div class="contact-text">
                 <h2>Liderazgo claro.</h2>
+                <p>Acelera la ejecución de tus proyectos más críticos.</p>
             </div>
             <div>
-                <a href="../index.html#contacto" class="btn-primary">Agendar Sesión Estratégica <i
-                        class="fas fa-arrow-right"></i></a>
+                <a href="../index.html#contacto" class="btn-primary">Agendar Sesión Estratégica <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -92,7 +96,7 @@
             <p class="copyright">&copy; 2026 Arcano Solutions. Todos los derechos reservados.</p>
         </div>
     </footer>
-    <script src="../script.js"></script>
+    <script src="../script.js?v=1.1"></script>
 </body>
 
 </html>

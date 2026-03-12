@@ -3,59 +3,63 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ERP & CRM | Arcano Solutions</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../styles.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
-    <!-- HUD Removed -->
     <nav class="navbar">
-        <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span
-                    class="dot">.</span></a></div>
+        <div class="logo-container">
+            <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span class="dot">.</span></a></div>
+            <div class="partner-badge-nav">
+                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_color_92x30dp.svg" alt="Google" class="google-mini-logo">
+                <span>Cloud Partner</span>
+            </div>
+        </div>
         <div class="nav-links">
             <a href="../index.html#inicio">Inicio</a>
+            <a href="../index.html#google-free-tier">Google Cloud</a>
             <a href="../index.html#servicios">Servicios</a>
-            <a href="../index.html#metodo">Método</a>
-            <a href="../index.html#kits">Precios</a>
-            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso Cliente</a>
-            <a href="../index_en.html" class="lang-switch">EN</a>
+            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso</a>
         </div>
         <div class="menu-toggle">
             <i class="fas fa-bars"></i>
         </div>
     </nav>
 
-    <header class="hero" style="min-height: 60vh;">
-        <div class="hero-content reveal-up">
+    <header class="hero">
+        <div class="reveal-up" style="text-align: center; max-width: 800px; z-index: 20;">
+            <div class="google-partner-tag" style="margin: 0 auto 25px;">
+                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24dp.svg" alt="GCP">
+                <span>Premier Partner</span>
+            </div>
             <span class="badge-new stagger-1" style="color: #00ff88; border-color: #00ff88;">Control Total</span>
-            <h1 class="stagger-2">Sistemas <span class="gradient-text"
-                    style="background: linear-gradient(90deg, #00ff88, #00b8ff); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Integrados</span>
-            </h1>
-            <p class="stagger-3">El sistema nervioso de tu empresa. Conectamos ventas, inventario y contabilidad en una
-                sola fuente de
-                verdad.</p>
+            <h1 class="stagger-2">Sistemas <span class="gradient-text">Integrados</span></h1>
+            <p class="stagger-3">El sistema nervioso de tu empresa. Conectamos ventas, inventario y contabilidad en una sola fuente de verdad.</p>
         </div>
         <div class="hero-visual">
-            <div class="glow-orb"
-                style="background: radial-gradient(circle, rgba(0, 255, 136, 0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+            <div class="glow-orb" style="background: radial-gradient(circle, rgba(0, 255, 136, 0.2) 0%, rgba(0,0,0,0) 70%);"></div>
         </div>
     </header>
 
     <section class="services">
+        <div class="section-header reveal-up">
+            <h2>Ecosistema Conectado</h2>
+            <p>Elimina silos de información y opera con datos en tiempo real.</p>
+        </div>
         <div class="cards-grid">
             <div class="card reveal-up stagger-1">
                 <div class="card-icon" style="color: #00ff88;"><i class="fas fa-cubes"></i></div>
                 <h3>Odoo & ERPs Modernos</h3>
-                <p>Somos expertos en Odoo. Implementamos módulos a medida, migramos datos históricos y capacitamos a tu
-                    equipo.</p>
+                <p>Somos expertos en Odoo. Implementamos módulos a medida, migramos datos históricos y capacitamos a tu equipo.</p>
             </div>
             <div class="card reveal-up stagger-2">
                 <div class="card-icon" style="color: #00ff88;"><i class="fas fa-users-cog"></i></div>
@@ -65,8 +69,7 @@
             <div class="card reveal-up stagger-3">
                 <div class="card-icon" style="color: #00ff88;"><i class="fas fa-plug"></i></div>
                 <h3>Integraciones</h3>
-                <p>Tu ERP habla con tu Banco, tu E-commerce (Shopify/WooCommerce) y tu logística. Sin doble digitación.
-                </p>
+                <p>Tu ERP habla con tu Banco, tu E-commerce (Shopify/WooCommerce) y tu logística. Sin doble digitación.</p>
             </div>
             <a href="admin-automation.html" class="card reveal-up stagger-4">
                 <div class="card-icon" style="color: #00ff88;"><i class="fas fa-file-invoice"></i></div>
@@ -85,10 +88,10 @@
         <div class="contact-container">
             <div class="contact-text">
                 <h2>Unifica tu operación.</h2>
+                <p>Descubre el poder de tener toda tu empresa en un solo lugar.</p>
             </div>
             <div>
-                <a href="../index.html#contacto" class="btn-primary">Consultar Implementación <i
-                        class="fas fa-arrow-right"></i></a>
+                <a href="../index.html#contacto" class="btn-primary">Consultar Implementación <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -103,7 +106,7 @@
             <p class="copyright">&copy; 2026 Arcano Solutions. Todos los derechos reservados.</p>
         </div>
     </footer>
-    <script src="../script.js"></script>
+    <script src="../script.js?v=1.1"></script>
 </body>
 
 </html>
