@@ -298,44 +298,93 @@ h4 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 100px;
-    padding-bottom: 200px;
+    justify-content: center;
+    padding-top: 120px;
+    min-height: 100vh;
 }
 
-.parallax-layer {
-    transition: transform 0.15s cubic-bezier(0.2, 0.4, 0.3, 1);
-    will-change: transform;
+/* Intro Branding Section (Landing Transition) */
+.intro-branding {
+    padding: 200px 5%;
+    background: radial-gradient(circle at 50% 50%, #0a0a0c 0%, #020204 100%);
+    text-align: center;
+    border-top: 1px solid var(--border-light);
+    position: relative;
+    z-index: 10;
 }
 
+.monumental-title {
+    font-family: var(--font-display) !important;
+    font-size: clamp(6rem, 18vw, 14rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.07em !important;
+    line-height: 0.75 !important;
+    text-transform: uppercase;
+    margin: 40px 0;
+}
+
+.monumental-subtitle {
+    font-size: clamp(1.2rem, 3vw, 2.5rem);
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    max-width: 900px;
+    margin: 0 auto 80px;
+}
+
+.intro-stats {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-top: 60px;
+}
+
+.intro-stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stat-val {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: var(--font-display);
+}
+
+.stat-lab {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Infrastructure HUD (Refined) */
 .performance-welcome-overlay {
     position: absolute;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
     z-index: 5;
     pointer-events: none;
     width: 100%;
-}
-
-.mini-hero-title {
-    font-size: clamp(4rem, 10vw, 8rem);
-    line-height: 0.9;
-    margin: 20px 0;
-    opacity: 0.6;
-    letter-spacing: -4px;
+    opacity: 0.5;
 }
 
 .mini-hero-desc {
-    font-size: 1.4rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    font-weight: 300;
+    font-weight: 400;
+    margin-top: 10px;
 }
 
 /* Service Cards Ambient Transition */
 .ambient-transition {
-    transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Vision Tooltip & Wrapper */
@@ -349,9 +398,9 @@ h4 {
     bottom: 120%;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     color: #fff;
-    padding: 12px 20px;
+    padding: 14px 24px;
     border-radius: 12px;
     font-size: 0.85rem;
     white-space: nowrap;
@@ -360,47 +409,42 @@ h4 {
     transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 1px solid var(--bot-accent);
     pointer-events: none;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     z-index: 100;
 }
 
 .vision-wrapper:hover .vision-tooltip {
     opacity: 1;
     visibility: visible;
-    bottom: 130%;
+    bottom: 135%;
 }
 
 .btn-ghost {
-    background: rgba(255, 255, 255, 0.02) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     color: #fff !important;
 }
 
 .btn-ghost:hover {
     border-color: var(--bot-accent) !important;
-    background: rgba(255, 255, 255, 0.05) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Monumental Branding Header */
-.bot-header-info-hero {
-    margin-top: 40px;
-    text-align: center;
+/* Language Selector */
+.lang-selector {
+    display: flex;
+    gap: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dark);
 }
 
-.bot-title-hero {
-    font-family: var(--font-display) !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.06em !important;
-    line-height: 0.8 !important;
-    text-transform: uppercase;
+.lang-selector a.active {
+    color: #fff;
 }
 
-.bot-subtitle-hero {
-    font-family: var(--font-body);
-    font-weight: 300;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    margin-top: 20px;
+.lang-selector span {
+    opacity: 0.3;
 }
 
 /* Google Color Accents */

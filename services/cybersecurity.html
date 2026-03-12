@@ -10,7 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../styles.css?v=1.1">
+    <link rel="stylesheet" href="../styles.css?v=1.4">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -28,6 +28,11 @@
             <a href="../index.html#inicio">Inicio</a>
             <a href="../index.html#google-catalog">Cloud Core</a>
             <a href="../index.html#servicios">Servicios</a>
+            <div class="lang-selector">
+                <a href="../index.html">EN</a>
+                <span>|</span>
+                <a href="../index_es.html" class="active">ES</a>
+            </div>
             <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Acceso</a>
         </div>
         <div class="menu-toggle">
@@ -35,52 +40,50 @@
         </div>
     </nav>
 
-    <header class="hero cloud-parallax-container" style="min-height: 100vh; padding: 180px 5% 100px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative;">
-        <div class="hero-visual parallax-layer" data-speed="0.2" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.7;">
+    <header class="hero cloud-parallax-container">
+        <div class="hero-visual parallax-layer" data-speed="0.2">
             <canvas id="particle-canvas"></canvas>
         </div>
 
-        <div class="performance-welcome-overlay parallax-layer reveal-up" data-speed="0.5" style="z-index: 5; text-align: center; margin-bottom: 40px;">
+        <div class="container reveal-up" style="z-index: 20; text-align: center; position: relative;">
+            <div class="google-partner-tag">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                <span>Google Cloud Premier Partner</span>
+            </div>
+            <h1 class="monumental-title">Ciberseguridad & <span class="gradient-text">Riesgo</span></h1>
+            <p class="monumental-subtitle">No vendemos miedo, vendemos continuidad. Protege tus activos críticos con arquitectura Zero Trust.</p>
+        </div>
+
+        <!-- Infrastructure HUD (Bottom of Hero) -->
+        <div class="performance-welcome-overlay">
             <span class="badge-new">Infraestructura Global</span>
-            <h2 class="mini-hero-title">Clase <span class="gradient-text">Mundial</span></h2>
-            <p class="mini-hero-desc">SLA de 99.9% respaldado por Google Cloud.</p>
-        </div>
-
-        <div class="reveal-up parallax-layer" data-speed="0.8" style="text-align: center; max-width: 1000px; z-index: 20; position: relative;">
-            <div class="google-partner-tag-elegant" style="margin: 0 auto 25px; display: inline-flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);">
-                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP" style="height: 20px;">
-                <span style="font-size: 0.8rem; font-weight: 600; color: #fff; letter-spacing: 1px;">Google Cloud Partner</span>
-            </div>
-            <br>
-            <span class="badge-new stagger-1" style="color: #ff0055; border-color: #ff0055;">Defensa Activa</span>
-            <h1 class="stagger-2" style="font-size: clamp(4.5rem, 10vw, 8rem); line-height: 1.1; margin-bottom: 25px;">Ciberseguridad & <span class="gradient-text">Riesgo</span></h1>
-            <p class="stagger-3" style="font-size: 1.4rem; max-width: 800px; margin: 0 auto;">No vendemos miedo, vendemos continuidad. Protege tus activos críticos con arquitectura Zero Trust.</p>
-        </div>
-
-        <div class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px;">
-            <div class="section-header reveal-up" style="margin-bottom: 50px;">
-                <h2 style="font-size: 2.5rem;">Protección 360°</h2>
-                <p>Seguridad proactiva para la era de la IA.</p>
-            </div>
-            <div class="cards-grid">
-                <div class="card reveal-up stagger-1">
-                    <div class="card-icon" style="color: #ff0055;"><i class="fas fa-user-shield"></i></div>
-                    <h3>IAM & MFA</h3>
-                    <p>Gestión de identidad robusta. Nadie entra a tus sistemas sin verificación multifactor estricta.</p>
-                </div>
-                <div class="card reveal-up stagger-2">
-                    <div class="card-icon" style="color: #ff0055;"><i class="fas fa-bug"></i></div>
-                    <h3>Pentesting & Hardening</h3>
-                    <p>Atacamos tu infraestructura antes que los criminales. Cerramos brechas en servidores y aplicaciones.</p>
-                </div>
-                <div class="card reveal-up stagger-3">
-                    <div class="card-icon" style="color: #ff0055;"><i class="fas fa-file-contract"></i></div>
-                    <h3>Cumplimiento</h3>
-                    <p>Alineación con ISO 27001, GDPR y normativas locales para evitar multas y ganar confianza.</p>
-                </div>
-            </div>
+            <p class="mini-hero-desc">99.9% Uptime SLA • Google Cloud Backbone</p>
         </div>
     </header>
+
+    <main class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px; margin: 0 auto; padding: 100px 5%;">
+        <div class="section-header reveal-up" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem;">Protección 360°</h2>
+            <p>Seguridad proactiva para la era de la IA.</p>
+        </div>
+        <div class="cards-grid">
+            <div class="card reveal-up stagger-1">
+                <div class="card-icon" style="color: #ff0055;"><i class="fas fa-user-shield"></i></div>
+                <h3>IAM & MFA</h3>
+                <p>Gestión de identidad robusta. Nadie entra a tus sistemas sin verificación multifactor estricta.</p>
+            </div>
+            <div class="card reveal-up stagger-2">
+                <div class="card-icon" style="color: #ff0055;"><i class="fas fa-bug"></i></div>
+                <h3>Pentesting & Hardening</h3>
+                <p>Atacamos tu infraestructura antes que los criminales. Cerramos brechas en servidores y aplicaciones.</p>
+            </div>
+            <div class="card reveal-up stagger-3">
+                <div class="card-icon" style="color: #ff0055;"><i class="fas fa-file-contract"></i></div>
+                <h3>Cumplimiento</h3>
+                <p>Alineación con ISO 27001, GDPR y normativas locales para evitar multas y ganar confianza.</p>
+            </div>
+        </div>
+    </main>
 
     <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
         <div class="contact-container">
