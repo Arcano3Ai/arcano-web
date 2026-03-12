@@ -13,17 +13,18 @@ app.use(express.json()); // Permitir recibir JSON del frontend
 const db = require('./db');
 
 // --- MIDDLEWARE DE SEGURIDAD ---
-// Evita que Node.js exponga archivos sensibles de backend (.php, .env, .sql, etc.)
 app.use((req, res, next) => {
     const url = req.url.toLowerCase();
-    const isSensitive = url.includes('.php') ||
-        url.includes('.env') ||
-        url.includes('.sql') ||
-        url.includes('.bat') ||
-        url.includes('.json') ||
-        url.includes('.md') ||
-        url.includes('/api/');
-    if (isSensitive) {
+    // Lista negra de extensiones sensibles
+    const isSensitiveFile = url.endsWith('.php') ||
+        url.endsWith('.env') ||
+        url.endsWith('.sql') ||
+        url.endsWith('.bat') ||
+        url.endsWith('.json') ||
+        url.endsWith('.md');
+    
+    // Bloquear archivos sensibles pero PERMITIR endpoints de la API
+    if (isSensitiveFile && !url.includes('/api/')) {
         return res.status(403).send('403 Forbidden - Access Denied');
     }
     next();
