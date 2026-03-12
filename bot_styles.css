@@ -257,42 +257,43 @@
     to { box-shadow: 0 0 100px var(--core-glow), 0 0 200px rgba(59, 130, 246, 0.4); }
 }
 
-/* Status */
+/* Status - Positioned properly below the terminal */
 .bot-status-container-hero {
-    position: absolute;
-    bottom: 5%;
+    margin-top: 20px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 15px;
-    opacity: 0.6;
+    opacity: 0.8;
+    z-index: 30;
+    position: relative; /* Changed from absolute to avoid overlap */
 }
 
 .status-indicator {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background: var(--core-glow);
     border-radius: 50%;
-    box-shadow: 0 0 10px var(--core-glow);
+    box-shadow: 0 0 15px var(--core-glow);
 }
 
 .status-text {
-    font-size: 0.7rem;
-    letter-spacing: 0.3em;
-    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.4em;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.3);
 }
 
-/* Mobile Adjustments */
-@media (max-width: 1200px) {
-    .bot-title-hero { font-size: 5rem !important; }
-    .floating-branding, .floating-interaction {
-        position: relative;
-        left: auto;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        width: 90%;
-        margin: 20px auto;
-        text-align: center;
-    }
-    .user-msg { text-align: center; }
+/* Floating Interaction adjustment to contain status */
+.floating-interaction {
+    position: absolute;
+    right: 8%;
+    bottom: 10%;
+    width: 450px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: float-slow 18s infinite ease-in-out reverse;
 }
