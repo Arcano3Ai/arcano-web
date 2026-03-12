@@ -5,14 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const transcriptArea = document.getElementById('bot-transcript');
     const reportArea = document.getElementById('bot-report');
     const reportText = document.getElementById('report-text');
-    const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
 
     let session = null;
     let isActive = false;
-    let visionActive = false;
-    let videoStream = null;
-    let frameInterval = null;
     let audioContext = null;
     let micContext = null;
     let scriptProcessor = null;
@@ -27,20 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', gen: 'Generating Diagnosis...' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', gen: 'Generando Diagnóstico...' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO' }
     };
     const t = i18n[lang] || i18n.en;
 
     const SYSTEM_INSTRUCTION = `
-    IDENTIDAD: Eres Arcana, representante senior de Arcano Solutions.
-    PERSONALIDAD: Majestuosa, cálida y muy profesional.
-    FLUJO: 
-    1. TÚ INICIAS LA CHARLA. Saluda con elegancia y pregunta el nombre del usuario de inmediato.
-    2. Una vez que tengas el nombre, úsalo constantemente.
-    3. Tu objetivo es asesorar sobre Google Cloud y agendar un Diagnóstico Ejecutivo.
-    4. NO muestres pensamientos internos.
-    5. Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
+    IDENTIDAD: Eres Arcana, representante de Arcano Solutions.
+    PERSONALIDAD: Majestuosa, estratégica y altamente profesional.
+    REGLA CRÍTICA DE TEXTO: Debes enviar SIEMPRE una transcripción en texto de lo que dices. 
+    Escribe tus respuestas palabra por palabra o en fragmentos cortos para que aparezcan en la pantalla en tiempo real.
+    FLUJO: Saluda, pregunta el nombre y asesora sobre Google Cloud.
+    Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
 
     const setStatus = (status) => {
@@ -53,11 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (status === 'active') {
             botContainer.classList.add('status-active');
             startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
-            
-            // Do NOT clear transcriptArea here to keep initial greeting
             transcriptArea.style.display = 'flex';
             reportArea.style.display = 'none';
-            
             messageCount = 0;
         }
     };
@@ -75,16 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const src = audioContext.createBufferSource();
             src.buffer = buf;
             src.connect(audioContext.destination);
-            
             const now = audioContext.currentTime;
             if (nextAudioTime < now) nextAudioTime = now + 0.15;
-            
             src.start(nextAudioTime);
             activeAudioSources.push(src);
-            src.onended = () => {
-                const idx = activeAudioSources.indexOf(src);
-                if (idx > -1) activeAudioSources.splice(idx, 1);
-            };
             nextAudioTime += buf.duration;
         } catch(e) {}
     }
@@ -99,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     generationConfig: { 
                         responseModalities: ['AUDIO'],
                         temperature: 0.75,
-                        topP: 0.95,
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
@@ -116,10 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (parsed.setupComplete || parsed.setup_complete) {
                 isActive = true;
                 setStatus('active');
-                if (recognition) try { recognition.start(); } catch(e){}
                 ws.send(JSON.stringify({
                     clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, por favor inicia la sesión, preséntate y pregúntame mi nombre.' }] }], 
+                        turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, preséntate y pregúntame mi nombre.' }] }], 
                         turnComplete: true 
                     }
                 }));
@@ -180,19 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
         transcriptArea.scrollTop = transcriptArea.scrollHeight;
     }
 
-    function disconnect() {
-        isActive = false;
-        if (session) session.close();
-        session = null;
-        if (micContext) micContext.close();
-        if (recognition) try { recognition.stop(); } catch(e) {}
-        activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
-        activeAudioSources = [];
-        setStatus('idle');
-    }
-
     startBtn.addEventListener('click', async () => {
-        if (isActive) { disconnect(); return; }
+        if (isActive) { session.close(); return; }
         setStatus('connecting');
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
