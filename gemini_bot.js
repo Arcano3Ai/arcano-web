@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setup: {
                     model: MODEL,
                     generationConfig: {
-                        responseModalities: ['TEXT', 'AUDIO'], // Request both for transcript support
+                        responseModalities: ['AUDIO'], // Native audio model prefers AUDIO only for full transcript flow
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: {
@@ -134,11 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = parsed.serverContent ?? parsed.server_content;
             if (sc?.modelTurn?.parts) {
                 sc.modelTurn.parts.forEach(p => {
-                    // Filter out internal thoughts
+                    // CRITICAL: Capture every piece of text that isn't a thought
                     if (p.thought || p.thinking) return;
 
-                    if (p.text) {
-                        addMessage('ai', p.text);
+                    if (p.text && p.text.trim().length > 0) {
+                        addMessage('ai', p.text.trim());
                         messageCount++;
                     }
                     if (p.inlineData?.data) playPCM(p.inlineData.data);
