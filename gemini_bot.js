@@ -16,16 +16,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const visualWrapper = document.querySelector('.bot-visual-wrapper');
     const minimizeBtn = document.getElementById('bot-minimize-btn');
 
+    const launcher = document.getElementById('bot-launcher');
+
     // ─── Minimize/Maximize Logic ───────────────────────────────
     minimizeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        botContainer.classList.add('minimized');
+        botContainer.classList.add('hidden');
+        launcher.style.display = 'flex';
     });
 
-    botContainer.addEventListener('click', () => {
-        if (botContainer.classList.contains('minimized')) {
-            botContainer.classList.remove('minimized');
-        }
+    launcher.addEventListener('click', () => {
+        botContainer.classList.remove('hidden');
+        launcher.style.display = 'none';
     });
 
     let session = null;
@@ -116,7 +118,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ─── Connect via raw WebSocket ────────────────────────────────
+    function addMessage(role, text) {
+        const p = document.createElement('p');
+        p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
+        p.textContent = (role === 'ai' ? '🤖 ' : '👤 ') + text;
+        transcriptArea.appendChild(p);
+        transcriptArea.scrollTop = transcriptArea.scrollHeight;
+    }
+
     function connect() {
         const ws = new WebSocket(WS_URL);
         session = ws;
@@ -138,74 +147,45 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     },
                     systemInstruction: {
-                        parts: [{ text: "You are a friendly and casual Google Expert from Arcano Solutions. Your goal is to help clients find the best Google products for their needs (from Google Workspace and Ads to Cloud). You are consultive: instead of just selling, you 'interview' the client by asking about their business goals or current challenges. Your tone is warm, approachable, and smart. MANDATORY: Start your first response in English with a friendly 'Hi!', then adapt to the user's language. Keep responses brief, conversational, and always end with a small follow-up question to keep the interview going." }]
+                        parts: [{ text: "You are the 'Arcano Neural Dev Agent', a high-level engineering specialist from Arcano Solutions. Your mission is to provide an elite, technical yet approachable consultation. You are a 'Deep Thinker': analyze user needs thoroughly. MANDATORY: Start in English with 'Neural Engine Initialized. Hi!', then switch to the user's language. Use technical terms like 'Cloud Infrastructure', 'Neural RAG', and 'Secure DevOps' to build trust. End every turn with a sharp, relevant question." }]
                     }
                 }
             };
             ws.send(JSON.stringify(setupMsg));
-            console.log('[Bot] Setup sent:', JSON.stringify(setupMsg).slice(0, 150));
         };
 
         ws.onmessage = async (event) => {
             let raw = event.data;
-
-            // Handle Blob
-            if (raw instanceof Blob) {
-                raw = await raw.text();
-            }
-
+            if (raw instanceof Blob) raw = await raw.text();
             let data;
-            try {
-                data = JSON.parse(raw);
-            } catch (e) {
-                console.warn('[Bot] Non-JSON message:', raw?.slice?.(0, 200));
-                return;
-            }
+            try { data = JSON.parse(raw); } catch (e) { return; }
 
-            console.log('[Bot] Received:', JSON.stringify(data).slice(0, 300));
-
-            // setupComplete — try all known variants
-            const isReady = data.setupComplete !== undefined ||
-                data.setup_complete !== undefined ||
-                (data.setupComplete === null) ||
-                (typeof data === 'object' && Object.keys(data).length === 0);
-
+            // setupComplete
+            const isReady = data.setupComplete !== undefined || data.setup_complete !== undefined;
             if (isReady && !isActive) {
-                console.log('[Bot] Setup complete!');
                 isActive = true;
                 setStatus('active');
-
-                // Enviar saludo inicial automático para que el agente se presente
                 ws.send(JSON.stringify({
-                    clientContent: {
-                        turns: [{ role: 'user', parts: [{ text: 'Hello.' }] }],
-                        turnComplete: true
-                    }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Initiate system check.' }] }], turnComplete: true }
                 }));
                 return;
             }
 
-            // Audio response — try all known field name variants
+            // Server Content (AI Response and User Transcript)
             const sc = data.serverContent ?? data.server_content;
             if (sc) {
-                botOrb.style.transform = 'scale(1.1)';
-                setTimeout(() => { botOrb.style.transform = ''; }, 200);
-
                 const mt = sc.modelTurn ?? sc.model_turn;
                 if (mt?.parts) {
                     for (const p of mt.parts) {
-                        // Capturar transcripcion de texto si viene acompanada de audio
-                        if (p.text) {
-                            const pElem = document.createElement('p');
-                            pElem.textContent = '🤖 ' + p.text;
-                            transcriptArea.appendChild(pElem);
-                            transcriptArea.scrollTop = transcriptArea.scrollHeight;
-                        }
-
-                        const inline = p.inlineData ?? p.inline_data;
-                        if (inline?.data) {
-                            playPCM(inline.data);
-                        }
+                        if (p.text) addMessage('ai', p.text);
+                        if (p.inlineData?.data) playPCM(p.inlineData.data);
+                    }
+                }
+                
+                // Real-time transcript for user speech
+                if (sc.userContent?.parts) {
+                    for (const p of sc.userContent.parts) {
+                        if (p.text) addMessage('user', p.text);
                     }
                 }
             }
