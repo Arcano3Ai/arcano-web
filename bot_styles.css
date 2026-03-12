@@ -194,8 +194,9 @@
 }
 
 .ai-msg {
-    color: #fff;
+    color: #a78bfa;
     font-weight: 400;
+    text-shadow: 0 0 15px rgba(167, 139, 250, 0.3);
 }
 
 .user-msg {
