@@ -58,6 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusText.textContent = t.active;
                 startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
                 transcriptArea.innerHTML = '';
+                transcriptArea.style.display = 'flex';
+                reportArea.style.display = 'none';
                 messageCount = 0;
                 break;
         }
