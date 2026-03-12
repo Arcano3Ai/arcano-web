@@ -20,7 +20,7 @@
         <div class="logo-container">
             <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span class="dot">.</span></a></div>
             <div class="partner-badge-nav">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_color_92x30dp.svg" alt="Google" class="google-mini-logo">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="Google Cloud" class="google-mini-logo">
                 <span>Cloud Partner</span>
             </div>
         </div>
@@ -35,47 +35,48 @@
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="reveal-up" style="text-align: center; max-width: 800px; z-index: 20;">
+    <header class="hero" style="min-height: 100vh; padding: 180px 5% 100px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative;">
+        <div class="hero-visual" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.7;">
+            <div class="glow-orb" style="background: radial-gradient(circle, rgba(0,243,255,0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+        </div>
+
+        <div class="reveal-up" style="text-align: center; max-width: 1000px; z-index: 20; position: relative; margin-bottom: 80px;">
             <div class="google-partner-tag" style="margin: 0 auto 25px;">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24dp.svg" alt="GCP">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
                 <span>Premier Partner</span>
             </div>
             <span class="badge-new stagger-1">Eficiencia Exponencial</span>
-            <h1 class="stagger-2">IA & <span class="gradient-text">Automatización</span></h1>
-            <p class="stagger-3">Deje de gastar talento humano en tareas de robot. Implementamos agentes inteligentes y flujos de trabajo autónomos.</p>
+            <h1 class="stagger-2" style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 25px;">IA & <span class="gradient-text">Automatización</span></h1>
+            <p class="stagger-3" style="font-size: 1.4rem; max-width: 800px; margin: 0 auto;">Deje de gastar talento humano en tareas de robot. Implementamos agentes inteligentes y flujos de trabajo autónomos.</p>
         </div>
-        <div class="hero-visual">
-            <div class="glow-orb" style="background: radial-gradient(circle, rgba(0,243,255,0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+
+        <div class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px;">
+            <div class="section-header reveal-up" style="margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem;">¿Qué construimos?</h2>
+                <p>Soluciones pragmáticas que impactan el P&L.</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon"><i class="fas fa-microchip"></i></div>
+                    <h3>Agentes IA</h3>
+                    <p>Chatbots internos entrenados con tu data (RAG). Resuelven dudas de RRHH, soporte técnico y ventas 24/7 sin alucinaciones.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3>Process Mining</h3>
+                    <p>Analizamos tus logs digitales para encontrar cuellos de botella reales, no supuestos. Optimizamos basándonos en evidencia.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <h3>Automatización Financiera</h3>
+                    <p>Conciliación bancaria automática, lectura de facturas con OCR inteligente y alertas de flujo de caja predictivas.</p>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>¿Qué construimos?</h2>
-            <p>Soluciones pragmáticas que impactan el P&L.</p>
-        </div>
-
-        <div class="cards-grid">
-            <div class="card reveal-up stagger-1">
-                <div class="card-icon"><i class="fas fa-microchip"></i></div>
-                <h3>Agentes IA</h3>
-                <p>Chatbots internos entrenados con tu data (RAG). Resuelven dudas de RRHH, soporte técnico y ventas 24/7 sin alucinaciones.</p>
-            </div>
-            <div class="card reveal-up stagger-2">
-                <div class="card-icon"><i class="fas fa-network-wired"></i></div>
-                <h3>Process Mining</h3>
-                <p>Analizamos tus logs digitales para encontrar cuellos de botella reales, no supuestos. Optimizamos basándonos en evidencia.</p>
-            </div>
-            <div class="card reveal-up stagger-3">
-                <div class="card-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                <h3>Automatización Financiera</h3>
-                <p>Conciliación bancaria automática, lectura de facturas con OCR inteligente y alertas de flujo de caja predictivas.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact" style="background: var(--bg-card);">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
         <div class="contact-container">
             <div class="contact-text">
                 <h2>¿Listo para automatizar?</h2>

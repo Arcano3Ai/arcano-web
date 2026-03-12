@@ -20,7 +20,7 @@
         <div class="logo-container">
             <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span class="dot">.</span></a></div>
             <div class="partner-badge-nav">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_color_92x30dp.svg" alt="Google" class="google-mini-logo">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="Google Cloud" class="google-mini-logo">
                 <span>Cloud Partner</span>
             </div>
         </div>
@@ -35,46 +35,47 @@
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="reveal-up" style="text-align: center; max-width: 800px; z-index: 20;">
+    <header class="hero" style="min-height: 100vh; padding: 180px 5% 100px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative;">
+        <div class="hero-visual" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.7;">
+            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 170, 0, 0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+        </div>
+
+        <div class="reveal-up" style="text-align: center; max-width: 1000px; z-index: 20; position: relative; margin-bottom: 80px;">
             <div class="google-partner-tag" style="margin: 0 auto 25px;">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24dp.svg" alt="GCP">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
                 <span>Premier Partner</span>
             </div>
             <span class="badge-new stagger-1" style="color: #ffaa00; border-color: #ffaa00;">Escalabilidad</span>
-            <h1 class="stagger-2">Arquitectura <span class="gradient-text">Cloud</span></h1>
-            <p class="stagger-3">Infraestructura que crece contigo. Diseño de sistemas resilientes, serverless y microservicios.</p>
+            <h1 class="stagger-2" style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 25px;">Arquitectura <span class="gradient-text">Cloud</span></h1>
+            <p class="stagger-3" style="font-size: 1.4rem; max-width: 800px; margin: 0 auto;">Infraestructura que crece contigo. Diseño de sistemas resilientes, serverless y microservicios.</p>
         </div>
-        <div class="hero-visual">
-            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 170, 0, 0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+
+        <div class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px;">
+            <div class="section-header reveal-up" style="margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem;">Ingeniería de Clase Mundial</h2>
+                <p>Sistemas diseñados para el alto rendimiento y la disponibilidad total.</p>
+            </div>
+            <div class="cards-grid">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon" style="color: #ffaa00;"><i class="fas fa-cloud"></i></div>
+                    <h3>AWS & Azure</h3>
+                    <p>Migración a la nube, optimización de costos y configuración de entornos de alta disponibilidad.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon" style="color: #ffaa00;"><i class="fas fa-server"></i></div>
+                    <h3>DevOps</h3>
+                    <p>Pipelines CI/CD para despliegues automáticos. Docker, Kubernetes y Terraform.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon" style="color: #ffaa00;"><i class="fas fa-project-diagram"></i></div>
+                    <h3>Diseño de APIs</h3>
+                    <p>APIs REST y GraphQL seguras y documentadas (Swagger) para interconectar todos tus sistemas.</p>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Ingeniería de Clase Mundial</h2>
-            <p>Sistemas diseñados para el alto rendimiento y la disponibilidad total.</p>
-        </div>
-        <div class="cards-grid">
-            <div class="card reveal-up stagger-1">
-                <div class="card-icon" style="color: #ffaa00;"><i class="fas fa-cloud"></i></div>
-                <h3>AWS & Azure</h3>
-                <p>Migración a la nube, optimización de costos y configuración de entornos de alta disponibilidad.</p>
-            </div>
-            <div class="card reveal-up stagger-2">
-                <div class="card-icon" style="color: #ffaa00;"><i class="fas fa-server"></i></div>
-                <h3>DevOps</h3>
-                <p>Pipelines CI/CD para despliegues automáticos. Docker, Kubernetes y Terraform.</p>
-            </div>
-            <div class="card reveal-up stagger-3">
-                <div class="card-icon" style="color: #ffaa00;"><i class="fas fa-project-diagram"></i></div>
-                <h3>Diseño de APIs</h3>
-                <p>APIs REST y GraphQL seguras y documentadas (Swagger) para interconectar todos tus sistemas.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact" style="background: var(--bg-card);">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
         <div class="contact-container">
             <div class="contact-text">
                 <h2>Construye sobre cimientos sólidos.</h2>

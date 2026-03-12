@@ -56,12 +56,25 @@
     border: 2px solid rgba(255, 255, 255, 0.1);
     z-index: 10;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: antigravity 6s infinite ease-in-out;
+}
+
+@keyframes antigravity {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-15px) rotate(1deg); }
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(15px) rotate(-1deg); }
 }
 
 .status-active .bot-orb-large {
     border-color: var(--bot-accent);
     box-shadow: 0 0 100px rgba(var(--bot-accent-rgb), 0.4);
-    transform: scale(1.1);
+    animation: antigravityActive 3s infinite ease-in-out;
+}
+
+@keyframes antigravityActive {
+    0%, 100% { transform: scale(1.1) translateY(0); }
+    50% { transform: scale(1.15) translateY(-20px); }
 }
 
 .bot-orb-large #bot-icon {

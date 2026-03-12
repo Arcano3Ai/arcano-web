@@ -20,7 +20,7 @@
         <div class="logo-container">
             <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span class="dot">.</span></a></div>
             <div class="partner-badge-nav">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_color_92x30dp.svg" alt="Google" class="google-mini-logo">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="Google Cloud" class="google-mini-logo">
                 <span>Cloud Partner</span>
             </div>
         </div>
@@ -35,46 +35,47 @@
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="reveal-up" style="text-align: center; max-width: 800px; z-index: 20;">
+    <header class="hero" style="min-height: 100vh; padding: 180px 5% 100px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative;">
+        <div class="hero-visual" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.7;">
+            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 0, 85, 0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+        </div>
+
+        <div class="reveal-up" style="text-align: center; max-width: 1000px; z-index: 20; position: relative; margin-bottom: 80px;">
             <div class="google-partner-tag" style="margin: 0 auto 25px;">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24dp.svg" alt="GCP">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
                 <span>Premier Partner</span>
             </div>
             <span class="badge-new stagger-1" style="color: #ff0055; border-color: #ff0055;">Defensa Activa</span>
-            <h1 class="stagger-2">Ciberseguridad & <span class="gradient-text">Riesgo</span></h1>
-            <p class="stagger-3">No vendemos miedo, vendemos continuidad. Protege tus activos críticos con arquitectura Zero Trust.</p>
+            <h1 class="stagger-2" style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 25px;">Ciberseguridad & <span class="gradient-text">Riesgo</span></h1>
+            <p class="stagger-3" style="font-size: 1.4rem; max-width: 800px; margin: 0 auto;">No vendemos miedo, vendemos continuidad. Protege tus activos críticos con arquitectura Zero Trust.</p>
         </div>
-        <div class="hero-visual">
-            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 0, 85, 0.2) 0%, rgba(0,0,0,0) 70%);"></div>
+
+        <div class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px;">
+            <div class="section-header reveal-up" style="margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem;">Protección 360°</h2>
+                <p>Seguridad proactiva para la era de la IA.</p>
+            </div>
+            <div class="cards-grid">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon" style="color: #ff0055;"><i class="fas fa-user-shield"></i></div>
+                    <h3>IAM & MFA</h3>
+                    <p>Gestión de identidad robusta. Nadie entra a tus sistemas sin verificación multifactor estricta.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon" style="color: #ff0055;"><i class="fas fa-bug"></i></div>
+                    <h3>Pentesting & Hardening</h3>
+                    <p>Atacamos tu infraestructura antes que los criminales. Cerramos brechas en servidores y aplicaciones.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon" style="color: #ff0055;"><i class="fas fa-file-contract"></i></div>
+                    <h3>Cumplimiento</h3>
+                    <p>Alineación con ISO 27001, GDPR y normativas locales para evitar multas y ganar confianza.</p>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Protección 360°</h2>
-            <p>Seguridad proactiva para la era de la IA.</p>
-        </div>
-        <div class="cards-grid">
-            <div class="card reveal-up stagger-1">
-                <div class="card-icon" style="color: #ff0055;"><i class="fas fa-user-shield"></i></div>
-                <h3>IAM & MFA</h3>
-                <p>Gestión de identidad robusta. Nadie entra a tus sistemas sin verificación multifactor estricta.</p>
-            </div>
-            <div class="card reveal-up stagger-2">
-                <div class="card-icon" style="color: #ff0055;"><i class="fas fa-bug"></i></div>
-                <h3>Pentesting & Hardening</h3>
-                <p>Atacamos tu infraestructura antes que los criminales. Cerramos brechas en servidores y aplicaciones.</p>
-            </div>
-            <div class="card reveal-up stagger-3">
-                <div class="card-icon" style="color: #ff0055;"><i class="fas fa-file-contract"></i></div>
-                <h3>Cumplimiento</h3>
-                <p>Alineación con ISO 27001, GDPR y normativas locales para evitar multas y ganar confianza.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact" style="background: var(--bg-card);">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
         <div class="contact-container">
             <div class="contact-text">
                 <h2>Asegura tu operación hoy.</h2>

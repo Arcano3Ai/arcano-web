@@ -20,7 +20,7 @@
         <div class="logo-container">
             <div class="logo"><a href="../index.html" style="text-decoration:none; color:white;">ARCANO<span class="dot">.</span></a></div>
             <div class="partner-badge-nav">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_light_color_92x30dp.svg" alt="Google" class="google-mini-logo">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="Google Cloud" class="google-mini-logo">
                 <span>Cloud Partner</span>
             </div>
         </div>
@@ -35,46 +35,47 @@
         </div>
     </nav>
 
-    <header class="hero">
-        <div class="reveal-up" style="text-align: center; max-width: 800px; z-index: 20;">
+    <header class="hero" style="min-height: 100vh; padding: 180px 5% 100px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; position: relative;">
+        <div class="hero-visual" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.7;">
+            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0,0,0,0) 70%);"></div>
+        </div>
+
+        <div class="reveal-up" style="text-align: center; max-width: 1000px; z-index: 20; position: relative; margin-bottom: 80px;">
             <div class="google-partner-tag" style="margin: 0 auto 25px;">
-                <img src="https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24dp.svg" alt="GCP">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
                 <span>Premier Partner</span>
             </div>
             <span class="badge-new stagger-1" style="color: #fff; border-color: #fff;">Visión Estratégica</span>
-            <h1 class="stagger-2">Dirección & <span class="gradient-text">PMO</span></h1>
-            <p class="stagger-3">Soporte ejecutivo para empresas que crecen rápido. Priorización, roadmap y ejecución.</p>
+            <h1 class="stagger-2" style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 25px;">Dirección & <span class="gradient-text">PMO</span></h1>
+            <p class="stagger-3" style="font-size: 1.4rem; max-width: 800px; margin: 0 auto;">Soporte ejecutivo para empresas que crecen rápido. Priorización, roadmap y ejecución.</p>
         </div>
-        <div class="hero-visual">
-            <div class="glow-orb" style="background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0,0,0,0) 70%);"></div>
+
+        <div class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px;">
+            <div class="section-header reveal-up" style="margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem;">Gestión de Alto Nivel</h2>
+                <p>Liderazgo técnico y estratégico para materializar tu visión de negocio.</p>
+            </div>
+            <div class="cards-grid">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon" style="color: #fff;"><i class="fas fa-chess"></i></div>
+                    <h3>Fractional CTO/COO</h3>
+                    <p>Accede a liderazgo senior por fracción de tiempo. Ideal para definir estrategia sin contratar un ejecutivo full-time.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon" style="color: #fff;"><i class="fas fa-tasks"></i></div>
+                    <h3>PMO Ligera</h3>
+                    <p>Oficina de gestión de proyectos ágil. Sin burocracia, solo seguimiento de hitos, bloqueos y entregables.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon" style="color: #fff;"><i class="fas fa-compass"></i></div>
+                    <h3>Roadmap 90-180</h3>
+                    <p>Definición clara de objetivos trimestrales (OKRs) y alineación de equipos técnicos y de negocio.</p>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Gestión de Alto Nivel</h2>
-            <p>Liderazgo técnico y estratégico para materializar tu visión de negocio.</p>
-        </div>
-        <div class="cards-grid">
-            <div class="card reveal-up stagger-1">
-                <div class="card-icon" style="color: #fff;"><i class="fas fa-chess"></i></div>
-                <h3>Fractional CTO/COO</h3>
-                <p>Accede a liderazgo senior por fracción de tiempo. Ideal para definir estrategia sin contratar un ejecutivo full-time.</p>
-            </div>
-            <div class="card reveal-up stagger-2">
-                <div class="card-icon" style="color: #fff;"><i class="fas fa-tasks"></i></div>
-                <h3>PMO Ligera</h3>
-                <p>Oficina de gestión de proyectos ágil. Sin burocracia, solo seguimiento de hitos, bloqueos y entregables.</p>
-            </div>
-            <div class="card reveal-up stagger-3">
-                <div class="card-icon" style="color: #fff;"><i class="fas fa-compass"></i></div>
-                <h3>Roadmap 90-180</h3>
-                <p>Definición clara de objetivos trimestrales (OKRs) y alineación de equipos técnicos y de negocio.</p>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact" style="background: var(--bg-card);">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
         <div class="contact-container">
             <div class="contact-text">
                 <h2>Liderazgo claro.</h2>
