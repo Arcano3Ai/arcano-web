@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoPreview.style.display = 'block';
             botOrb.style.opacity = '0.1';
             visionActive = true;
-            visionBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Desactivar Visión';
+            visionBtn.innerHTML = '<i class="fas fa-eye-slash"></i> DESACTIVAR';
             visionBtn.classList.add('btn-danger');
 
             const canvas = document.createElement('canvas');
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (frameInterval) clearInterval(frameInterval);
         videoPreview.style.display = 'none';
         botOrb.style.opacity = '1';
-        visionBtn.innerHTML = '<i class="fas fa-eye"></i> Activar Visión Neural';
+        visionBtn.innerHTML = '<i class="fas fa-eye"></i> VISIÓN';
         visionBtn.classList.remove('btn-danger');
     }
 
