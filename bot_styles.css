@@ -193,7 +193,34 @@
     font-weight: 700 !important;
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+}
+
+.consulting-badge {
+    background: rgba(85, 230, 165, 0.15) !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 0.65rem !important;
+    border: 1px solid var(--bot-accent) !important;
+    animation: pulse-soft 2s infinite !important;
+}
+
+@keyframes pulse-soft {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.neural-watermark {
+    position: absolute !important;
+    bottom: 10px !important;
+    right: 20px !important;
+    font-size: 0.6rem !important;
+    color: rgba(255, 255, 255, 0.1) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 3px !important;
+    pointer-events: none !important;
 }
 
 .report-content {

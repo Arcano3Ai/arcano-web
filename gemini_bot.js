@@ -32,60 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let session = null;
     let isActive = false;
-    let mediaStream = null;
-    let audioContext = null;
-    let nextAudioTime = 0;
-    let scriptProcessor = null;
-    let microphoneNode = null;
-    let micContext = null;
-    let recognition = null; // Local STT for user experience
-
-    // ─── STT Initialization ─────────────────────────────────────
-    function initRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            console.warn('Speech Recognition not supported in this browser.');
-            return;
-        }
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'es-ES';
-
-        recognition.onresult = (event) => {
-            let interimTranscript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    addMessage('user', event.results[i][0].transcript);
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
-                }
-            }
-            // Optional: update a temporary interim bubble if desired
-        };
-    }
-
-    initRecognition();
-
-    const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
-
-    // Determinar la URL correcta del WebSocket (Local vs Producción)
-    const isLocal = window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1';
-
-    let WS_URL;
-    if (isLocal) {
-        WS_URL = `ws://localhost:8080/`;
-    } else {
-        WS_URL = window.location.protocol === 'https:' ?
-            `wss://${window.location.host}/` :
-            `ws://${window.location.host}/`;
-    }
+    let sessionTimer = null; // Timer for 3-min limit
+    const SESSION_LIMIT = 180000; // 3 minutes in ms
 
     // ─── UI State ───────────────────────────────────────────────
     const setStatus = (status) => {
         statusContainer.className = 'bot-status-container';
         botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
+        if (sessionTimer) { clearTimeout(sessionTimer); sessionTimer = null; }
+
         switch (status) {
             case 'idle':
                 botContainer.classList.add('status-idle');
@@ -103,6 +58,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 transcriptArea.innerHTML = '';
                 if (recognition) recognition.start();
                 startBtn.innerHTML = '<i class="fas fa-stop"></i> Finalizar Sesión';
+                
+                // Iniciar temporizador de 3 minutos para cierre profesional
+                sessionTimer = setTimeout(() => {
+                    addMessage('ai', 'El tiempo de diagnóstico inicial ha concluido. Procedo a generar su Estrategia Digital personalizada para optimizar su inversión en Google Solutions.');
+                    setTimeout(() => disconnect(), 5000);
+                }, SESSION_LIMIT);
                 break;
         }
     };
