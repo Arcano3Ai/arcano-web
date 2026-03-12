@@ -43,8 +43,8 @@
 
     <header id="inicio" class="hero">
         <div class="hero-bot-integrated reveal-up">
+            <!-- Bot Core Visual (Top) -->
             <div class="bot-visual-side">
-                <!-- Official Partner Badge -->
                 <div class="google-partner-tag">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg" alt="GCP">
                     <span>Premier Partner</span>
@@ -56,26 +56,12 @@
                     </div>
                     <video id="bot-video-preview" autoplay playsinline muted></video>
                 </div>
-                <div class="vision-control-hero">
-                    <button id="toggle-vision-btn" class="btn-secondary">
-                        <i class="fas fa-eye"></i> Activar Visión Neural
-                    </button>
-                </div>
             </div>
 
+            <!-- Interaction Area (Middle) -->
             <div class="bot-interaction-side">
-                <div class="bot-header-info-hero">
-                    <div class="google-tech-stack">
-                        <i class="fab fa-google-drive" title="Workspace"></i>
-                        <i class="fas fa-cloud" title="GCP"></i>
-                        <i class="fas fa-brain" title="Vertex AI"></i>
-                    </div>
-                    <h1 class="bot-title-hero">Agente de Estrategia <span class="gradient-text">Arcano OS</span></h1>
-                    <p class="bot-subtitle-hero">Consultoría de Élite • Certificación Google Cloud</p>
-                </div>
-
                 <div id="bot-transcript" class="bot-transcript-area-hero">
-                    <p class="ai-msg">Bienvenido a Arcano Solutions. Inicie el Neural Core para comenzar su diagnóstico estratégico.</p>
+                    <p class="ai-msg">Nucleo Neural Arcano v2.5 Online. Esperando inicialización para diagnóstico estratégico...</p>
                 </div>
 
                 <div id="bot-report" class="bot-report-area-hero" style="display: none;">
@@ -97,11 +83,25 @@
                     <button id="start-bot-btn" class="btn-primary btn-xl">
                         <i class="fas fa-terminal"></i> INICIAR NEURAL CORE
                     </button>
+                    <button id="toggle-vision-btn" class="btn-secondary btn-vision-hero">
+                        <i class="fas fa-eye"></i> Visión Neural
+                    </button>
                     <div class="bot-status-container-hero">
                         <span class="status-indicator" id="bot-status-indicator"></span>
                         <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Branding Info (Bottom - Was Hero) -->
+            <div class="bot-header-info-hero">
+                <div class="google-tech-stack">
+                    <i class="fab fa-google-drive" title="Workspace"></i>
+                    <i class="fas fa-cloud" title="GCP"></i>
+                    <i class="fas fa-brain" title="Vertex AI"></i>
+                </div>
+                <h1 class="bot-title-hero">Agente de Estrategia <span class="gradient-text">Arcano OS</span></h1>
+                <p class="bot-subtitle-hero">Consultoría de Élite • Certificación Google Cloud</p>
             </div>
         </div>
         
