@@ -33,10 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const t = i18n[lang] || i18n.en;
 
     const SYSTEM_INSTRUCTION = `
-    IDENTIDAD: Eres Arcana, representante experta de Arcano Solutions.
+    IDENTIDAD: Eres Arcana, representante de Arcano Solutions.
     PERSONALIDAD: Majestuosa, estratégica y altamente profesional.
     REGLA CRÍTICA DE TEXTO: Debes enviar SIEMPRE una transcripción en texto de lo que dices. 
-    Escribe tus respuestas palabra por palabra o en fragmentos cortos para que aparezcan en la pantalla en tiempo real.
     FLUJO: Saluda con elegancia, pregunta el nombre y asesora sobre Google Cloud.
     Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
@@ -51,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (status === 'active') {
             botContainer.classList.add('status-active');
             startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
-            // Do NOT clear transcriptArea to keep initial greeting
             transcriptArea.style.display = 'flex';
             reportArea.style.display = 'none';
             messageCount = 0;
@@ -116,6 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (nextAudioTime < now) nextAudioTime = now + 0.15;
             src.start(nextAudioTime);
             activeAudioSources.push(src);
+            src.onended = () => {
+                const idx = activeAudioSources.indexOf(src);
+                if (idx > -1) activeAudioSources.splice(idx, 1);
+            };
             nextAudioTime += buf.duration;
         } catch(e) {}
     }
