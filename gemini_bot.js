@@ -211,6 +211,19 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    const updateOrbReactivity = (volume) => {
+        if (!isActive) return;
+        // Scale from 1.0 to 1.5 based on volume
+        const scale = 1 + (volume * 1.5);
+        botOrb.style.transform = `scale(${scale})`;
+        botOrb.style.boxShadow = `0 0 ${20 + (volume * 60)}px rgba(85, 230, 165, ${0.2 + (volume * 0.8)})`;
+        
+        const icon = botOrb.querySelector('#bot-icon');
+        if (icon) {
+            icon.style.filter = `drop-shadow(0 0 ${5 + (volume * 20)}px rgba(255, 255, 255, ${0.4 + volume}))`;
+        }
+    };
+
     // ─── Microphone ──────────────────────────────────────────────
     async function startMic() {
         if (!navigator.mediaDevices?.getUserMedia) {
@@ -242,14 +255,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const f32 = e.data; // Recibimos el buffer completo de 4096 muestras
 
-            // Medir volumen para depuración
+            // Medir volumen para reactividad visual
             let max = 0;
             for (let i = 0; i < f32.length; i++) {
-                if (Math.abs(f32[i]) > max) max = Math.abs(f32[i]);
+                const abs = Math.abs(f32[i]);
+                if (abs > max) max = abs;
             }
-            if (max > 0.01 && Math.random() < 0.01) {
-                console.log('[Bot] Mic active, volume:', max.toFixed(3));
-            }
+            
+            // Actualizar orbe (smooth scaling)
+            requestAnimationFrame(() => updateOrbReactivity(max));
 
             // Convertir de Float32 a Int16 (PCM)
             const pcm16 = new Int16Array(f32.length);
