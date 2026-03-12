@@ -26,20 +26,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let apiKey = null;
 
-    const MODEL = 'models/gemini-2.0-flash-exp';
+    const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
 
     // Determinar la URL correcta del WebSocket (Local vs Producción)
     const isLocal = window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.protocol === 'file:';
+        window.location.hostname === '127.0.0.1';
 
-    let WS_URL = window.location.protocol === 'https:' ?
-        `wss://${window.location.host}/` :
-        `ws://${window.location.host}/`;
-
-    // Si estamos en entorno local pero en puerto distinto al 8080 (ej. XAMPP o Live Server), forzar el puerto 8080 de Node.
-    if (isLocal && window.location.port !== '8080') {
+    let WS_URL;
+    if (isLocal) {
+        // En local, siempre forzamos el puerto 8080 del servidor Node
         WS_URL = `ws://localhost:8080/`;
+    } else {
+        // En producción, usamos el mismo host y protocolo (ws o wss)
+        WS_URL = window.location.protocol === 'https:' ?
+            `wss://${window.location.host}/` :
+            `ws://${window.location.host}/`;
     }
 
     // ─── UI State ───────────────────────────────────────────────
@@ -116,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         responseModalities: ['AUDIO'],
                         temperature: 0.7,
                         top_p: 0.95,
+                        thinkingConfig: { includeThoughts: true },
                         speechConfig: {
                             voiceConfig: {
                                 prebuiltVoiceConfig: { voiceName: 'Aoede' }
@@ -326,65 +328,74 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
         if (micContext) { micContext.close(); micContext = null; }
 
-        // Generar Informe en el área nueva
+        // Generar Informe Real con IA
         if (transcriptArea.textContent.length > 10) {
             visualWrapper.style.display = 'none';
             transcriptArea.style.display = 'none';
             reportArea.style.display = 'block';
+            reportText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ejecutando Arcano Deep Analysis...';
 
-            // Simular un resumen inteligente basado en las palabras clave detectadas
-            const text = transcriptArea.textContent.toLowerCase();
-            let recommendation = "Basado en nuestra conversación, recomendamos iniciar con una auditoría de **Google Workspace** para mejorar la colaboración interna.";
+            const fullTranscript = Array.from(transcriptArea.querySelectorAll('p'))
+                .map(p => p.textContent)
+                .join('\n');
 
-            if (text.includes('cloud') || text.includes('vertex') || text.includes('ia')) {
-                recommendation = "Tu perfil requiere **Arquitectura de Cloud Avanzada**. Sugerimos implementar un piloto con **Vertex AI** para automatizar tus procesos de atención al cliente.";
-            } else if (text.includes('ads') || text.includes('marketing') || text.includes('ventas')) {
-                recommendation = "Detectamos oportunidad en **Google Ads**. Arcano Solutions puede optimizar tus campañas actuales para reducir el costo por lead en un 20%.";
-            }
-
-            reportText.innerHTML = recommendation;
-            statusText.textContent = 'INFORME GENERADO';
-
-            // Mostrar el formulario de captura
-            const leadForm = document.getElementById('lead-capture-form');
-            if (leadForm) {
-                leadForm.style.display = 'block';
-                const saveBtn = document.getElementById('save-lead-btn');
-                saveBtn.onclick = async () => {
-                    const name = document.getElementById('lead-name').value;
-                    const email = document.getElementById('lead-email').value;
-                    
-                    if (!name || !email) {
-                        alert('Por favor, ingresa tu nombre y correo.');
-                        return;
-                    }
-                    
-                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-                    
-                    try {
-                        const response = await fetch('/api/save_lead', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                name: name,
-                                email: email,
-                                interest: 'Consulta Arcano Live AI',
-                                message: recommendation
-                            })
-                        });
+            fetch('/api/generate_report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ transcript: fullTranscript })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const recommendation = data.report || "No se pudo generar el informe profundo.";
+                reportText.innerHTML = recommendation.replace(/\n/g, '<br>');
+                
+                // Mostrar el formulario de captura
+                const leadForm = document.getElementById('lead-capture-form');
+                if (leadForm) {
+                    leadForm.style.display = 'block';
+                    const saveBtn = document.getElementById('save-lead-btn');
+                    saveBtn.onclick = async () => {
+                        const name = document.getElementById('lead-name').value;
+                        const email = document.getElementById('lead-email').value;
                         
-                        if (response.ok) {
-                            leadForm.innerHTML = '<p style="color: #55e6a5; font-weight: 600; text-align: center;"><i class="fas fa-check-circle"></i> ¡Guardado con éxito! Un especialista analizará el reporte y te contactará.</p>';
-                        } else {
-                            throw new Error('Error en el servidor');
+                        if (!name || !email) {
+                            alert('Por favor, ingresa tu nombre y correo.');
+                            return;
                         }
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Hubo un problema de conexión al guardar.');
-                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar y Enviar';
-                    }
-                };
-            }
+                        
+                        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                        
+                        try {
+                            const response = await fetch('/api/save_lead', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    name: name,
+                                    email: email,
+                                    interest: 'Consulta Arcano Live AI',
+                                    message: recommendation
+                                })
+                            });
+                            
+                            if (response.ok) {
+                                leadForm.innerHTML = '<p style="color: #55e6a5; font-weight: 600; text-align: center;"><i class="fas fa-check-circle"></i> ¡Guardado con éxito! Un especialista analizará el reporte y te contactará.</p>';
+                            } else {
+                                throw new Error('Error en el servidor');
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Hubo un problema de conexión al guardar.');
+                            saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar y Enviar';
+                        }
+                    };
+                }
+            })
+            .catch(err => {
+                console.error('Error generating deep report:', err);
+                reportText.innerHTML = "Error al conectar con el motor de análisis profundo. Se usará recomendación estándar.";
+            });
+
+            statusText.textContent = 'INFORME GENERADO';
         }
 
         // Actualizar el Hero

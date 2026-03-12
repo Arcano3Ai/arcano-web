@@ -30,6 +30,45 @@ app.use((req, res, next) => {
 });
 
 // --- API ENDPOINTS ---
+app.post('/api/generate_report', async (req, res) => {
+    try {
+        const { transcript } = req.body;
+        if (!transcript || transcript.length < 10) {
+            return res.status(400).json({ error: 'Transcripción insuficiente.' });
+        }
+
+        const prompt = `Analiza la siguiente conversación entre un cliente y un experto de Arcano Solutions. 
+        Genera un informe ejecutivo conciso (máximo 3 párrafos) con:
+        1. Resumen de necesidades detectadas.
+        2. Recomendación técnica específica (Google Workspace, GCP, Vertex AI, etc.).
+        3. Próximo paso sugerido.
+        Usa un tono profesional y persuasivo. Usa formato Markdown para negritas.
+        
+        CONVERSACIÓN:
+        ${transcript}`;
+
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                    temperature: 0.4,
+                    topP: 0.95,
+                }
+            })
+        });
+
+        const data = await response.json();
+        const report = data.candidates?.[0]?.content?.parts?.[0]?.text || "No se pudo generar el informe profundo.";
+        
+        res.json({ report });
+    } catch (err) {
+        console.error('[API Error] Error al generar reporte:', err.message);
+        res.status(500).json({ error: 'Error interno del servidor.' });
+    }
+});
+
 app.post('/api/save_lead', async (req, res) => {
     try {
         const { name, email, interest, message } = req.body;
@@ -76,7 +115,7 @@ wss.on('connection', (clientWs) => {
     geminiWs = new WebSocket(`${WS_URL}?key=${apiKey}`);
 
     geminiWs.on('open', () => {
-        console.log('[Proxy] Connected to Gemini. Routing traffic...');
+        console.log('[Proxy] Connected to Gemini API (Live Bidi). Routing traffic...');
         // Flush queue
         while (messageQueue.length > 0) {
             const { data, isBinary } = messageQueue.shift();
@@ -86,10 +125,22 @@ wss.on('connection', (clientWs) => {
 
     geminiWs.on('message', (data, isBinary) => {
         try {
-            const parsed = JSON.parse(data.toString());
-            console.log('[Proxy] Gemini -> Client:', Object.keys(parsed));
+            const str = data.toString();
+            const parsed = JSON.parse(str);
+            if (parsed.setupComplete || parsed.setup_complete) {
+                console.log('[Proxy] Gemini -> Client: SETUP_COMPLETE');
+            } else if (parsed.serverContent || parsed.server_content) {
+                // Audio or text response
+                const sc = parsed.serverContent || parsed.server_content;
+                if (sc.modelTurn?.parts?.some(p => p.text)) {
+                    const text = sc.modelTurn.parts.find(p => p.text).text;
+                    console.log('[Proxy] Gemini -> Client (Text):', text.substring(0, 50) + '...');
+                }
+            } else {
+                console.log('[Proxy] Gemini -> Client (JSON):', Object.keys(parsed));
+            }
         } catch (e) {
-            // Probably binary audio
+            // Probably binary audio, no log to avoid spam
         }
         if (clientWs.readyState === WebSocket.OPEN) {
             clientWs.send(data, { binary: isBinary });
@@ -97,7 +148,10 @@ wss.on('connection', (clientWs) => {
     });
 
     geminiWs.on('close', (code, reason) => {
-        console.log(`[Proxy] Gemini connection closed: ${code}`);
+        console.log(`[Proxy] Gemini connection closed by Google. Code: ${code}, Reason: ${reason || 'No reason provided'}`);
+        if (code === 1008) console.error('  -> Error 1008 usually means an invalid model name or unsupported region/API key.');
+        if (code === 1007) console.error('  -> Error 1007 usually means an invalid API key.');
+        
         if (clientWs.readyState === WebSocket.OPEN) {
             clientWs.close(code, reason);
         }
