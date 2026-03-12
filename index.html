@@ -43,12 +43,23 @@
 
     <header id="inicio" class="hero">
         <div class="hero-bot-integrated reveal-up">
-            <!-- Bot Core Visual (Top) -->
+            <!-- Left Side: Identity & Visual -->
             <div class="bot-visual-side">
                 <div class="google-partner-tag">
                     <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
                     <span>Google Cloud Partner</span>
                 </div>
+                
+                <div class="bot-header-info-hero">
+                    <div class="google-tech-stack">
+                        <i class="fab fa-google-drive" title="Workspace"></i>
+                        <i class="fas fa-cloud" title="GCP"></i>
+                        <i class="fas fa-brain" title="Vertex AI"></i>
+                    </div>
+                    <h1 class="bot-title-hero">Arcano <span class="gradient-text">OS</span></h1>
+                    <p class="bot-subtitle-hero">Consultoría de Élite • Partner Premier</p>
+                </div>
+
                 <div class="bot-visual-wrapper-large">
                     <div class="ai-waves-large"></div>
                     <div class="bot-orb-large" id="bot-orb">
@@ -56,52 +67,44 @@
                     </div>
                     <video id="bot-video-preview" autoplay playsinline muted></video>
                 </div>
+
+                <div class="bot-status-container-hero">
+                    <span class="status-indicator" id="bot-status-indicator"></span>
+                    <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
+                </div>
             </div>
 
-            <!-- Interaction Area (Middle) -->
+            <!-- Right Side: Interaction Area -->
             <div class="bot-interaction-side">
-                <div id="bot-transcript" class="bot-transcript-area-hero">
-                    <p class="ai-msg">Nucleo Neural Arcano v2.5 Online. Esperando inicialización para diagnóstico estratégico...</p>
-                </div>
-
-                <div id="bot-report" class="bot-report-area-hero" style="display: none;">
-                    <div class="report-header">
-                        <span><i class="fas fa-file-alt"></i> Estrategia Digital</span>
-                        <span class="consulting-badge">Análisis Deep Arcano</span>
+                <div class="terminal-frame">
+                    <div id="bot-transcript" class="bot-transcript-area-hero">
+                        <p class="ai-msg">Bienvenido al Núcleo de Estrategia Arcano. Iniciemos su diagnóstico corporativo.</p>
                     </div>
-                    <div id="report-text" class="report-content-hero"></div>
-                    <div class="neural-watermark">Neural Engine v2.5</div>
-                    
-                    <div id="lead-capture-form" class="lead-form-hero">
-                        <input type="text" id="lead-name" placeholder="Su Nombre" class="bot-input-hero">
-                        <input type="email" id="lead-email" placeholder="Correo Corporativo" class="bot-input-hero">
-                        <button id="save-lead-btn" class="btn-primary">Obtener Estrategia Completa</button>
+
+                    <div id="bot-report" class="bot-report-area-hero" style="display: none;">
+                        <div class="report-header">
+                            <span><i class="fas fa-file-alt"></i> Estrategia Generada</span>
+                            <span class="consulting-badge">Ready for Delivery</span>
+                        </div>
+                        <div id="report-text" class="report-content-hero"></div>
+                        
+                        <div id="lead-capture-form" class="lead-form-hero">
+                            <h3 style="margin-bottom: 15px; font-size: 1.2rem;">Enviar Reporte a mi Correo</h3>
+                            <input type="text" id="lead-name" placeholder="Nombre Completo" class="bot-input-hero">
+                            <input type="email" id="lead-email" placeholder="Email Corporativo" class="bot-input-hero">
+                            <button id="save-lead-btn" class="btn-primary" style="width: 100%;">ENVIAR ESTRATEGIA AHORA</button>
+                        </div>
                     </div>
                 </div>
 
                 <div class="bot-controls-hero">
                     <button id="start-bot-btn" class="btn-primary btn-xl">
-                        <i class="fas fa-terminal"></i> INICIAR NEURAL CORE
+                        <i class="fas fa-terminal"></i> INICIAR CONSULTORÍA
                     </button>
                     <button id="toggle-vision-btn" class="btn-secondary btn-vision-hero">
-                        <i class="fas fa-eye"></i> Visión Neural
+                        <i class="fas fa-eye"></i> Activar Visión
                     </button>
-                    <div class="bot-status-container-hero">
-                        <span class="status-indicator" id="bot-status-indicator"></span>
-                        <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
-                    </div>
                 </div>
-            </div>
-
-            <!-- Branding Info (Bottom - Was Hero) -->
-            <div class="bot-header-info-hero">
-                <div class="google-tech-stack">
-                    <i class="fab fa-google-drive" title="Workspace"></i>
-                    <i class="fas fa-cloud" title="GCP"></i>
-                    <i class="fas fa-brain" title="Vertex AI"></i>
-                </div>
-                <h1 class="bot-title-hero">Agente de Estrategia <span class="gradient-text">Arcano OS</span></h1>
-                <p class="bot-subtitle-hero">Consultoría de Élite • Certificación Google Cloud</p>
             </div>
         </div>
         
