@@ -90,7 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     model: MODEL,
                     generationConfig: {
                         responseModalities: ['AUDIO'],
-                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
+                        speechConfig: { 
+                            voiceConfig: { 
+                                prebuiltVoiceConfig: { voiceName: 'Aoede' } 
+                            } 
+                        }
                     }
                 }
             }));
