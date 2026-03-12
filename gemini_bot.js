@@ -16,19 +16,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const visualWrapper = document.querySelector('.bot-visual-wrapper');
     const minimizeBtn = document.getElementById('bot-minimize-btn');
     const launcher = document.getElementById('bot-launcher');
+    const videoPreview = document.getElementById('bot-video-preview');
+    const visionBtn = document.getElementById('toggle-vision-btn');
 
     // ─── Variables de Sesión ────────────────────────────────────
     let session = null;
     let isActive = false;
-    let mediaStream = null;
-    let audioContext = null;
-    let nextAudioTime = 0;
-    let scriptProcessor = null;
-    let microphoneNode = null;
-    let micContext = null;
-    let recognition = null; 
-    let sessionTimer = null;
-    const SESSION_LIMIT = 180000; // 3 minutos
+    let visionActive = false;
+    let videoStream = null;
+    let frameInterval = null;
+
+    // ─── Vision Logic (Capture and Send Frames) ────────────────
+    async function startVision() {
+        try {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320 } });
+            videoPreview.srcObject = videoStream;
+            videoPreview.style.display = 'block';
+            botOrb.style.opacity = '0.3';
+            visionActive = true;
+            visionBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Desactivar Visión';
+            visionBtn.classList.add('btn-danger');
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 320;
+            canvas.height = 320;
+
+            frameInterval = setInterval(() => {
+                if (!session || session.readyState !== WebSocket.OPEN || !visionActive) return;
+                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+                const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
+                
+                session.send(JSON.stringify({
+                    realtimeInput: {
+                        mediaChunks: [{
+                            mimeType: 'image/jpeg',
+                            data: base64Frame
+                        }]
+                    }
+                }));
+            }, 1000); // 1 frame per second for stability
+        } catch (e) {
+            console.error("Vision Error:", e);
+            alert("No se pudo acceder a la cámara.");
+        }
+    }
+
+    function stopVision() {
+        visionActive = false;
+        if (videoStream) videoStream.getTracks().forEach(t => t.stop());
+        if (frameInterval) clearInterval(frameInterval);
+        videoPreview.style.display = 'none';
+        botOrb.style.opacity = '1';
+        visionBtn.innerHTML = '<i class="fas fa-eye"></i> Activar Visión Neural';
+        visionBtn.classList.remove('btn-danger');
+    }
+
+    visionBtn.addEventListener('click', () => {
+        if (visionActive) stopVision();
+        else startVision();
+    });
 
     // ─── Configuración de Red (WebSocket) ───────────────────────
     const MODEL = 'models/gemini-2.5-flash-native-audio-preview-12-2025';
