@@ -162,6 +162,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Parallax Effect
+    window.addEventListener('scroll', () => {
+        const scrollY = window.pageYOffset;
+        document.querySelectorAll('.parallax-layer').forEach(layer => {
+            const speed = layer.getAttribute('data-speed') || 0.5;
+            const yPos = -(scrollY * speed);
+            layer.style.transform = `translateY(${yPos}px)`;
+        });
+    });
+
     // Scroll Reveal
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
