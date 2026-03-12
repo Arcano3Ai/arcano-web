@@ -5,73 +5,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const botOrb = document.getElementById('bot-orb');
     const transcriptArea = document.getElementById('bot-transcript');
     const reportArea = document.getElementById('bot-report');
-    const reportText = document.getElementById('report-text');
-    const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
 
     let session = null;
     let isActive = false;
-    let visionActive = false;
-    let videoStream = null;
-    let frameInterval = null;
     let audioContext = null;
     let micContext = null;
     let scriptProcessor = null;
     let nextAudioTime = 0;
     let activeAudioSources = [];
     let messageCount = 0;
-    let recognition = null;
 
+    // The only confirmed model for real-time bidi audio in v1beta
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', gen: 'Generating Diagnosis...' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', gen: 'Generando Diagnóstico...' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO' }
     };
     const t = i18n[lang] || i18n.en;
 
-    const SYSTEM_INSTRUCTION = `
-    Identidad: Eres Arcana, Consultora Senior de Élite en Arcano Solutions.
-    Misión: Representar la excelencia técnica de Arcano y el poder de Google Cloud (Vertex AI, BigQuery, GKE).
-    
-    ESTILO DE INTERACCIÓN:
-    1. Autoridad: No pidas permiso. Presenta soluciones. Tu tono es pausado, seguro y altamente profesional.
-    2. Flujo: Inicia con una presentación de impacto que resalte nuestra capacidad como Premier Partner. Luego, menciona cómo Arcano OS optimiza el 87% de las tareas manuales.
-    3. Consultoría: Solo después de establecer autoridad, invita al cliente a comentar sus objetivos estratégicos.
-    4. Salida: En la terminal, solo registra "Vectores de Decisión" y "Key Points".
-    5. Idioma: Responde en ${lang === 'es' ? 'Español' : 'Inglés'}.
-    `;
-
-    const setStatus = (status) => {
+    const setStatus = (status, errorMsg = '') => {
         botContainer.classList.remove('status-idle', 'status-connecting', 'status-active');
-        switch (status) {
-            case 'idle':
-                botContainer.classList.add('status-idle');
-                statusText.textContent = t.ready;
-                startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${t.start}`;
-                break;
-            case 'connecting':
-                botContainer.classList.add('status-connecting');
-                statusText.textContent = t.init;
-                break;
-            case 'active':
-                botContainer.classList.add('status-active');
-                statusText.textContent = t.active;
-                startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
-                
-                transcriptArea.style.opacity = '0';
-                setTimeout(() => {
-                    transcriptArea.innerHTML = '';
-                    transcriptArea.style.opacity = '1';
-                    transcriptArea.style.display = 'flex';
-                    reportArea.style.display = 'none';
-                }, 200);
-                
-                messageCount = 0;
-                break;
+        if (status === 'idle') {
+            botContainer.classList.add('status-idle');
+            statusText.textContent = errorMsg || t.ready;
+            startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${t.start}`;
+        } else if (status === 'connecting') {
+            botContainer.classList.add('status-connecting');
+            statusText.textContent = t.init;
+        } else if (status === 'active') {
+            botContainer.classList.add('status-active');
+            statusText.textContent = t.active;
+            startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
         }
     };
 
@@ -88,64 +57,82 @@ document.addEventListener('DOMContentLoaded', () => {
             const src = audioContext.createBufferSource();
             src.buffer = buf;
             src.connect(audioContext.destination);
-            
             const now = audioContext.currentTime;
-            // Increased lookahead to 0.1s for smoother playback
             if (nextAudioTime < now) nextAudioTime = now + 0.1;
-            
             src.start(nextAudioTime);
             activeAudioSources.push(src);
-            src.onended = () => {
-                const idx = activeAudioSources.indexOf(src);
-                if (idx > -1) activeAudioSources.splice(idx, 1);
-            };
             nextAudioTime += buf.duration;
-        } catch(e) {}
+        } catch(e) { console.error('Audio Error:', e); }
     }
 
     function connect() {
+        console.log('[Bot] Opening WebSocket...');
         const ws = new WebSocket(WS_URL);
         session = ws;
+
         ws.onopen = () => {
-            ws.send(JSON.stringify({
+            console.log('[Bot] Socket Open. Sending Setup...');
+            const setupMsg = {
                 setup: {
                     model: MODEL,
-                    generationConfig: { 
-                        responseModalities: ['AUDIO'],
-                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
-                    },
-                    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
+                    generationConfig: {
+                        responseModalities: ['AUDIO']
+                    }
                 }
-            }));
+            };
+            ws.send(JSON.stringify(setupMsg));
         };
 
         ws.onmessage = async (event) => {
             let data = event.data;
             if (data instanceof Blob) data = await data.text();
-            const parsed = JSON.parse(data);
+            let parsed;
+            try { parsed = JSON.parse(data); } catch(e) { return; }
 
             if (parsed.setupComplete || parsed.setup_complete) {
+                console.log('[Bot] Setup Success');
                 isActive = true;
                 setStatus('active');
-                if (recognition) try { recognition.start(); } catch(e){}
+                transcriptArea.innerHTML = '';
+                // Manual trigger
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Preséntate como Arcana, la consultora senior de Arcano Solutions, con un tono majestuoso y profesional.' }] }], turnComplete: true }
+                    clientContent: { 
+                        turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, preséntate como consultora senior de Arcano Solutions y explícame las ventajas de usar Google Cloud.' }] }], 
+                        turnComplete: true 
+                    }
                 }));
             }
 
             const sc = parsed.serverContent ?? parsed.server_content;
             if (sc?.modelTurn?.parts) {
                 sc.modelTurn.parts.forEach(p => {
-                    if (p.thought || p.thinking) return;
                     if (p.text) {
-                        addMessage('ai', p.text);
+                        const msg = document.createElement('p');
+                        msg.className = 'ai-msg';
+                        msg.textContent = '🔹 ' + p.text;
+                        transcriptArea.appendChild(msg);
+                        transcriptArea.scrollTop = transcriptArea.scrollHeight;
                         messageCount++;
                     }
                     if (p.inlineData?.data) playPCM(p.inlineData.data);
                 });
             }
         };
-        ws.onclose = () => disconnect();
+
+        ws.onclose = (e) => {
+            console.log('[Bot] Socket Closed. Code:', e.code, 'Reason:', e.reason);
+            const isError = e.code !== 1000 && e.code !== 1005;
+            isActive = false;
+            if (micContext) micContext.close();
+            activeAudioSources.forEach(s => { try { s.stop(); } catch(err) {} });
+            activeAudioSources = [];
+            setStatus('idle', isError ? `Error ${e.code}` : '');
+        };
+
+        ws.onerror = (err) => {
+            console.error('[Bot] WebSocket Error:', err);
+            setStatus('idle', 'Connection Failed');
+        };
     }
 
     async function startMic() {
@@ -164,12 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Math.abs(s) > max) max = Math.abs(s);
                 pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
             }
-            if (max > 0.12) {
-                activeAudioSources.forEach(s => { try { s.stop(); } catch(err) {} });
-                activeAudioSources = [];
-                nextAudioTime = 0;
-            }
-            botOrb.style.transform = `scale(${1 + (max * 1.2)})`;
+            botOrb.style.transform = `scale(${1 + (max * 1.5)})`;
             const bytes = new Uint8Array(pcm16.buffer);
             let binary = '';
             for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
@@ -179,33 +161,17 @@ document.addEventListener('DOMContentLoaded', () => {
         processor.connect(micContext.destination);
     }
 
-    function addMessage(role, text) {
-        const p = document.createElement('p');
-        p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
-        p.textContent = (role === 'ai' ? '🔹 ' : '👤 ') + text;
-        transcriptArea.appendChild(p);
-        transcriptArea.scrollTop = transcriptArea.scrollHeight;
-    }
-
-    function disconnect() {
-        isActive = false;
-        if (session) session.close();
-        session = null;
-        if (micContext) micContext.close();
-        if (recognition) try { recognition.stop(); } catch(e) {}
-        activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
-        activeAudioSources = [];
-        setStatus('idle');
-    }
-
     startBtn.addEventListener('click', async () => {
-        if (isActive) { disconnect(); return; }
+        if (isActive) { session.close(); return; }
         setStatus('connecting');
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
             await startMic();
             connect();
-        } catch (e) { setStatus('idle'); }
+        } catch (e) {
+            console.error('[Bot] Start Error:', e);
+            setStatus('idle', 'Mic Required');
+        }
     });
 
     setStatus('idle');
