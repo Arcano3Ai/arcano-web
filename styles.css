@@ -291,18 +291,84 @@ h4 {
     transition: 0.3s;
 }
 
-/* --- Sections --- */
+/* --- Cloud Parallax System --- */
+.cloud-parallax-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
 
-.hero {
+.parallax-layer {
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+}
+
+.performance-welcome-overlay {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.mini-hero-title {
+    font-size: 4rem;
+    line-height: 1;
+    margin: 10px 0;
+    opacity: 0.8;
+}
+
+.mini-hero-desc {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Service Cards Ambient Transition */
+.ambient-transition {
+    transition: background 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Vision Tooltip & Wrapper */
+.vision-wrapper {
     position: relative;
-    min-height: 100vh;
-    padding: 160px 5% 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    z-index: 10;
+    display: inline-block;
+}
+
+.vision-tooltip {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s;
+    border: 1px solid var(--border-light);
+    pointer-events: none;
+}
+
+.vision-wrapper:hover .vision-tooltip {
+    opacity: 1;
+    visibility: visible;
+    bottom: 110%;
+}
+
+.btn-ghost {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}
+
+.btn-ghost:hover {
+    border-color: #fff !important;
 }
 
 /* Google Color Accents */
