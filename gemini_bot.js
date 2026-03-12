@@ -14,6 +14,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const reportText = document.getElementById('report-text');
     const heroTitle = document.querySelector('.hero-content h1');
     const visualWrapper = document.querySelector('.bot-visual-wrapper');
+    const minimizeBtn = document.getElementById('bot-minimize-btn');
+
+    // ─── Minimize/Maximize Logic ───────────────────────────────
+    minimizeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        botContainer.classList.add('minimized');
+    });
+
+    botContainer.addEventListener('click', () => {
+        if (botContainer.classList.contains('minimized')) {
+            botContainer.classList.remove('minimized');
+        }
+    });
 
     let session = null;
     let isActive = false;
