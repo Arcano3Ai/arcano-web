@@ -132,15 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const sc = parsed.serverContent ?? parsed.server_content;
-            if (sc?.modelTurn?.parts) {
-                sc.modelTurn.parts.forEach(p => {
-                    // Filter out internal thoughts
+            const modelTurn = sc?.modelTurn ?? sc?.model_turn;
+            if (modelTurn?.parts) {
+                modelTurn.parts.forEach(p => {
+                    // Capture all non-thought text parts, even small ones
                     if (p.thought || p.thinking) return;
 
-                    if (p.text) {
+                    if (p.text && p.text.length > 0) {
                         addMessage('ai', p.text);
                         messageCount++;
                     }
+                    
                     if (p.inlineData?.data) playPCM(p.inlineData.data);
                 });
             }
