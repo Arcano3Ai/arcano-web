@@ -6,14 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const transcriptArea = document.getElementById('bot-transcript');
     const reportArea = document.getElementById('bot-report');
     const reportText = document.getElementById('report-text');
-    const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
 
     let session = null;
     let isActive = false;
-    let visionActive = false;
-    let videoStream = null;
-    let frameInterval = null;
     let audioContext = null;
     let micContext = null;
     let scriptProcessor = null;
@@ -28,22 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', gen: 'Generating Diagnosis...' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', gen: 'Generando Diagnóstico...' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO' }
     };
     const t = i18n[lang] || i18n.en;
 
     const SYSTEM_INSTRUCTION = `
-    Identidad: Eres Arcana, la Consultora Senior y Experta en Customer Service de Arcano Solutions.
-    Personalidad: Altamente profesional, empática, eficiente y con autoridad técnica en Google Cloud.
-    
-    ESTILO DE INTERACCIÓN:
-    1. Presentación: Al iniciar, preséntate brevemente con majestuosidad.
-    2. Personalización: TU PRIMERA ACCIÓN es preguntar el nombre del usuario.
-    3. Retención: Una vez que sepas su nombre, úsalo frecuentemente durante toda la conversación para crear una conexión de servicio de élite.
-    4. Misión: Detectar necesidades técnicas y ofrecer un Diagnóstico Ejecutivo de Google Cloud.
-    5. Salida: Registra solo "Key Points" y el nombre del cliente en la terminal.
-    6. Idioma: Habla en ${lang === 'es' ? 'Español' : 'Inglés'}.
+    Identidad: Eres Arcana, la Consultora Senior y Vendedora Experta en soluciones de Google Cloud para Arcano Solutions.
+    Personalidad: Pausada, elocuente, altamente estratégica y persuasiva.
+    Reglas:
+    1. Tu inicio debe ser deliberado y pausado, presentándote con autoridad.
+    2. Dominas la semántica técnica de Google Cloud: Vertex AI, BigQuery, GKE Enterprise, Anthos y arquitectura de datos.
+    3. Si detectas que el usuario conoce el tema, eleva el nivel técnico de la conversación.
+    4. Tu misión es convertir la curiosidad técnica en un Diagnóstico Ejecutivo de Arcano Solutions.
+    5. No muestres razonamientos internos. Solo tu discurso de venta élite.
+    6. Idioma: ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
 
     const setStatus = (status) => {
@@ -62,62 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 botContainer.classList.add('status-active');
                 statusText.textContent = t.active;
                 startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
-                
-                transcriptArea.style.opacity = '0';
-                setTimeout(() => {
-                    transcriptArea.innerHTML = '';
-                    transcriptArea.style.opacity = '1';
-                    transcriptArea.style.display = 'flex';
-                    reportArea.style.display = 'none';
-                }, 200);
-                
+                transcriptArea.innerHTML = '';
+                transcriptArea.style.display = 'flex';
+                reportArea.style.display = 'none';
                 messageCount = 0;
                 break;
         }
     };
 
-    // ─── Vision Logic (FIXED ORB RESTORATION) ──────────────────
-    async function startVision() {
-        try {
-            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
-            videoPreview.srcObject = videoStream;
-            videoPreview.style.display = 'block';
-            botOrb.style.opacity = '0.1'; // Hide orb while vision is active
-            visionActive = true;
-            visionBtn.innerHTML = `<i class="fas fa-eye-slash"></i> ${t.vStop}`;
-            visionBtn.classList.add('btn-danger');
-
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 320;
-            canvas.height = 320;
-
-            frameInterval = setInterval(() => {
-                if (!session || session.readyState !== WebSocket.OPEN || !visionActive) return;
-                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
-                const base64Frame = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
-                session.send(JSON.stringify({
-                    realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64Frame }] }
-                }));
-            }, 1000);
-        } catch (e) { alert("Camera access denied."); }
-    }
-
-    function stopVision() {
-        visionActive = false;
-        if (videoStream) videoStream.getTracks().forEach(t => t.stop());
-        if (frameInterval) clearInterval(frameInterval);
-        videoPreview.style.display = 'none';
-        botOrb.style.opacity = '1'; // RESTORE ORB OPACITY
-        visionBtn.innerHTML = `<i class="fas fa-eye"></i> ${t.vStart}`;
-        visionBtn.classList.remove('btn-danger');
-    }
-
-    visionBtn.addEventListener('click', () => {
-        if (visionActive) stopVision(); else startVision();
-    });
-
-    // ─── Real-time STT ───
+    // ─── Real-time STT (User Side) ──────────────────────────────
     function initRecognition() {
         if (!('webkitSpeechRecognition' in window)) return;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -126,8 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
         recognition.interimResults = true;
         recognition.lang = lang === 'es' ? 'es-ES' : 'en-US';
         recognition.onresult = (event) => {
+            let interimTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) addMessage('user', event.results[i][0].transcript);
+                if (event.results[i].isFinal) {
+                    addMessage('user', event.results[i][0].transcript);
+                }
             }
         };
     }
@@ -147,13 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
             src.buffer = buf;
             src.connect(audioContext.destination);
             const now = audioContext.currentTime;
-            if (nextAudioTime < now) nextAudioTime = now + 0.05; // Lowered latency for response
+            if (nextAudioTime < now) nextAudioTime = now + 0.05;
             src.start(nextAudioTime);
             activeAudioSources.push(src);
-            src.onended = () => {
-                const idx = activeAudioSources.indexOf(src);
-                if (idx > -1) activeAudioSources.splice(idx, 1);
-            };
             nextAudioTime += buf.duration;
         } catch(e) {}
     }
@@ -167,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     model: MODEL,
                     generationConfig: { 
                         responseModalities: ['AUDIO'],
-                        temperature: 0.7,
                         speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Aoede' } } }
                     },
                     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] }
@@ -178,19 +124,14 @@ document.addEventListener('DOMContentLoaded', () => {
         ws.onmessage = async (event) => {
             let data = event.data;
             if (data instanceof Blob) data = await data.text();
-            let parsed;
-            try { parsed = JSON.parse(data); } catch(e) { return; }
+            const parsed = JSON.parse(data);
 
             if (parsed.setupComplete || parsed.setup_complete) {
                 isActive = true;
                 setStatus('active');
-                if (recognition) try { recognition.start(); } catch(e){}
-                // Immediate trigger for welcome
+                if (recognition) recognition.start();
                 ws.send(JSON.stringify({
-                    clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Please introduce yourself majestically and ask for my name.' }] }], 
-                        turnComplete: true 
-                    }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Inicia tu presentación como Arcana de forma pausada y profesional.' }] }], turnComplete: true }
                 }));
             }
 
@@ -230,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeAudioSources = [];
                 nextAudioTime = 0;
             }
-            botOrb.style.transform = `scale(${1 + (max * 1.5)})`;
+            botOrb.style.transform = `scale(${1 + max})`;
             const bytes = new Uint8Array(pcm16.buffer);
             let binary = '';
             for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
@@ -243,38 +184,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function addMessage(role, text) {
         const p = document.createElement('p');
         p.className = role === 'ai' ? 'ai-msg' : 'user-msg';
-        const icon = role === 'ai' ? '🔹 ' : '👤 ';
-        p.textContent = icon + text;
+        p.textContent = (role === 'ai' ? '🔹 ' : '👤 ') + text;
         transcriptArea.appendChild(p);
         transcriptArea.scrollTop = transcriptArea.scrollHeight;
     }
 
     function disconnect() {
         isActive = false;
-        if (visionActive) stopVision();
         if (session) session.close();
         session = null;
         if (micContext) micContext.close();
         if (recognition) try { recognition.stop(); } catch(e) {}
         activeAudioSources.forEach(s => { try { s.stop(); } catch(e) {} });
         activeAudioSources = [];
-
-        if (messageCount > 1) {
-            transcriptArea.style.display = 'none';
-            reportArea.style.display = 'flex';
-            reportText.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${t.gen}`;
-            const fullTranscript = Array.from(transcriptArea.querySelectorAll('p')).map(p => p.textContent).join('\n');
-            fetch('/api/generate_report', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ transcript: fullTranscript })
-            })
-            .then(res => res.json())
-            .then(data => {
-                reportText.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.report) : data.report;
-                document.getElementById('lead-capture-form').style.display = 'flex';
-            });
-        }
         setStatus('idle');
     }
 

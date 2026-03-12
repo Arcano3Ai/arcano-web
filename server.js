@@ -82,15 +82,14 @@ app.post('/api/generate_report', async (req, res) => {
         CONVERSACIÓN:
         ${transcript}`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
-                    temperature: 0.2, // Máxima precisión para estrategia
+                    temperature: 0.3, // Aún más preciso para estrategia
                     topP: 0.95,
-                    maxOutputTokens: 2048,
                 }
             })
         });
