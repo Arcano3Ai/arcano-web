@@ -25,55 +25,102 @@
             </div>
         </div>
         <div class="nav-links">
-            <a href="../index.html">Home</a>
-            <a href="../index.html#google-catalog">Cloud Ecosystem</a>
+            <a href="../index.html#inicio">Home</a>
+            <a href="../index.html#google-catalog">Cloud</a>
+            <a href="../index.html#servicios">Services</a>
             <div class="lang-selector">
-                <a href="bigquery.html" class="active">EN</a>
+                <a href="../index.html" class="active">EN</a>
                 <a href="../index_es.html">ES</a>
             </div>
+            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Access</a>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
         </div>
     </nav>
 
-    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(59, 130, 246, 0.15); --accent-color: #3b82f6;">
+    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(59, 130, 246, 0.15);">
         <div class="hero-visual">
             <canvas id="particle-canvas"></canvas>
         </div>
-        <div class="reveal-up" style="text-align: center; z-index: 20; width: 100%;">
+
+        <div class="container reveal-up" style="z-index: 20; text-align: center; position: relative;">
+            <div class="google-partner-tag">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                <span>Google Cloud Premier Partner</span>
+            </div>
             <h1 class="monumental-title">Big<span class="gradient-text">Query</span></h1>
-            <p class="monumental-subtitle">Serverless, Highly Scalable Data Warehouse for Agility.</p>
+            <p class="monumental-subtitle">Serverless, highly scalable, and cost-effective multicloud data warehouse designed for business agility. Turn data into insights in seconds.</p>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Data Analytics <span class="gradient-text">At Scale</span></h2>
-            <p>Turn data silos into real-time decision engines with petabyte-scale analytics.</p>
+    <main class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px; margin: 0 auto; padding: 100px 5%;">
+        <div class="section-header reveal-up" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem;">Analytics at Scale</h2>
+            <p>Empower your business with real-time analytics and built-in machine learning.</p>
         </div>
         <div class="cards-grid">
             <div class="card reveal-up stagger-1">
-                <div class="card-icon"><i class="fas fa-bolt"></i></div>
-                <h3>Real-time Insights</h3>
-                <p>Analyze streaming data in real-time to get up-to-the-minute business visibility.</p>
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-database"></i></div>
+                <h3>Serverless Warehouse</h3>
+                <p>Fully managed and serverless, so you can focus on data instead of managing infrastructure.</p>
             </div>
             <div class="card reveal-up stagger-2">
-                <div class="card-icon"><i class="fas fa-search-dollar"></i></div>
-                <h3>Built-in ML</h3>
-                <p>Create and execute machine learning models in BigQuery using standard SQL.</p>
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-brain"></i></div>
+                <h3>BigQuery ML</h3>
+                <p>Create and execute machine learning models in BigQuery using standard SQL queries.</p>
             </div>
             <div class="card reveal-up stagger-3">
-                <div class="card-icon"><i class="fas fa-server"></i></div>
-                <h3>Zero Management</h3>
-                <p>Serverless architecture means you focus on data, not infrastructure or scaling.</p>
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-water"></i></div>
+                <h3>BigLake</h3>
+                <p>Unify data warehouses and lakes by analyzing data across different clouds and storage formats.</p>
+            </div>
+            <div class="card reveal-up stagger-4">
+                <div class="card-icon" style="color: #3b82f6;"><i class="fas fa-bolt"></i></div>
+                <h3>Real-time Analytics</h3>
+                <p>Analyze streaming data in real-time and get up-to-the-minute business visibility.</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="gcp-integration" style="padding: 80px 5%; background: rgba(0,0,0,0.2); position: relative; z-index: 20;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header reveal-up" style="text-align: center; margin-bottom: 50px;">
+                <div class="google-partner-tag" style="margin: 0 auto 20px;">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                    <span>Data Stack</span>
+                </div>
+                <h2>Powered by Google Cloud</h2>
+                <p>End-to-end data processing and visualization ecosystem.</p>
+            </div>
+            <div class="gcp-products-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon"><i class="fas fa-code-branch"></i></div>
+                    <h3>Dataform</h3>
+                    <p>Develop, test, and deploy SQL-based data transformation pipelines in BigQuery.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon"><i class="fas fa-share-nodes"></i></div>
+                    <h3>Analytics Hub</h3>
+                    <p>Share data and insights securely across organizational boundaries.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3>Looker</h3>
+                    <p>Enterprise platform for business intelligence, data applications, and embedded analytics.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="contact">
-        <div class="contact-container reveal-up">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
+        <div class="contact-container">
             <div class="contact-text">
-                <h2>Unlock Your Data Potential</h2>
-                <p>Design a robust data strategy with Arcano's BigQuery experts.</p>
-                <a href="../index.html#contacto" class="btn-primary">Get Strategic Audit</a>
+                <h2>Activate your Data.</h2>
+                <p>Discover how BigQuery can transform your decision-making process with Arcano.</p>
+            </div>
+            <div>
+                <a href="../index.html#contacto" class="btn-primary">Consult Data Strategy <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -81,10 +128,14 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ARCANO.</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
             <p class="copyright">&copy; 2026 Arcano Solutions. All rights reserved.</p>
         </div>
     </footer>
-
     <script src="../script.js?v=1.6"></script>
 </body>
+
 </html>

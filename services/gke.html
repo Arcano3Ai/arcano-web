@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GKE | Arcano Solutions</title>
+    <title>Google Kubernetes Engine | Arcano Solutions</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -25,55 +25,102 @@
             </div>
         </div>
         <div class="nav-links">
-            <a href="../index.html">Home</a>
-            <a href="../index.html#google-catalog">Cloud Ecosystem</a>
+            <a href="../index.html#inicio">Home</a>
+            <a href="../index.html#google-catalog">Cloud</a>
+            <a href="../index.html#servicios">Services</a>
             <div class="lang-selector">
-                <a href="gke.html" class="active">EN</a>
+                <a href="../index.html" class="active">EN</a>
                 <a href="../index_es.html">ES</a>
             </div>
+            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Access</a>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
         </div>
     </nav>
 
-    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(59, 130, 246, 0.15); --accent-color: #3b82f6;">
+    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(79, 70, 229, 0.15);">
         <div class="hero-visual">
             <canvas id="particle-canvas"></canvas>
         </div>
-        <div class="reveal-up" style="text-align: center; z-index: 20; width: 100%;">
-            <h1 class="monumental-title">GKE</h1>
-            <p class="monumental-subtitle">Google Kubernetes Engine: The Standard for Modern Apps.</p>
+
+        <div class="container reveal-up" style="z-index: 20; text-align: center; position: relative;">
+            <div class="google-partner-tag">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                <span>Google Cloud Premier Partner</span>
+            </div>
+            <h1 class="monumental-title">Google Kubernetes <span class="gradient-text">Engine</span></h1>
+            <p class="monumental-subtitle">The gold standard for managed Kubernetes. Orchestrate microservices with the same precision and scale as Google's internal systems.</p>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Powered by <span class="gradient-text">Google Cloud</span></h2>
-            <p>Deploy and manage containerized applications at scale with the most advanced Kubernetes service.</p>
+    <main class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px; margin: 0 auto; padding: 100px 5%;">
+        <div class="section-header reveal-up" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem;">Orchestration at Scale</h2>
+            <p>Empower your DevOps teams with the industry's most automated Kubernetes service.</p>
         </div>
         <div class="cards-grid">
             <div class="card reveal-up stagger-1">
-                <div class="card-icon"><i class="fas fa-robot"></i></div>
+                <div class="card-icon" style="color: #4f46e5;"><i class="fas fa-robot"></i></div>
                 <h3>Autopilot Mode</h3>
-                <p>A fully managed Kubernetes experience with hands-off operations, where Google manages your entire infrastructure.</p>
+                <p>A fully managed Kubernetes experience where Google manages your entire infrastructure, node pools, and scaling.</p>
             </div>
             <div class="card reveal-up stagger-2">
-                <div class="card-icon"><i class="fas fa-network-wired"></i></div>
-                <h3>Multi-cluster Management</h3>
-                <p>Seamlessly deploy and manage applications across multiple clusters and regions for high availability.</p>
+                <div class="card-icon" style="color: #4f46e5;"><i class="fas fa-network-wired"></i></div>
+                <h3>Multi-cluster Orchestration</h3>
+                <p>Seamlessly manage applications across multiple clusters and regions for extreme high availability and disaster recovery.</p>
             </div>
             <div class="card reveal-up stagger-3">
-                <div class="card-icon"><i class="fas fa-shield-circle-check"></i></div>
-                <h3>Integrated Security</h3>
-                <p>Built-in binary authorization and workload identity ensure that only trusted code runs in your environment.</p>
+                <div class="card-icon" style="color: #4f46e5;"><i class="fas fa-diagram-project"></i></div>
+                <h3>Anthos Service Mesh</h3>
+                <p>Managed service mesh that provides observability, security, and reliability for your complex microservices architectures.</p>
+            </div>
+            <div class="card reveal-up stagger-4">
+                <div class="card-icon" style="color: #4f46e5;"><i class="fas fa-shield-check"></i></div>
+                <h3>Binary Authorization</h3>
+                <p>Ensure that only trusted and verified container images are deployed into your GKE environment.</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="gcp-integration" style="padding: 80px 5%; background: rgba(0,0,0,0.2); position: relative; z-index: 20;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header reveal-up" style="text-align: center; margin-bottom: 50px;">
+                <div class="google-partner-tag" style="margin: 0 auto 20px;">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                    <span>Infrastructure Stack</span>
+                </div>
+                <h2>Powered by Google Cloud</h2>
+                <p>Global infrastructure and advanced operations.</p>
+            </div>
+            <div class="gcp-products-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon"><i class="fas fa-gears"></i></div>
+                    <h3>Config Connector</h3>
+                    <p>Manage your Google Cloud resources through Kubernetes, using declarative YAML files.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Cloud Operations</h3>
+                    <p>Full-stack monitoring, logging, and performance management for your containerized workloads.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon"><i class="fas fa-server"></i></div>
+                    <h3>Compute Engine</h3>
+                    <p>The high-performance virtual machine infrastructure that powers your GKE clusters.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="contact">
-        <div class="contact-container reveal-up">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
+        <div class="contact-container">
             <div class="contact-text">
-                <h2>Master Orchestration</h2>
-                <p>Partner with Arcano to architect, migrate, and optimize your Kubernetes workloads on GKE.</p>
-                <a href="../index.html#contacto" class="btn-primary">Request Audit</a>
+                <h2>Scale your Infrastructure.</h2>
+                <p>Modernize your workloads and embrace cloud-native development with Arcano's GKE experts.</p>
+            </div>
+            <div>
+                <a href="../index.html#contacto" class="btn-primary">Consult Orchestration <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -81,10 +128,13 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ARCANO.</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
             <p class="copyright">&copy; 2026 Arcano Solutions. All rights reserved.</p>
         </div>
     </footer>
-
     <script src="../script.js?v=1.6"></script>
 </body>
 

@@ -25,55 +25,102 @@
             </div>
         </div>
         <div class="nav-links">
-            <a href="../index.html">Home</a>
-            <a href="../index.html#google-catalog">Cloud Ecosystem</a>
+            <a href="../index.html#inicio">Home</a>
+            <a href="../index.html#google-catalog">Cloud</a>
+            <a href="../index.html#servicios">Services</a>
             <div class="lang-selector">
-                <a href="cloud-run.html" class="active">EN</a>
+                <a href="../index.html" class="active">EN</a>
                 <a href="../index_es.html">ES</a>
             </div>
+            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Access</a>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
         </div>
     </nav>
 
-    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(139, 92, 246, 0.15); --accent-color: #8b5cf6;">
+    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(139, 92, 246, 0.15);">
         <div class="hero-visual">
             <canvas id="particle-canvas"></canvas>
         </div>
-        <div class="reveal-up" style="text-align: center; z-index: 20; width: 100%;">
+
+        <div class="container reveal-up" style="z-index: 20; text-align: center; position: relative;">
+            <div class="google-partner-tag">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                <span>Google Cloud Premier Partner</span>
+            </div>
             <h1 class="monumental-title">Cloud <span class="gradient-text">Run</span></h1>
-            <p class="monumental-subtitle">The Serverless Container Platform.</p>
+            <p class="monumental-subtitle">The ultimate serverless platform for containerized applications. Focus on your code while we handle the infrastructure.</p>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Powered by <span class="gradient-text">Google Cloud</span></h2>
-            <p>Build and deploy scalable containerized applications with full automation.</p>
+    <main class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px; margin: 0 auto; padding: 100px 5%;">
+        <div class="section-header reveal-up" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem;">Serverless Velocity</h2>
+            <p>Deploy high-scale applications with zero infrastructure management.</p>
         </div>
         <div class="cards-grid">
             <div class="card reveal-up stagger-1">
-                <div class="card-icon"><i class="fas fa-cubes"></i></div>
+                <div class="card-icon" style="color: #8b5cf6;"><i class="fas fa-cubes"></i></div>
                 <h3>Serverless Containers</h3>
-                <p>Deploy containers without managing any infrastructure, letting you focus solely on your code.</p>
+                <p>Deploy any containerized application without managing a single server. Complete abstraction of infrastructure.</p>
             </div>
             <div class="card reveal-up stagger-2">
-                <div class="card-icon"><i class="fas fa-arrow-up-right-dots"></i></div>
-                <h3>Auto-scaling</h3>
-                <p>Scale automatically from zero to N based on incoming traffic, ensuring optimal performance and cost.</p>
+                <div class="card-icon" style="color: #8b5cf6;"><i class="fas fa-up-right-and-down-left-from-center"></i></div>
+                <h3>Automatic Scaling</h3>
+                <p>Scale from zero to thousands of instances instantly based on traffic. Only pay for the resources you use.</p>
             </div>
             <div class="card reveal-up stagger-3">
-                <div class="card-icon"><i class="fas fa-coins"></i></div>
-                <h3>Pay-per-use</h3>
-                <p>Only pay when your code is actually running, with per-100ms billing and no idle costs.</p>
+                <div class="card-icon" style="color: #8b5cf6;"><i class="fas fa-bolt-lightning"></i></div>
+                <h3>Eventarc Integration</h3>
+                <p>Build event-driven architectures by triggering Cloud Run services from more than 90 Google Cloud sources.</p>
+            </div>
+            <div class="card reveal-up stagger-4">
+                <div class="card-icon" style="color: #8b5cf6;"><i class="fas fa-globe"></i></div>
+                <h3>Multi-region Deployment</h3>
+                <p>Serve your users with low latency by deploying your services across Google's global network of regions.</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="gcp-integration" style="padding: 80px 5%; background: rgba(0,0,0,0.2); position: relative; z-index: 20;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header reveal-up" style="text-align: center; margin-bottom: 50px;">
+                <div class="google-partner-tag" style="margin: 0 auto 20px;">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                    <span>DevOps Stack</span>
+                </div>
+                <h2>Powered by Google Cloud</h2>
+                <p>Continuous integration and artifact management.</p>
+            </div>
+            <div class="gcp-products-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>Cloud Build</h3>
+                    <p>Continuous integration and continuous delivery platform that lets you create and test software at scale.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon"><i class="fas fa-archive"></i></div>
+                    <h3>Artifact Registry</h3>
+                    <p>Centralized place for your organization to manage container images and language packages.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon"><i class="fas fa-mobile-screen-button"></i></div>
+                    <h3>Firebase App Check</h3>
+                    <p>Protect your API resources from abuse by ensuring that only your valid apps can access them.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="contact">
-        <div class="contact-container reveal-up">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
+        <div class="contact-container">
             <div class="contact-text">
-                <h2>Scale Your Innovation</h2>
-                <p>Partner with Arcano to modernize your application stack with Cloud Run's serverless efficiency.</p>
-                <a href="../index.html#contacto" class="btn-primary">Request Audit</a>
+                <h2>Accelerate Deployment.</h2>
+                <p>Modernize your application stack with Arcano's serverless expertise.</p>
+            </div>
+            <div>
+                <a href="../index.html#contacto" class="btn-primary">Request Modernization <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -81,10 +128,13 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ARCANO.</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
             <p class="copyright">&copy; 2026 Arcano Solutions. All rights reserved.</p>
         </div>
     </footer>
-
     <script src="../script.js?v=1.6"></script>
 </body>
 

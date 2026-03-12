@@ -25,55 +25,102 @@
             </div>
         </div>
         <div class="nav-links">
-            <a href="../index.html">Home</a>
-            <a href="../index.html#google-catalog">Cloud Ecosystem</a>
+            <a href="../index.html#inicio">Home</a>
+            <a href="../index.html#google-catalog">Cloud</a>
+            <a href="../index.html#servicios">Services</a>
             <div class="lang-selector">
-                <a href="cloud-security.html" class="active">EN</a>
+                <a href="../index.html" class="active">EN</a>
                 <a href="../index_es.html">ES</a>
             </div>
+            <a href="../login.html" class="btn-login"><i class="fas fa-user-lock"></i> Access</a>
+        </div>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
         </div>
     </nav>
 
-    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(16, 185, 129, 0.15); --accent-color: #10b981;">
+    <header class="hero cloud-parallax-container" style="--ambient-color: rgba(16, 185, 129, 0.15);">
         <div class="hero-visual">
             <canvas id="particle-canvas"></canvas>
         </div>
-        <div class="reveal-up" style="text-align: center; z-index: 20; width: 100%;">
+
+        <div class="container reveal-up" style="z-index: 20; text-align: center; position: relative;">
+            <div class="google-partner-tag">
+                <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                <span>Google Cloud Premier Partner</span>
+            </div>
             <h1 class="monumental-title">Cloud <span class="gradient-text">Security</span></h1>
-            <p class="monumental-subtitle">Advanced Threat Protection & Compliance.</p>
+            <p class="monumental-subtitle">Elite protection for your digital assets. We implement zero-trust architectures and proactive defense mechanisms on Google Cloud.</p>
         </div>
     </header>
 
-    <section class="services">
-        <div class="section-header reveal-up">
-            <h2>Powered by <span class="gradient-text">Google Cloud</span></h2>
-            <p>Ensure your infrastructure and data are protected by world-class security tools.</p>
+    <main class="services-integrated" style="z-index: 20; position: relative; width: 100%; max-width: 1400px; margin: 0 auto; padding: 100px 5%;">
+        <div class="section-header reveal-up" style="margin-bottom: 50px;">
+            <h2 style="font-size: 2.5rem;">Defense in Depth</h2>
+            <p>A multi-layered approach to secure your infrastructure, applications, and data.</p>
         </div>
         <div class="cards-grid">
             <div class="card reveal-up stagger-1">
-                <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
+                <div class="card-icon" style="color: #10b981;"><i class="fas fa-shield-halved"></i></div>
                 <h3>Security Command Center</h3>
-                <p>Unified security and risk management platform for Google Cloud to detect threats and vulnerabilities.</p>
+                <p>Gain centralized visibility and control over your cloud security posture, detecting threats and vulnerabilities.</p>
             </div>
             <div class="card reveal-up stagger-2">
-                <div class="card-icon"><i class="fas fa-lock"></i></div>
+                <div class="card-icon" style="color: #10b981;"><i class="fas fa-lock"></i></div>
                 <h3>Cloud Armor</h3>
-                <p>Enterprise-grade DDoS protection and Web Application Firewall (WAF) to defend your applications.</p>
+                <p>Enterprise-grade DDoS protection and Web Application Firewall (WAF) to defend your applications at Google scale.</p>
             </div>
             <div class="card reveal-up stagger-3">
-                <div class="card-icon"><i class="fas fa-key"></i></div>
+                <div class="card-icon" style="color: #10b981;"><i class="fas fa-network-wired"></i></div>
                 <h3>VPC Service Controls</h3>
-                <p>Define a security perimeter around your Google Cloud resources to mitigate data exfiltration risks.</p>
+                <p>Define a security perimeter around your sensitive resources to mitigate data exfiltration risks.</p>
+            </div>
+            <div class="card reveal-up stagger-4">
+                <div class="card-icon" style="color: #10b981;"><i class="fas fa-user-shield"></i></div>
+                <h3>BeyondCorp Enterprise</h3>
+                <p>Enable secure access to applications and resources with a zero-trust model, without the need for traditional VPNs.</p>
+            </div>
+        </div>
+    </main>
+
+    <section class="gcp-integration" style="padding: 80px 5%; background: rgba(0,0,0,0.2); position: relative; z-index: 20;">
+        <div class="container" style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header reveal-up" style="text-align: center; margin-bottom: 50px;">
+                <div class="google-partner-tag" style="margin: 0 auto 20px;">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                    <span>Security Stack</span>
+                </div>
+                <h2>Powered by Google Cloud</h2>
+                <p>Integrated identity and encryption services.</p>
+            </div>
+            <div class="gcp-products-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                <div class="card reveal-up stagger-1">
+                    <div class="card-icon"><i class="fas fa-users-gear"></i></div>
+                    <h3>Cloud IAM</h3>
+                    <p>Fine-grained access control and visibility for centrally managing cloud resources.</p>
+                </div>
+                <div class="card reveal-up stagger-2">
+                    <div class="card-icon"><i class="fas fa-key"></i></div>
+                    <h3>Secret Manager</h3>
+                    <p>Securely store and manage sensitive information such as API keys, passwords, and certificates.</p>
+                </div>
+                <div class="card reveal-up stagger-3">
+                    <div class="card-icon"><i class="fas fa-vault"></i></div>
+                    <h3>Cloud KMS</h3>
+                    <p>Manage encryption keys for your cloud services the same way you do on-premises.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <section class="contact">
-        <div class="contact-container reveal-up">
+    <section class="contact" style="background: var(--bg-card); position: relative; z-index: 20;">
+        <div class="contact-container">
             <div class="contact-text">
-                <h2>Secure Your Cloud Future</h2>
-                <p>Partner with Arcano to implement zero-trust architectures and robust compliance frameworks.</p>
-                <a href="../index.html#contacto" class="btn-primary">Request Audit</a>
+                <h2>Secure your Perimeter.</h2>
+                <p>Partner with Arcano for a comprehensive security audit and zero-trust implementation.</p>
+            </div>
+            <div>
+                <a href="../index.html#contacto" class="btn-primary">Request Security Audit <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -81,10 +128,13 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ARCANO.</div>
+            <div class="footer-links">
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
             <p class="copyright">&copy; 2026 Arcano Solutions. All rights reserved.</p>
         </div>
     </footer>
-
     <script src="../script.js?v=1.6"></script>
 </body>
 
