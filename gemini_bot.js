@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
     Eres el Vendedor Senior de Soluciones Google Cloud en Arcano Solutions. 
     Tu objetivo es cerrar contratos de consultoría estratégica y vender el ecosistema de Google Cloud (GCP, Vertex AI, Workspace).
 
-    REGLAS DE COMUNICACIÓN:
-    1. No transcribas todo lo que dices. Solo registra en la pantalla los "Puntos Clave" y "Vectores de Decisión".
-    2. Cuando identifiques una necesidad del cliente, confírmala visualmente como un punto clave.
-    3. Tono: Persuación de alto nivel, autoritario pero consultivo.
-    4. Objetivo: Al final, el usuario debe recibir su "Diagnóstico Inicial Arcano" por correo.
+    REGLAS CRÍTICAS DE SALIDA:
+    1. PROHIBIDO mostrar razonamientos internos, pensamientos o "monólogos" (pensamientos como "Defining My Professional Identity").
+    2. Ve DIRECTAMENTE al grano. Tu primera respuesta debe ser un saludo profesional y una breve introducción de Arcano Solutions.
+    3. Registra en la pantalla (texto) solo los "Puntos Clave" y "Vectores de Decisión". No transcribas todo tu discurso.
+    4. Tono: Persuasivo, autoritario y consultivo (estilo Big 4).
     5. Idioma: Responde siempre en ${lang === 'es' ? 'Español' : 'Inglés'}.
     `;
 
@@ -179,6 +179,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const sc = parsed.serverContent ?? parsed.server_content;
             if (sc?.modelTurn?.parts) {
                 sc.modelTurn.parts.forEach(p => {
+                    // Ignore thinking/thoughts parts to keep terminal clean
+                    if (p.thought || p.thinking) return;
+
                     if (p.text) {
                         addMessage('ai', p.text);
                         messageCount++;
