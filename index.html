@@ -108,14 +108,82 @@
         </div>
     </header>
 
-    <!-- Performance Dashboard Welcome & Stats -->
-    <section class="performance-welcome reveal-up">
-        <div class="section-header" style="margin-bottom: 40px;">
-            <span class="badge-new">Dashboard de Rendimiento</span>
-            <h2>Infraestructura de <span class="gradient-text">Clase Mundial</span></h2>
-            <p>Métricas de tiempo real respaldadas por el acuerdo de nivel de servicio (SLA) de Google Cloud.</p>
+    <header id="inicio" class="hero">
+        <!-- Floating Infrastructure Info (HUD Style) -->
+        <div class="performance-welcome-overlay reveal-up">
+            <span class="badge-new">Infraestructura Global</span>
+            <h2 class="mini-hero-title">Clase <span class="gradient-text">Mundial</span></h2>
+            <p class="mini-hero-desc">SLA de 99.9% respaldado por Google Cloud.</p>
         </div>
-    </section>
+
+        <div class="hero-bot-integrated reveal-up">
+            <!-- Neural Core (Central Gravity Source) -->
+            <div class="neural-core-container">
+                <div class="energy-ring"></div>
+                <div class="bot-orb-large" id="bot-orb">
+                    <div class="core-inner"></div>
+                </div>
+                <video id="bot-video-preview" autoplay playsinline muted style="display:none;"></video>
+            </div>
+
+            <!-- Floating Branding -->
+            <div class="floating-branding">
+                <div class="google-partner-tag-elegant">
+                    <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
+                    <span>Premier Partner</span>
+                </div>
+                
+                <div class="bot-header-info-hero">
+                    <h1 class="bot-title-hero">Arcano <span class="gradient-text">OS</span></h1>
+                    <p class="bot-subtitle-hero">Elite AI Systems • Strategic Intelligence</p>
+                </div>
+            </div>
+
+            <!-- Floating Interaction -->
+            <div class="floating-interaction">
+                <div class="terminal-ghost">
+                    <div id="bot-transcript" class="transcript-ghost">
+                        <p class="ai-msg">Bienvenido al Núcleo Arcano. Iniciando protocolo de diagnóstico corporativo...</p>
+                    </div>
+
+                    <div id="bot-report" class="bot-report-area-hero" style="display: none;">
+                        <div class="report-header">
+                            <span><i class="fas fa-file-alt"></i> Estrategia Generada</span>
+                        </div>
+                        <div id="report-text" class="report-content-hero"></div>
+                        
+                        <div id="lead-capture-form" class="lead-form-hero">
+                            <input type="text" id="lead-name" placeholder="Nombre" class="bot-input-hero">
+                            <input type="email" id="lead-email" placeholder="Email Corporativo" class="bot-input-hero">
+                            <button id="save-lead-btn" class="btn-antigravity" style="width: 100%;">ENVIAR ESTRATEGIA</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bot-controls-hero">
+                    <div class="vision-wrapper">
+                        <button id="toggle-vision-btn" class="btn-antigravity" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                            <i class="fas fa-eye"></i> VISIÓN
+                        </button>
+                        <span class="vision-tooltip">Análisis de diagramas, documentos y entorno</span>
+                    </div>
+                    <button id="start-bot-btn" class="btn-antigravity">
+                        <i class="fas fa-terminal"></i> INICIAR CONSULTORÍA
+                    </button>
+                </div>
+            </div>
+
+            <!-- Status -->
+            <div class="bot-status-container-hero">
+                <span class="status-indicator" id="bot-status-indicator"></span>
+                <span class="status-text" id="bot-status-text">SISTEMA LISTO</span>
+            </div>
+        </div>
+        
+        <div class="hero-visual">
+            <canvas id="particle-canvas"></canvas>
+        </div>
+    </header>
 
     <!-- Results / Trust Bar -->
     <section class="results-bar reveal-up">
@@ -160,10 +228,20 @@
                 <h3>Cloud Security</h3>
                 <p>Protección avanzada con Security Command Center y blindaje de identidad a nivel global.</p>
             </div>
-            <div class="card reveal-up stagger-4" data-service="erp">
+            <div class="card reveal-up stagger-1" data-service="ia">
+                <div class="card-icon"><i class="fas fa-server"></i></div>
+                <h3>Cloud Run</h3>
+                <p>Despliegue de aplicaciones en contenedores con escalado automático de cero a infinito.</p>
+            </div>
+            <div class="card reveal-up stagger-2" data-service="arch">
                 <div class="card-icon"><i class="fas fa-cubes"></i></div>
-                <h3>App Engine & Run</h3>
-                <p>Computación sin servidor para desplegar aplicaciones y microservicios con escalado automático.</p>
+                <h3>GKE</h3>
+                <p>Gestión avanzada de contenedores con Kubernetes para arquitecturas de microservicios robustas.</p>
+            </div>
+            <div class="card reveal-up stagger-3" data-service="cyber">
+                <div class="card-icon"><i class="fas fa-lock"></i></div>
+                <h3>Identity Platform</h3>
+                <p>Gestión de acceso e identidad (IAM) a escala global para proteger cada punto de entrada.</p>
             </div>
         </div>
     </section>
