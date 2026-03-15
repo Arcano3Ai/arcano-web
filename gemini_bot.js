@@ -177,10 +177,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 setStatus('active');
                 if (recognition) try { recognition.start(); } catch(e){}
                 
-                // Trigger the initial greeting based on language
+                // Trigger the initial greeting with high priority
                 const initialPrompt = lang === 'es' 
-                    ? 'Hola Arcana, por favor inicia la sesión de consultoría formal sobre el Free Tier de Google Cloud.'
-                    : 'Hello Arcana, please start the formal consultancy session about Google Cloud Free Tier.';
+                    ? '¡SISTEMA INICIADO! Arcana, preséntate de inmediato con voz profesional, saluda al fundador y explícale proactivamente cómo vas a maximizar su Free Tier de GCP hoy mismo. Menciona explícitamente que ya puedes verlo si activa la VISIÓN.'
+                    : 'SYSTEM STARTED! Arcana, introduce yourself immediately with a professional voice, greet the founder, and proactively explain how you will maximize their GCP Free Tier today. Mention explicitly that you can already see them if they activate VISION.';
                 
                 ws.send(JSON.stringify({
                     clientContent: { 
