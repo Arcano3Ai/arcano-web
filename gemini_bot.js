@@ -1,6 +1,6 @@
 /**
- * ARCANO OS - Versión Estable v1.8 + Visión & Pantalla
- * Voz intacta, añadiendo capacidades visuales.
+ * ARCANO OS - Versión Estable v1.8 + Visión & Pantalla + Mute
+ * Voz intacta, capacidades visuales integradas y traducciones dinámicas.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const WS_URL = `${protocol}//${window.location.host}/`;
     const lang = document.documentElement.lang || 'es';
 
+    const t = {
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR', vision: 'VISIÓN', screen: 'PANTALLA', mute: 'MUTE', unmute: 'UNMUTE' },
+        en: { start: 'START CONSULTANCY', stop: 'STOP', vision: 'VISION', screen: 'SCREEN', mute: 'MUTE', unmute: 'UNMUTE' }
+    }[lang] || { start: 'START CONSULTANCY', stop: 'STOP', vision: 'VISION', screen: 'SCREEN', mute: 'MUTE', unmute: 'UNMUTE' };
+
     const SYSTEM_INSTRUCTION = `
     IDENTITY: You are Arcana, the elite Screen Intelligence Agent for Arcano Solutions.
     VISUAL SYNC: You speak THROUGH THE ORB. Your voice is synchronized with its pulse.
@@ -51,10 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!botContainer) return;
         if (status === 'active') {
             botContainer.classList.add('status-active');
-            if (startBtn) startBtn.innerHTML = `<i class="fas fa-stop"></i> ${lang === 'es' ? 'FINALIZAR' : 'STOP'}`;
+            if (startBtn) startBtn.innerHTML = `<i class="fas fa-stop"></i> ${t.stop}`;
         } else {
             botContainer.classList.remove('status-active');
-            if (startBtn) startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${lang === 'es' ? 'INICIAR CONSULTORÍA' : 'START CONSULTANCY'}`;
+            if (startBtn) startBtn.innerHTML = `<i class="fas fa-terminal"></i> ${t.start}`;
         }
     };
 
@@ -67,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoPreview.style.display = 'block';
             botOrb.style.opacity = '0.2';
             visionActive = true;
+            visionBtn.innerHTML = `<i class="fas fa-eye-slash"></i> ${t.vision}`;
             visionBtn.classList.add('btn-danger');
 
             const canvas = document.createElement('canvas');
@@ -88,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaInterval) clearInterval(mediaInterval);
         videoPreview.style.display = 'none';
         botOrb.style.opacity = '1';
+        visionBtn.innerHTML = `<i class="fas fa-eye"></i> ${t.vision}`;
         visionBtn.classList.remove('btn-danger');
     }
 
@@ -99,7 +106,10 @@ document.addEventListener('DOMContentLoaded', () => {
             videoPreview.style.display = 'block';
             botOrb.style.opacity = '0.2';
             screenActive = true;
-            if (screenBtn) screenBtn.classList.add('btn-danger');
+            if (screenBtn) {
+                screenBtn.innerHTML = `<i class="fas fa-desktop"></i> ${t.screen}`;
+                screenBtn.classList.add('btn-danger');
+            }
 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -121,7 +131,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaInterval) clearInterval(mediaInterval);
         videoPreview.style.display = 'none';
         botOrb.style.opacity = '1';
-        if (screenBtn) screenBtn.classList.remove('btn-danger');
+        if (screenBtn) {
+            screenBtn.innerHTML = `<i class="fas fa-desktop"></i> ${t.screen}`;
+            screenBtn.classList.remove('btn-danger');
+        }
     }
 
     // --- VOZ (INTACTA) ---
@@ -246,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isActive = false;
         isMuted = false;
         if (muteBtn) {
-            muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${lang === 'es' ? 'MUTE' : 'MUTE'}`;
+            muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${t.mute}`;
             muteBtn.classList.remove('btn-danger');
         }
         if (session) session.close();
@@ -274,10 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
         muteBtn.addEventListener('click', () => {
             isMuted = !isMuted;
             if (isMuted) {
-                muteBtn.innerHTML = `<i class="fas fa-microphone-slash"></i> ${lang === 'es' ? 'UNMUTE' : 'UNMUTE'}`;
+                muteBtn.innerHTML = `<i class="fas fa-microphone-slash"></i> ${t.unmute}`;
                 muteBtn.classList.add('btn-danger');
             } else {
-                muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${lang === 'es' ? 'MUTE' : 'MUTE'}`;
+                muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${t.mute}`;
                 muteBtn.classList.remove('btn-danger');
             }
         });
