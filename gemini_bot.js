@@ -291,8 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Only apply mic scale if the bot is not speaking
             if (!botOrb.classList.contains('speaking')) {
                 botOrb.style.transform = `scale(${1 + (max * 0.25)})`;
-            } else {
-                botOrb.style.transform = ''; 
             }
 
             const bytes = new Uint8Array(pcm16.buffer);
@@ -350,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let sum = 0;
             for (let i = 0; i < outputDataArray.length; i++) sum += outputDataArray[i];
             const avg = sum / outputDataArray.length;
-            const scale = 1.0 + (avg / 128) * 0.45; 
+            const scale = 1.0 + (avg / 255) * 0.45; 
             botOrb.style.transform = `scale(${scale})`;
         }
     }
