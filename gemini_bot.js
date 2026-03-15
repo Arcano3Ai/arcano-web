@@ -1,29 +1,17 @@
 /**
- * ARCANO OS - Integración Blindada v3.0
- * Esta versión ignora errores de UI y se enfoca en que el botón de charla funcione sí o sí.
+ * ARCANO OS - Integración v3.1 (Granular Status)
  */
 
-console.log("[Arcana] Cargando Integración Blindada...");
+console.log("[Arcana] Cargando Integración v3.1...");
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[Arcana] DOM Listo. Iniciando mapeo de seguridad...");
-
-    // --- Referencias con Validación ---
     const getEl = (id) => document.getElementById(id);
     const startBtn = getEl('start-bot-btn');
     const botOrb = getEl('bot-orb');
     const transcriptArea = getEl('bot-transcript');
-    const videoPreview = getEl('bot-video-preview');
-    const visionBtn = getEl('toggle-vision-btn');
-    const screenBtn = getEl('toggle-screen-btn');
-    const botContainer = document.querySelector('.hero-bot-integrated') || document.body;
+    
+    if (!startBtn) return;
 
-    if (!startBtn) {
-        console.error("[Arcana] ERROR CRÍTICO: No se encontró 'start-bot-btn' en el HTML.");
-        return;
-    }
-
-    // --- Estado ---
     let socket = null;
     let isActive = false;
     let audioCtx = null;
@@ -36,7 +24,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
 
-    // --- Lógica de Audio ---
+    function updateBtn(text, icon = 'fa-spinner fa-spin', color = '') {
+        startBtn.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+        if (color) startBtn.style.background = color;
+    }
+
     function playAudio(base64) {
         if (!audioCtx) return;
         try {
@@ -64,13 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Error Audio:", e); }
     }
 
-    // --- Conexión ---
     function connect() {
-        console.log("[Arcana] Conectando proxy en:", WS_URL);
+        console.log("[Arcana] WebSocket: Conectando...");
+        updateBtn("CONECTANDO...");
         socket = new WebSocket(WS_URL);
 
         socket.onopen = () => {
-            console.log("[Arcana] WebSocket Abierto.");
+            console.log("[Arcana] WebSocket: Abierto.");
             socket.send(JSON.stringify({
                 setup: { model: MODEL, generationConfig: { responseModalities: ['AUDIO', 'TEXT'] } }
             }));
@@ -82,12 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const parsed = JSON.parse(data);
 
             if (parsed.setupComplete || parsed.setup_complete) {
-                console.log("[Arcana] Bot Listo.");
+                console.log("[Arcana] Bot: Listo para hablar.");
                 isActive = true;
-                startBtn.innerHTML = '<i class="fas fa-stop"></i> FINALIZAR SESIÓN';
-                startBtn.style.background = "red";
+                updateBtn("FINALIZAR SESIÓN", "fa-stop", "red");
                 socket.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Inicia la sesión saludando.' }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, inicia la sesión.' }] }], turnComplete: true }
                 }));
             }
 
@@ -106,37 +97,45 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         socket.onclose = () => stop();
+        socket.onerror = () => stop();
     }
 
     async function startMic() {
-        try {
-            micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
-            await ctx.audioWorklet.addModule('audio-processor.js');
-            const source = ctx.createMediaStreamSource(micStream);
-            const node = new AudioWorkletNode(ctx, 'audio-processor');
+        console.log("[Arcana] Mic: Pidiendo permiso...");
+        updateBtn("MICRÓFONO...");
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        console.log("[Arcana] Mic: Configurando procesador...");
+        const ctx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        
+        // Carga robusta del procesador
+        const processorUrl = 'audio-processor.js?v=' + Date.now();
+        await ctx.audioWorklet.addModule(processorUrl);
+        
+        const source = ctx.createMediaStreamSource(micStream);
+        const node = new AudioWorkletNode(ctx, 'audio-processor');
 
-            node.port.onmessage = (e) => {
-                if (isActive && socket?.readyState === WebSocket.OPEN) {
-                    const f32 = e.data;
-                    const pcm16 = new Int16Array(f32.length);
-                    let max = 0;
-                    for (let i = 0; i < f32.length; i++) {
-                        const s = Math.max(-1, Math.min(1, f32[i]));
-                        if (Math.abs(s) > max) max = Math.abs(s);
-                        pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-                    }
-                    if (botOrb && !botOrb.classList.contains('speaking')) {
-                        botOrb.style.transform = `scale(${1 + (max * 0.8)})`;
-                    }
-                    const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
-                    socket.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: base64 }] } }));
+        node.port.onmessage = (e) => {
+            if (isActive && socket?.readyState === WebSocket.OPEN) {
+                const f32 = e.data;
+                const pcm16 = new Int16Array(f32.length);
+                let max = 0;
+                for (let i = 0; i < f32.length; i++) {
+                    const s = Math.max(-1, Math.min(1, f32[i]));
+                    if (Math.abs(s) > max) max = Math.abs(s);
+                    pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
                 }
-            };
-            source.connect(node);
-            node.connect(ctx.destination);
-            micNode = { ctx, stream: micStream };
-        } catch (e) { alert("Permiso de micrófono denegado."); stop(); }
+                if (botOrb && !botOrb.classList.contains('speaking')) {
+                    botOrb.style.transform = `scale(${1 + (max * 0.8)})`;
+                }
+                const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
+                socket.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: base64 }] } }));
+            }
+        };
+        source.connect(node);
+        node.connect(ctx.destination);
+        micNode = { ctx, stream: micStream };
+        console.log("[Arcana] Mic: OK.");
     }
 
     function stop() {
@@ -147,27 +146,29 @@ document.addEventListener('DOMContentLoaded', () => {
             micNode.stream.getTracks().forEach(t => t.stop());
         }
         socket = null; micNode = null;
-        startBtn.innerHTML = '<i class="fas fa-terminal"></i> INICIAR CONSULTORÍA';
+        updateBtn("INICIAR CONSULTORÍA", "fa-terminal", "");
         startBtn.style.background = "";
-        console.log("[Arcana] Sesión terminada.");
+        console.log("[Arcana] Sesión cerrada.");
     }
 
-    // --- EL ACTIVADOR ---
     startBtn.addEventListener('click', async () => {
-        console.log("[Arcana] ¡CLICK DETECTADO!");
         if (isActive || socket) { stop(); return; }
 
         try {
-            startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> CONECTANDO...';
+            console.log("[Arcana] Inicio: Activando audio ctx...");
+            updateBtn("INICIANDO AUDIO...");
             audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
             await audioCtx.resume();
+
             await startMic();
             connect();
         } catch (err) {
-            console.error("[Arcana] Error al iniciar:", err);
+            console.error("[Arcana] Error Crítico:", err);
+            alert("Error al iniciar: " + err.message);
             stop();
         }
     });
 
-    console.log("[Arcana] Integración finalizada. Botón listo.");
+    updateBtn("INICIAR CONSULTORÍA", "fa-terminal", "");
+    console.log("[Arcana] Botón listo.");
 });
