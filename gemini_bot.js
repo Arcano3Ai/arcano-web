@@ -1,18 +1,19 @@
 /**
- * ARCANO OS - Versión Estable v1.8 (Recovered & Re-mapped)
- * Esta versión usa la lógica original que funcionaba antes del cambio de UI.
+ * ARCANO OS - Versión Estable v1.8 + Visión & Pantalla
+ * Voz intacta, añadiendo capacidades visuales.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Referencias a la Nueva UI ---
+    // --- Referencias a la UI ---
     const startBtn = document.getElementById('start-bot-btn');
     const botContainer = document.querySelector('.hero-bot-integrated');
     const botOrb = document.getElementById('bot-orb');
     const transcriptArea = document.getElementById('bot-transcript');
     const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
+    const screenBtn = document.getElementById('toggle-screen-btn');
 
-    // --- Estado Global Original ---
+    // --- Estado Global ---
     let session = null;
     let isActive = false;
     let audioContext = null;
@@ -21,7 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let nextAudioTime = 0;
     let activeAudioSources = [];
 
-    // --- Configuración Original Estabilizada ---
+    // Estado Visual
+    let visionActive = false;
+    let screenActive = false;
+    let videoStream = null;
+    let screenStream = null;
+    let mediaInterval = null;
+
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
@@ -45,7 +52,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ─── AI Voice Visualizer (Original Pulsing) ───
+    // --- FUNCIONES DE VISIÓN Y PANTALLA ---
+    async function startVision() {
+        try {
+            if (screenActive) stopScreen();
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
+            videoPreview.srcObject = videoStream;
+            videoPreview.style.display = 'block';
+            botOrb.style.opacity = '0.2';
+            visionActive = true;
+            visionBtn.classList.add('btn-danger');
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 320; canvas.height = 320;
+
+            mediaInterval = setInterval(() => {
+                if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
+                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+                const base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
+                session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64 }] } }));
+            }, 1000);
+        } catch (e) { console.error("Vision Error:", e); }
+    }
+
+    function stopVision() {
+        visionActive = false;
+        if (videoStream) videoStream.getTracks().forEach(t => t.stop());
+        if (mediaInterval) clearInterval(mediaInterval);
+        videoPreview.style.display = 'none';
+        botOrb.style.opacity = '1';
+        visionBtn.classList.remove('btn-danger');
+    }
+
+    async function startScreen() {
+        try {
+            if (visionActive) stopVision();
+            screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { width: 1280, height: 720 } });
+            videoPreview.srcObject = screenStream;
+            videoPreview.style.display = 'block';
+            botOrb.style.opacity = '0.2';
+            screenActive = true;
+            if (screenBtn) screenBtn.classList.add('btn-danger');
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 640; canvas.height = 360;
+
+            mediaInterval = setInterval(() => {
+                if (!isActive || !session || session.readyState !== WebSocket.OPEN) return;
+                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+                const base64 = canvas.toDataURL('image/jpeg', 0.4).split(',')[1];
+                session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64 }] } }));
+            }, 1000);
+            screenStream.getVideoTracks()[0].onended = () => stopScreen();
+        } catch (e) { console.error("Screen Error:", e); }
+    }
+
+    function stopScreen() {
+        screenActive = false;
+        if (screenStream) screenStream.getTracks().forEach(t => t.stop());
+        if (mediaInterval) clearInterval(mediaInterval);
+        videoPreview.style.display = 'none';
+        botOrb.style.opacity = '1';
+        if (screenBtn) screenBtn.classList.remove('btn-danger');
+    }
+
+    // --- VOZ (INTACTA) ---
     function animateOrbFromAI() {
         if (!aiAnalyser || !isActive || !botOrb) return;
         const dataArray = new Uint8Array(aiAnalyser.frequencyBinCount);
@@ -69,14 +142,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const buf = audioContext.createBuffer(1, pcm16.length, 24000);
             const ch = buf.getChannelData(0);
             for (let i = 0; i < pcm16.length; i++) ch[i] = pcm16[i] / 32768;
-            
             const src = audioContext.createBufferSource();
             src.buffer = buf;
             src.connect(aiAnalyser);
             aiAnalyser.connect(audioContext.destination);
-            
             const now = audioContext.currentTime;
-            if (nextAudioTime < now) nextAudioTime = now + 0.1;
+            if (nextAudioTime < now) nextAudioTime = now + 0.15;
             src.start(nextAudioTime);
             activeAudioSources.push(src);
             nextAudioTime += buf.duration;
@@ -90,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function connect() {
-        console.log("[Arcana] Original Connection Initiated...");
         const ws = new WebSocket(WS_URL);
         session = ws;
         ws.onopen = () => {
@@ -116,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setStatus('active');
                 animateOrbFromAI();
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: `System Online. Greet me through the orb.` }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: `System Online. Greet me.` }] }], turnComplete: true }
                 }));
             }
 
@@ -135,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (parsed.interrupted) stopAIAudio();
         };
-        ws.onclose = () => { isActive = false; setStatus('idle'); };
+        ws.onclose = () => { stopAll(); };
     }
 
     async function startMic() {
@@ -155,24 +225,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
             }
             if (max > 0.15) { stopAIAudio(); }
-            if (max > 0.05 && botOrb) botOrb.style.transform = `scale(${1 + (max * 1.2)})`;
-            
-            const bytes = new Uint8Array(pcm16.buffer);
-            let binary = '';
-            for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
-            session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: btoa(binary) }] } }));
+            if (max > 0.05 && botOrb && !botOrb.classList.contains('speaking')) botOrb.style.transform = `scale(${1 + (max * 1.2)})`;
+            const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
+            session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: base64 }] } }));
         };
         source.connect(processor);
         processor.connect(micContext.destination);
     }
 
+    function stopAll() {
+        isActive = false;
+        if (session) session.close();
+        if (micContext) micContext.close();
+        if (audioContext) audioContext.close();
+        if (visionActive) stopVision();
+        if (screenActive) stopScreen();
+        setStatus('idle');
+    }
+
+    // --- EVENT LISTENERS ---
     if (startBtn) {
         startBtn.addEventListener('click', async () => {
-            if (isActive) { 
-                isActive = false; 
-                if (session) session.close(); 
-                setStatus('idle'); return; 
-            }
+            if (isActive) { stopAll(); return; }
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
             if (audioContext.state === 'suspended') await audioContext.resume();
             aiAnalyser = audioContext.createAnalyser();
@@ -181,4 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
             connect();
         });
     }
+
+    if (visionBtn) visionBtn.addEventListener('click', () => visionActive ? stopVision() : startVision());
+    if (screenBtn) screenBtn.addEventListener('click', () => screenActive ? stopScreen() : startScreen());
 });
