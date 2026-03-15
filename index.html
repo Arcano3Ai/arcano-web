@@ -26,7 +26,7 @@
             <div class="logo"><a href="index.html">ARCANO<span class="dot">.</span></a></div>
             <div class="partner-badge-nav">
                 <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="Google Cloud" class="google-mini-logo">
-                <span>Premier Partner</span>
+                <span>Cloud Architecture</span>
             </div>
         </div>
         <div class="nav-links">
@@ -63,7 +63,7 @@
             <div class="floating-branding">
                 <div class="google-partner-tag-elegant">
                     <img src="https://www.gstatic.com/images/branding/product/2x/google_cloud_64dp.png" alt="GCP">
-                    <span>Premier Partner</span>
+                    <span>Cloud Architecture</span>
                 </div>
                 
                 <div class="bot-header-info-hero">
@@ -73,31 +73,10 @@
             </div>
 
             <!-- Floating Interaction -->
-            <div class="floating-interaction">
-                <div class="terminal-ghost">
-                    <div id="bot-transcript" class="transcript-ghost">
-                        <p class="ai-msg" style="font-size: 1.4rem; font-weight: 600;">Hello, I am Arcana.</p>
-                        <p class="ai-msg">Your Strategic AI Partner from Arcano Solutions.</p>
-                        <div class="floating-questions" style="margin-top: 30px; opacity: 0.8;">
-                            <p class="ai-msg" style="font-size: 0.85rem; letter-spacing: 2px; color: var(--core-glow);">COMMON INQUIRIES:</p>
-                            <p class="ai-msg" style="font-size: 0.9rem; margin: 10px 0; border-left: 2px solid var(--core-glow); padding-left: 15px;">"How can Vertex AI optimize my operations?"</p>
-                            <p class="ai-msg" style="font-size: 0.9rem; margin: 10px 0; border-left: 2px solid var(--core-glow); padding-left: 15px;">"Tell me about Arcano's security framework."</p>
-                            <p class="ai-msg" style="font-size: 0.9rem; margin: 10px 0; border-left: 2px solid var(--core-glow); padding-left: 15px;">"What are the benefits of BigQuery for my scale?"</p>
-                        </div>
-                    </div>
-
-                    <div id="bot-report" class="bot-report-area-hero" style="display: none;">
-                        <div class="report-header">
-                            <span><i class="fas fa-file-alt"></i> Generated Strategy</span>
-                        </div>
-                        <div id="report-text" class="report-content-hero"></div>
-                        
-                        <div id="lead-capture-form" class="lead-form-hero">
-                            <input type="text" id="lead-name" placeholder="Name" class="bot-input-hero">
-                            <input type="email" id="lead-email" placeholder="Corporate Email" class="bot-input-hero">
-                            <button id="save-lead-btn" class="btn-antigravity" style="width: 100%;">SEND STRATEGY</button>
-                        </div>
-                    </div>
+            <div class="floating-interaction" style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                <!-- Vision HUD (New) -->
+                <div id="vision-hud" style="display:none; width: 100%; max-width: 400px; background: rgba(0,0,0,0.85); border: 1px solid var(--core-glow); border-radius: 20px; padding: 10px; box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);">
+                    <video id="bot-video-preview" autoplay playsinline muted style="width: 100%; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></video>
                 </div>
 
                 <div class="bot-controls-hero">
@@ -105,10 +84,10 @@
                         <i class="fas fa-terminal"></i> START CONSULTANCY
                     </button>
                     <div class="vision-wrapper">
-                        <button id="toggle-vision-btn" class="btn-antigravity" style="background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+                        <button id="toggle-vision-btn" class="btn-antigravity btn-ghost">
                             <i class="fas fa-eye"></i> VISION
                         </button>
-                        <span class="vision-tooltip">Analysis of diagrams, documents and environment</span>
+                        <span class="vision-tooltip">Analyze architecture diagrams and environment</span>
                     </div>
                 </div>
             </div>
