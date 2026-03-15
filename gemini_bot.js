@@ -7,12 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const reportText = document.getElementById('report-text');
     const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
+    const screenBtn = document.getElementById('toggle-screen-btn');
 
     let session = null;
     let isActive = false;
     let visionActive = false;
+    let screenActive = false;
     let videoStream = null;
+    let screenStream = null;
     let frameInterval = null;
+    let screenInterval = null;
     let audioContext = null;
     let micContext = null;
     let scriptProcessor = null;
@@ -27,8 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', gen: 'Generating Diagnosis...' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', gen: 'Generando Diagnóstico...' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', sStart: 'SCREEN', sStop: 'STOP SCREEN', gen: 'Generating Diagnosis...' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', sStart: 'PANTALLA', sStop: 'DETENER PANTALLA', gen: 'Generando Diagnóstico...' }
     };
     const t = i18n[lang] || i18n.en;
 
@@ -44,10 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
     - Compute Engine: 1 instancia e2-micro gratis (en regiones específicas de US).
     - Cloud Build: 2,500 minutos gratis al mes.
     
-    BOTÓN DE VISIÓN: Debes explicar al usuario que tienes capacidades de "Visión" en tiempo real. Si presionan el botón de VISIÓN, puedes ver y analizar diagramas de arquitectura, documentos físicos o incluso su entorno de desarrollo a través de la cámara para dar recomendaciones técnicas precisas.
+    CAPACIDADES MULTIMODALES: 
+    - VISIÓN: Puedes ver a través de la cámara del usuario para analizar hardware, documentos o diagramas físicos.
+    - PANTALLA: Puedes ver la pantalla del usuario en tiempo real. Esto es ideal para realizar auditorías de código en el IDE, revisar configuraciones en la consola de Google Cloud o analizar diagramas de arquitectura complejos que el usuario tenga abiertos. Debes mencionar proactivamente que puedes ver su pantalla para ayudarle con estas tareas técnicas.
     
     ESTRATEGIA PROACTIVA:
-    1. DIAGNÓSTICO AUDITIVO/VISUAL: Escucha activamente y, si la visión está activa, analiza lo que ves para ofrecer soluciones antes de que te las pidan.
+    1. DIAGNÓSTICO AUDITIVO/VISUAL/PANTALLA: Escucha activamente y, si la visión o la pantalla están activas, analiza lo que ves para ofrecer soluciones antes de que te las pidan.
     2. PROPUESTA DE VALOR: Si mencionan una base de datos, sugiere Firestore. Si mencionan APIs, sugiere Cloud Run. Siempre con el enfoque de "Cero Costo".
     3. CIERRE ESTRATÉGICO: Guía al usuario hacia un plan de escalabilidad donde Arcano Solutions sea su socio para pasar de $0 a millones de usuarios.
     
@@ -74,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ─── Vision Logic ───
     async function startVision() {
         try {
+            if (screenActive) stopScreen();
             videoStream = await navigator.mediaDevices.getUserMedia({ video: { width: 480, height: 480 } });
             videoPreview.srcObject = videoStream;
             videoPreview.style.display = 'block';
@@ -110,6 +117,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
     visionBtn.addEventListener('click', () => {
         if (visionActive) stopVision(); else startVision();
+    });
+
+    // ─── Screen Logic ───
+    async function startScreen() {
+        try {
+            if (visionActive) stopVision();
+            screenStream = await navigator.mediaDevices.getDisplayMedia({ video: { width: 1280, height: 720 } });
+            videoPreview.srcObject = screenStream;
+            videoPreview.style.display = 'block';
+            botOrb.style.opacity = '0.1';
+            screenActive = true;
+            screenBtn.innerHTML = `<i class="fas fa-desktop"></i> ${t.sStop}`;
+            screenBtn.classList.add('btn-danger');
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 640;
+            canvas.height = 360;
+
+            screenInterval = setInterval(() => {
+                if (!session || session.readyState !== WebSocket.OPEN || !screenActive) return;
+                ctx.drawImage(videoPreview, 0, 0, canvas.width, canvas.height);
+                const base64Frame = canvas.toDataURL('image/jpeg', 0.4).split(',')[1];
+                session.send(JSON.stringify({
+                    realtimeInput: { mediaChunks: [{ mimeType: 'image/jpeg', data: base64Frame }] }
+                }));
+            }, 1000);
+            
+            screenStream.getVideoTracks()[0].onended = () => stopScreen();
+        } catch (e) { alert("Screen share denied."); }
+    }
+
+    function stopScreen() {
+        screenActive = false;
+        if (screenStream) screenStream.getTracks().forEach(t => t.stop());
+        if (screenInterval) clearInterval(screenInterval);
+        videoPreview.style.display = 'none';
+        botOrb.style.opacity = '1';
+        screenBtn.innerHTML = `<i class="fas fa-desktop"></i> ${t.sStart}`;
+        screenBtn.classList.remove('btn-danger');
+    }
+
+    screenBtn.addEventListener('click', () => {
+        if (screenActive) stopScreen(); else startScreen();
     });
 
     function playPCM(base64) {
@@ -180,8 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Trigger the initial greeting with high priority
                 const initialPrompt = lang === 'es' 
-                    ? '¡SISTEMA INICIADO! Arcana, preséntate de inmediato con voz profesional, saluda al fundador y explícale proactivamente cómo vas a maximizar su Free Tier de GCP hoy mismo. Menciona explícitamente que ya puedes verlo si activa la VISIÓN.'
-                    : 'SYSTEM STARTED! Arcana, introduce yourself immediately with a professional voice, greet the founder, and proactively explain how you will maximize their GCP Free Tier today. Mention explicitly that you can already see them if they activate VISION.';
+                    ? '¡SISTEMA INICIADO! Arcana, preséntate de inmediato con voz profesional, saluda al fundador y explícale proactivamente cómo vas a maximizar su Free Tier de GCP hoy mismo. Menciona explícitamente que ya puedes verlo si activa la VISIÓN o comparte su PANTALLA para una auditoría técnica.'
+                    : 'SYSTEM STARTED! Arcana, introduce yourself immediately with a professional voice, greet the founder, and proactively explain how you will maximize their GCP Free Tier today. Mention explicitly that you can already see them if they activate VISION or share their SCREEN for a technical audit.';
                 
                 ws.send(JSON.stringify({
                     clientContent: { 
@@ -230,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Only apply mic scale if the bot is not speaking
             if (!botOrb.classList.contains('speaking')) {
-                botOrb.style.transform = `scale(${1 + (max * 1.5)})`;
+                botOrb.style.transform = `scale(${1 + (max * 0.25)})`;
             } else {
                 botOrb.style.transform = ''; 
             }
@@ -256,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function disconnect() {
         isActive = false;
         if (visionActive) stopVision();
+        if (screenActive) stopScreen();
         if (session) session.close();
         session = null;
         if (micContext) micContext.close();
