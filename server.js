@@ -7,15 +7,11 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // Permitir recibir JSON del frontend
-
-// --- BASE DE DATOS ---
-const db = require('./db');
+app.use(express.json());
 
 // --- MIDDLEWARE DE SEGURIDAD ---
 app.use((req, res, next) => {
     const url = req.url.toLowerCase();
-    // Lista negra de extensiones sensibles
     const isSensitiveFile = url.endsWith('.php') ||
         url.endsWith('.env') ||
         url.endsWith('.sql') ||
@@ -23,7 +19,6 @@ app.use((req, res, next) => {
         url.endsWith('.json') ||
         url.endsWith('.md');
     
-    // Bloquear archivos sensibles pero PERMITIR endpoints de la API
     if (isSensitiveFile && !url.includes('/api/')) {
         return res.status(403).send('403 Forbidden - Access Denied');
     }
@@ -34,7 +29,6 @@ app.use((req, res, next) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        // Simulación de login profesional para el reto
         if (email && password) {
             return res.json({ 
                 status: 'success', 
@@ -49,7 +43,6 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.get('/api/dashboard_data', (req, res) => {
-    // Datos simulados de monitoreo de IA y Cloud para el panel
     res.json({
         ai_usage: [12, 19, 3, 5, 2, 3, 10],
         cloud_credits: 240.50,
@@ -82,13 +75,13 @@ app.post('/api/generate_report', async (req, res) => {
         CONVERSACIÓN:
         ${transcript}`;
 
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${process.env.GEMINI_API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
-                    temperature: 0.3, // Aún más preciso para estrategia
+                    temperature: 0.3,
                     topP: 0.95,
                 }
             })
@@ -100,24 +93,6 @@ app.post('/api/generate_report', async (req, res) => {
         res.json({ report });
     } catch (err) {
         console.error('[API Error] Error al generar reporte:', err.message);
-        res.status(500).json({ error: 'Error interno del servidor.' });
-    }
-});
-
-app.post('/api/save_lead', async (req, res) => {
-    try {
-        const { name, email, interest, message } = req.body;
-        if (!name || !email) {
-            return res.status(400).json({ error: 'Nombre y email son requeridos.' });
-        }
-        
-        const [result] = await db.execute(
-            'INSERT INTO leads (name, email, interest, message) VALUES (?, ?, ?, ?)',
-            [name, email, interest, message]
-        );
-        res.status(201).json({ success: true, leadId: result.insertId });
-    } catch (err) {
-        console.error('[API Error] Error al guardar lead:', err.message);
         res.status(500).json({ error: 'Error interno del servidor.' });
     }
 });
