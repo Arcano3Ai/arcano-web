@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let activeAudioSources = [];
     let messageCount = 0;
     let recognition = null;
+    let outputAnalyser = null;
+    let outputDataArray = null;
 
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -175,7 +177,13 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let i = 0; i < pcm16.length; i++) ch[i] = pcm16[i] / 0x8000;
             const src = audioContext.createBufferSource();
             src.buffer = buf;
-            src.connect(audioContext.destination);
+
+            if (outputAnalyser) {
+                src.connect(outputAnalyser);
+                outputAnalyser.connect(audioContext.destination);
+            } else {
+                src.connect(audioContext.destination);
+            }
             
             const now = audioContext.currentTime;
             if (nextAudioTime < now) nextAudioTime = now + 0.15;
@@ -194,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (idx > -1) activeAudioSources.splice(idx, 1);
                 if (activeAudioSources.length === 0) {
                     botOrb.classList.remove('speaking');
+                    botOrb.style.transform = ''; 
                 }
             };
             nextAudioTime += buf.duration;
@@ -334,11 +343,29 @@ document.addEventListener('DOMContentLoaded', () => {
         setStatus('idle');
     }
 
+    function updateVisuals() {
+        requestAnimationFrame(updateVisuals);
+        if (botOrb.classList.contains('speaking') && outputAnalyser && outputDataArray) {
+            outputAnalyser.getByteFrequencyData(outputDataArray);
+            let sum = 0;
+            for (let i = 0; i < outputDataArray.length; i++) sum += outputDataArray[i];
+            const avg = sum / outputDataArray.length;
+            const scale = 1.0 + (avg / 128) * 0.45; 
+            botOrb.style.transform = `scale(${scale})`;
+        }
+    }
+
     startBtn.addEventListener('click', async () => {
         if (isActive) { disconnect(); return; }
         setStatus('connecting');
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+            
+            outputAnalyser = audioContext.createAnalyser();
+            outputAnalyser.fftSize = 256;
+            outputDataArray = new Uint8Array(outputAnalyser.frequencyBinCount);
+            updateVisuals();
+
             await startMic();
             connect();
         } catch (e) { setStatus('idle'); }
