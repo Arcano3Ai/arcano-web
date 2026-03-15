@@ -34,7 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const MODEL = 'models/gemini-2.5-flash-native-audio-latest'; 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const WS_URL = `${protocol}//${window.location.host}/`;
-    const lang = document.documentElement.lang || 'es';
+    
+    // Detección de idioma reforzada
+    const langAttr = document.documentElement.lang ? document.documentElement.lang.toLowerCase() : 'es';
+    const lang = langAttr.startsWith('en') ? 'en' : 'es';
 
     const t = {
         es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR', vision: 'VISIÓN', screen: 'PANTALLA', mute: 'MUTE', unmute: 'UNMUTE' },
