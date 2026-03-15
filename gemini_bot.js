@@ -174,9 +174,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 isActive = true;
                 setStatus('active');
                 if (recognition) try { recognition.start(); } catch(e){}
+                
+                // Trigger the initial greeting based on language
+                const initialPrompt = lang === 'es' 
+                    ? 'Hola Arcana, por favor inicia la sesión de consultoría formal sobre el Free Tier de Google Cloud.'
+                    : 'Hello Arcana, please start the formal consultancy session about Google Cloud Free Tier.';
+                
                 ws.send(JSON.stringify({
                     clientContent: { 
-                        turns: [{ role: 'user', parts: [{ text: 'Hola Arcana, por favor inicia la sesión de consultoría formal.' }] }], 
+                        turns: [{ role: 'user', parts: [{ text: initialPrompt }] }], 
                         turnComplete: true 
                     }
                 }));
