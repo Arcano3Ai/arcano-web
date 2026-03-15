@@ -37,9 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = document.documentElement.lang || 'es';
 
     const SYSTEM_INSTRUCTION = `
-    IDENTITY: You are Arcana, the elite Screen Intelligence Agent.
+    IDENTITY: You are Arcana, the elite Screen Intelligence Agent for Arcano Solutions.
     VISUAL SYNC: You speak THROUGH THE ORB. Your voice is synchronized with its pulse.
     MISSION: Help founders build for $0 using Google's Free Tier.
+    ABILITIES: You can see through the camera (VISION) and analyze the user's screen (SCREEN) in real-time to review architectures, code or diagrams.
+    
+    START OF SESSION: Your first message must be a proactive greeting. Explain briefly that you are ready to talk and that the user can use the "VISIÓN" or "PANTALLA" buttons so you can analyze their environment or desktop.
+    
     LANGUAGE: Always respond in ${lang === 'es' ? 'Español' : 'English'}.
     `;
 
@@ -188,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 setStatus('active');
                 animateOrbFromAI();
                 ws.send(JSON.stringify({
-                    clientContent: { turns: [{ role: 'user', parts: [{ text: `System Online. Greet me.` }] }], turnComplete: true }
+                    clientContent: { turns: [{ role: 'user', parts: [{ text: `System Online. Greet me and explain your vision and screen sharing capabilities.` }] }], turnComplete: true }
                 }));
             }
 
