@@ -148,9 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let sum = 0;
         for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
         const average = sum / dataArray.length;
-        const scale = 1 + (average / 128); 
+        
+        // Efecto de crecimiento más pronunciado (escala de 1.0 a 1.25 aprox)
+        const scale = 1 + (average / 64); 
+        
         botOrb.style.transform = `scale(${scale})`;
-        botOrb.style.boxShadow = `0 0 ${40 + average}px rgba(59, 130, 246, 0.6)`;
+        // Brillo sincronizado con el volumen
+        botOrb.style.boxShadow = `0 0 ${40 + (average * 2)}px rgba(59, 130, 246, 0.8), inset 0 0 ${20 + average}px rgba(255, 255, 255, 0.2)`;
+        
         requestAnimationFrame(animateOrbFromAI);
     }
 
