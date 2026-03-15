@@ -8,11 +8,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
     const screenBtn = document.getElementById('toggle-screen-btn');
+    const muteBtn = document.getElementById('toggle-mute-btn');
 
     let session = null;
     let isActive = false;
     let visionActive = false;
     let screenActive = false;
+    let isMuted = false;
     let videoStream = null;
     let screenStream = null;
     let frameInterval = null;
@@ -33,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = document.documentElement.lang || 'en';
     const i18n = {
-        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', sStart: 'SCREEN', sStop: 'STOP SCREEN', gen: 'Generating Diagnosis...' },
-        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', sStart: 'PANTALLA', sStop: 'DETENER PANTALLA', gen: 'Generando Diagnóstico...' }
+        en: { start: 'START CONSULTANCY', stop: 'END SESSION', ready: 'SYSTEM READY', init: 'INITIALIZING...', active: 'SYSTEM ACTIVE', vStart: 'VISION', vStop: 'STOP VISION', sStart: 'SCREEN', sStop: 'STOP SCREEN', gen: 'Generating Diagnosis...', mute: 'MUTE', unmute: 'UNMUTE' },
+        es: { start: 'INICIAR CONSULTORÍA', stop: 'FINALIZAR SESIÓN', ready: 'SISTEMA LISTO', init: 'INICIALIZANDO...', active: 'SISTEMA ACTIVO', vStart: 'VISIÓN', vStop: 'DETENER VISIÓN', sStart: 'PANTALLA', sStop: 'DETENER PANTALLA', gen: 'Generando Diagnóstico...', mute: 'SILENCIAR', unmute: 'REACTIVAR' }
     };
     const t = i18n[lang] || i18n.en;
 
@@ -165,6 +167,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (screenActive) stopScreen(); else startScreen();
     });
 
+    muteBtn.addEventListener('click', () => {
+        isMuted = !isMuted;
+        if (isMuted) {
+            muteBtn.innerHTML = `<i class="fas fa-microphone-slash"></i> ${t.unmute}`;
+            muteBtn.style.opacity = '1';
+            muteBtn.style.color = '#ff4444';
+        } else {
+            muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${t.mute}`;
+            muteBtn.style.opacity = '0.5';
+            muteBtn.style.color = '';
+        }
+    });
+
     function playPCM(base64) {
         if (!audioContext) return;
         try {
@@ -273,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const source = micContext.createMediaStreamSource(stream);
         const processor = new AudioWorkletNode(micContext, 'audio-processor');
         processor.port.onmessage = (e) => {
-            if (!isActive || session?.readyState !== WebSocket.OPEN) return;
+            if (!isActive || session?.readyState !== WebSocket.OPEN || isMuted) return;
             const f32 = e.data;
             const pcm16 = new Int16Array(f32.length);
             let max = 0;
