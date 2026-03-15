@@ -116,13 +116,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const src = audioContext.createBufferSource();
             src.buffer = buf;
             src.connect(audioContext.destination);
+            
             const now = audioContext.currentTime;
             if (nextAudioTime < now) nextAudioTime = now + 0.15;
+            
             src.start(nextAudioTime);
             activeAudioSources.push(src);
+
+            // Trigger animation
+            setTimeout(() => {
+                botOrb.classList.add('speaking');
+            }, (nextAudioTime - now) * 1000);
+
             src.onended = () => {
                 const idx = activeAudioSources.indexOf(src);
                 if (idx > -1) activeAudioSources.splice(idx, 1);
+                if (activeAudioSources.length === 0) {
+                    botOrb.classList.remove('speaking');
+                }
             };
             nextAudioTime += buf.duration;
         } catch(e) {}
