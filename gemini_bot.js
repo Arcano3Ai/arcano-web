@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trigger animation
             setTimeout(() => {
                 botOrb.classList.add('speaking');
+                botOrb.style.transform = ''; // Clear JS mic scale to allow CSS animation
             }, (nextAudioTime - now) * 1000);
 
             src.onended = () => {
@@ -226,7 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 activeAudioSources = [];
                 nextAudioTime = 0;
             }
-            botOrb.style.transform = `scale(${1 + (max * 1.5)})`;
+            
+            // Only apply mic scale if the bot is not speaking
+            if (!botOrb.classList.contains('speaking')) {
+                botOrb.style.transform = `scale(${1 + (max * 1.5)})`;
+            } else {
+                botOrb.style.transform = ''; 
+            }
+
             const bytes = new Uint8Array(pcm16.buffer);
             let binary = '';
             for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
