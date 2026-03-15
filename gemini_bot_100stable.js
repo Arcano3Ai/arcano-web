@@ -12,10 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoPreview = document.getElementById('bot-video-preview');
     const visionBtn = document.getElementById('toggle-vision-btn');
     const screenBtn = document.getElementById('toggle-screen-btn');
+    const muteBtn = document.getElementById('toggle-mute-btn');
 
     // --- Estado Global ---
     let session = null;
     let isActive = false;
+    let isMuted = false;
     let audioContext = null;
     let micContext = null;
     let aiAnalyser = null; 
@@ -226,8 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (max > 0.15) { stopAIAudio(); }
             if (max > 0.05 && botOrb && !botOrb.classList.contains('speaking')) botOrb.style.transform = `scale(${1 + (max * 1.2)})`;
-            const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
-            session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: base64 }] } }));
+            
+            if (!isMuted) {
+                const base64 = btoa(String.fromCharCode(...new Uint8Array(pcm16.buffer)));
+                session.send(JSON.stringify({ realtimeInput: { mediaChunks: [{ mimeType: 'audio/pcm;rate=16000', data: base64 }] } }));
+            }
         };
         source.connect(processor);
         processor.connect(micContext.destination);
@@ -235,6 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function stopAll() {
         isActive = false;
+        isMuted = false;
+        if (muteBtn) {
+            muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${lang === 'es' ? 'MUTE' : 'MUTE'}`;
+            muteBtn.classList.remove('btn-danger');
+        }
         if (session) session.close();
         if (micContext) micContext.close();
         if (audioContext) audioContext.close();
@@ -253,6 +263,19 @@ document.addEventListener('DOMContentLoaded', () => {
             aiAnalyser.fftSize = 256;
             await startMic(); 
             connect();
+        });
+    }
+
+    if (muteBtn) {
+        muteBtn.addEventListener('click', () => {
+            isMuted = !isMuted;
+            if (isMuted) {
+                muteBtn.innerHTML = `<i class="fas fa-microphone-slash"></i> ${lang === 'es' ? 'UNMUTE' : 'UNMUTE'}`;
+                muteBtn.classList.add('btn-danger');
+            } else {
+                muteBtn.innerHTML = `<i class="fas fa-microphone"></i> ${lang === 'es' ? 'MUTE' : 'MUTE'}`;
+                muteBtn.classList.remove('btn-danger');
+            }
         });
     }
 
