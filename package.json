@@ -1,23 +1,19 @@
 {
+  "name": "arcano-os-v100-stable",
+  "version": "1.0.0",
+  "description": "Arcano OS Stable - Definitive High-Impact Version",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "ws": "^8.19.0"
   },
-  "name": "public_html",
-  "version": "1.0.0",
-  "description": "",
-  "main": "find_model.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "keywords": [],
-  "author": "",
+  "author": "Arcano Solutions",
   "license": "ISC",
   "type": "commonjs"
 }
